@@ -15,7 +15,7 @@ Friendly **article-style** notes that match what you see in the **First Principl
 - **Gold / curve** → the function \(f(x)\).
 - **Derivative curve** → \(f'(x)\) (slope). In many levels, **where the derivative is “high enough,”** you get **platforms**; otherwise, **gaps / hazards**.
 - **Stages** → story beats and **visual “pops”** on the derivative as you move right.
-- **Math tips overlay** → from **Level select**, open **“Math tips & snippets”** for the same ideas in short form (also on GitHub here).
+- **Math tips / concepts overlay** → from **Level select** open **“Math tips & snippets”**, or during **Game** tap **“Math concepts”** (top-right) — same scrollable reader, with an opening section that explains how the visuals tie to f(x), f′(x), platforms, Riemann shading, and stages.
 
 ---
 
