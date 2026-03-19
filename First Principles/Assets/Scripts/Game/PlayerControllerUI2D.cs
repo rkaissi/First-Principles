@@ -43,7 +43,17 @@ public class PlayerControllerUI2D : MonoBehaviour
     private Action deathCallback;
     private Action finishCallback;
 
+    /// <summary>When true (e.g. stage intro overlay), physics/input integration is skipped so the avatar stays frozen.</summary>
+    private bool inputLocked;
+
     public Vector2 PlayerCenterGrid => posGrid;
+
+    public void SetInputLocked(bool locked)
+    {
+        inputLocked = locked;
+        if (locked)
+            velGrid = Vector2.zero;
+    }
 
     public void BindVisual(RectTransform rect, Image img)
     {
@@ -108,6 +118,9 @@ public class PlayerControllerUI2D : MonoBehaviour
             return;
 
         if (isDead || isFinished)
+            return;
+
+        if (inputLocked)
             return;
 
         float dt = Time.deltaTime;

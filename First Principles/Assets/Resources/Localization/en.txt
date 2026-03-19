@@ -8,6 +8,7 @@ ui.graphing_calculator_mode=Graphing calculator
 ui.loading=Loading…
 ui.language=Language
 ui.tap_change_language=Tap to change
+ui.stage_intro_hint=Tap anywhere to continue
 ui.close=Close
 ui.math_concepts=Math concepts
 ui.jump=Jump

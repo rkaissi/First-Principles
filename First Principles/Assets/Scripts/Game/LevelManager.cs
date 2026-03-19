@@ -16,8 +16,8 @@ using UnityEngine.UI;
 //   2. BuildSampleLevels() populates `levels`. CRITICAL: index order must match
 //      GameLevelCatalog.DisplayNames (level select uses the same indices).
 //   3. LoadLevel(i) → ApplyLevelTheme(def) pushes params into FunctionPlotter and HUD
-//      state, then LoadWorldAfterThemeChange waits a frame so LineRenderer points exist,
-//      then regenerates obstacles + Riemann mesh and resets the player.
+//      state, then LoadLevelFullRoutine: world build → optional StageIntroOverlay roleplay
+//      “page” → story banner fade (player can move during fade).
 //   4. Update() advances nextStageIndex when PlayerCenterGrid.x crosses
 //      stageTriggerXGrid[k], firing DerivativePopAnimator.
 // Dependencies: Cartesian plane RectTransform, Canvas with CanvasSafeAreaBootstrap for mobile.
@@ -71,6 +71,16 @@ public class LevelManager : MonoBehaviour
 
     private bool isRestarting;
     private Coroutine storyFadeRoutine;
+    private Coroutine levelFlowRoutine;
+    /// <summary>After death-restart, skip the full-screen roleplay card for the same stage.</summary>
+    private bool skipNextStageIntro;
+
+    private GameObject stageIntroRoot;
+    private CanvasGroup stageIntroCanvasGroup;
+    private TextMeshProUGUI stageIntroTitle;
+    private TextMeshProUGUI stageIntroBody;
+    private TextMeshProUGUI stageIntroHint;
+    private bool stageIntroSkipRequested;
 
     /// <summary>Graphing calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
     private bool graphCalculatorMode;
@@ -172,7 +182,7 @@ public class LevelManager : MonoBehaviour
             storyText.text = TmpLatex.Process(LocalizationManager.Get("graph.calculator_intro",
                 "<b>Graphing calculator mode</b>\n" +
                 "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>"));
-            storyText.isRightToLeftText = false;
+            LocalizationManager.ApplyTextDirection(storyText);
             return;
         }
 
@@ -189,8 +199,8 @@ public class LevelManager : MonoBehaviour
         }
 
         storyText.text = TmpLatex.Process($"<b>{title}</b>\n{story}");
-        // Long level copy is often mixed Latin/math; keep LTR unless you add full `story.N` translations in RTL locales.
-        storyText.isRightToLeftText = false;
+        // Use RTL for Arabic / Urdu; Latin-heavy mixed math still renders with TMP bidi when possible.
+        LocalizationManager.ApplyTextDirection(storyText);
     }
 
     private void Start()
@@ -324,6 +334,12 @@ public class LevelManager : MonoBehaviour
         {
             StopCoroutine(storyFadeRoutine);
             storyFadeRoutine = null;
+        }
+
+        if (levelFlowRoutine != null)
+        {
+            StopCoroutine(levelFlowRoutine);
+            levelFlowRoutine = null;
         }
 
         if (storyText != null)
@@ -2025,7 +2041,10 @@ public class LevelManager : MonoBehaviour
         var def = levels[currentLevelIndex];
         ApplyLevelTheme(def);
         RefreshStageHud();
-        StartCoroutine(LoadWorldAfterThemeChange(def));
+
+        if (levelFlowRoutine != null)
+            StopCoroutine(levelFlowRoutine);
+        levelFlowRoutine = StartCoroutine(LoadLevelFullRoutine(def));
     }
 
     /// <summary>
@@ -2110,14 +2129,231 @@ public class LevelManager : MonoBehaviour
             gridRenderer.enabled = true;
         }
 
-        // Story.
+        // Story + roleplay intro run from <see cref="LoadLevelFullRoutine"/> after the world is built.
+    }
+
+    /// <summary>
+    /// Builds platforms after plot refresh; then optional roleplay “page”, then the ordinary story banner fade.
+    /// </summary>
+    private IEnumerator LoadLevelFullRoutine(LevelDefinition def)
+    {
+        if (playerController != null)
+            playerController.SetInputLocked(true);
+
+        yield return LoadWorldAfterThemeChange(def);
+
+        bool showIntro = !skipNextStageIntro
+                         && !graphCalculatorMode
+                         && currentLevelIndex >= 0
+                         && currentLevelIndex < StageRoleplayLibrary.Count;
+
+        skipNextStageIntro = false;
+
+        if (showIntro)
+            yield return RunEnumerated(RunStageIntroCoroutine(def));
+
+        // Match original behaviour: player can move while the top story banner fades.
+        if (playerController != null)
+            playerController.SetInputLocked(false);
+
         if (storyText != null)
         {
             RefreshStoryBannerForCurrentMode(def);
-            if (storyFadeRoutine != null)
-                StopCoroutine(storyFadeRoutine);
-            storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());
+            yield return RunEnumerated(FadeStoryTextRoutine());
         }
+
+        levelFlowRoutine = null;
+    }
+
+    /// <summary>Runs a child iterator inside this MonoBehaviour coroutine without starting a nested Unity coroutine.</summary>
+    private static IEnumerator RunEnumerated(IEnumerator inner)
+    {
+        if (inner == null)
+            yield break;
+
+        while (inner.MoveNext())
+            yield return inner.Current;
+    }
+
+    private IEnumerator RunStageIntroCoroutine(LevelDefinition def)
+    {
+        EnsureStageIntroOverlay();
+        if (stageIntroRoot == null || stageIntroCanvasGroup == null)
+            yield break;
+
+        stageIntroSkipRequested = false;
+
+        string title = LocalizationManager.GetWithFallback($"level.{currentLevelIndex}", def.levelName);
+        stageIntroTitle.text = title;
+        stageIntroBody.text = TmpLatex.Process(StageRoleplayLibrary.GetRoleplayText(currentLevelIndex));
+        LocalizationManager.ApplyTextDirection(stageIntroTitle);
+        LocalizationManager.ApplyTextDirection(stageIntroBody);
+        stageIntroHint.text = LocalizationManager.Get("ui.stage_intro_hint", "Tap to continue");
+        LocalizationManager.ApplyTextDirection(stageIntroHint);
+
+        stageIntroRoot.SetActive(true);
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroCanvasGroup.interactable = false;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        float fadeIn = 0.38f;
+        float t = 0f;
+        while (t < fadeIn)
+        {
+            t += Time.unscaledDeltaTime;
+            stageIntroCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, t / fadeIn);
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.alpha = 1f;
+        stageIntroCanvasGroup.interactable = true;
+        stageIntroCanvasGroup.blocksRaycasts = true;
+
+        const float maxWait = 6f;
+        const float minBeforeSkip = 0.42f;
+        float waited = 0f;
+        while (waited < maxWait)
+        {
+            waited += Time.unscaledDeltaTime;
+            if (stageIntroSkipRequested && waited >= minBeforeSkip)
+                break;
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.interactable = false;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        float fadeOut = 0.32f;
+        t = 0f;
+        while (t < fadeOut)
+        {
+            t += Time.unscaledDeltaTime;
+            stageIntroCanvasGroup.alpha = Mathf.SmoothStep(1f, 0f, t / fadeOut);
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroRoot.SetActive(false);
+    }
+
+    private void EnsureStageIntroOverlay()
+    {
+        if (stageIntroRoot != null)
+            return;
+
+        var canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        var parent = safe != null ? safe : canvas.transform;
+
+        stageIntroRoot = new GameObject("StageIntroOverlay");
+        var rootRt = stageIntroRoot.AddComponent<RectTransform>();
+        rootRt.SetParent(parent, false);
+        rootRt.SetAsLastSibling();
+        rootRt.anchorMin = Vector2.zero;
+        rootRt.anchorMax = Vector2.one;
+        rootRt.offsetMin = Vector2.zero;
+        rootRt.offsetMax = Vector2.zero;
+
+        stageIntroCanvasGroup = stageIntroRoot.AddComponent<CanvasGroup>();
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        var dimGo = new GameObject("Dim");
+        var dimRt = dimGo.AddComponent<RectTransform>();
+        dimRt.SetParent(rootRt, false);
+        dimRt.anchorMin = Vector2.zero;
+        dimRt.anchorMax = Vector2.one;
+        dimRt.offsetMin = Vector2.zero;
+        dimRt.offsetMax = Vector2.zero;
+        var dimImg = dimGo.AddComponent<Image>();
+        dimImg.color = new Color(0.04f, 0.05f, 0.08f, 0.88f);
+        dimImg.raycastTarget = false;
+
+        var panelGo = new GameObject("Panel");
+        var panelRt = panelGo.AddComponent<RectTransform>();
+        panelRt.SetParent(rootRt, false);
+        panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRt.pivot = new Vector2(0.5f, 0.5f);
+        panelRt.sizeDelta = new Vector2(Mathf.Min(760f, Screen.width * 0.9f), Mathf.Min(520f, Screen.height * 0.72f));
+        var panelImg = panelGo.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(panelImg);
+        panelImg.color = new Color(0.1f, 0.11f, 0.15f, 0.97f);
+        panelImg.raycastTarget = false;
+        RuntimeUiPolish.ApplyDropShadow(panelRt, new Vector2(2f, -4f), 0.35f);
+
+        var titleGo = new GameObject("Title");
+        var titleRt = titleGo.AddComponent<RectTransform>();
+        titleRt.SetParent(panelRt, false);
+        titleRt.anchorMin = new Vector2(0f, 1f);
+        titleRt.anchorMax = new Vector2(1f, 1f);
+        titleRt.pivot = new Vector2(0.5f, 1f);
+        titleRt.offsetMin = new Vector2(22f, -120f);
+        titleRt.offsetMax = new Vector2(-22f, -16f);
+        stageIntroTitle = titleGo.AddComponent<TextMeshProUGUI>();
+        stageIntroTitle.fontSize = UiTypography.Scale(30);
+        stageIntroTitle.fontStyle = FontStyles.Bold;
+        stageIntroTitle.alignment = TextAlignmentOptions.Top;
+        stageIntroTitle.color = RuntimeUiPolish.TitleIvory;
+        stageIntroTitle.richText = true;
+        stageIntroTitle.textWrappingMode = TextWrappingModes.Normal;
+        stageIntroTitle.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroTitle, FindPrimaryEquationTmp(), outlineWidth: 0.1f, outlineAlpha: 0.4f);
+
+        var bodyGo = new GameObject("Body");
+        var bodyRt = bodyGo.AddComponent<RectTransform>();
+        bodyRt.SetParent(panelRt, false);
+        bodyRt.anchorMin = new Vector2(0f, 0.22f);
+        bodyRt.anchorMax = new Vector2(1f, 1f);
+        bodyRt.offsetMin = new Vector2(22f, 8f);
+        bodyRt.offsetMax = new Vector2(-22f, -132f);
+        stageIntroBody = bodyGo.AddComponent<TextMeshProUGUI>();
+        stageIntroBody.fontSize = UiTypography.Scale(23);
+        stageIntroBody.alignment = TextAlignmentOptions.Top;
+        stageIntroBody.color = new Color(0.92f, 0.93f, 0.96f, 1f);
+        stageIntroBody.richText = true;
+        stageIntroBody.textWrappingMode = TextWrappingModes.Normal;
+        stageIntroBody.lineSpacing = 2f;
+        stageIntroBody.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroBody, FindPrimaryEquationTmp(), outlineWidth: 0.08f, outlineAlpha: 0.35f);
+
+        var hintGo = new GameObject("Hint");
+        var hintRt = hintGo.AddComponent<RectTransform>();
+        hintRt.SetParent(panelRt, false);
+        hintRt.anchorMin = new Vector2(0f, 0f);
+        hintRt.anchorMax = new Vector2(1f, 0f);
+        hintRt.pivot = new Vector2(0.5f, 0f);
+        hintRt.offsetMin = new Vector2(16f, 14f);
+        hintRt.offsetMax = new Vector2(-16f, 76f);
+        stageIntroHint = hintGo.AddComponent<TextMeshProUGUI>();
+        stageIntroHint.fontSize = UiTypography.Scale(19);
+        stageIntroHint.alignment = TextAlignmentOptions.Bottom;
+        stageIntroHint.color = new Color(0.75f, 0.8f, 0.95f, 0.85f);
+        stageIntroHint.fontStyle = FontStyles.Italic;
+        stageIntroHint.richText = true;
+        stageIntroHint.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroHint, FindPrimaryEquationTmp(), outlineWidth: 0.06f, outlineAlpha: 0.3f);
+
+        var tapGo = new GameObject("TapToContinue");
+        var tapRt = tapGo.AddComponent<RectTransform>();
+        tapRt.SetParent(rootRt, false);
+        tapRt.SetAsLastSibling();
+        tapRt.anchorMin = Vector2.zero;
+        tapRt.anchorMax = Vector2.one;
+        tapRt.offsetMin = Vector2.zero;
+        tapRt.offsetMax = Vector2.zero;
+        var tapImg = tapGo.AddComponent<Image>();
+        tapImg.color = new Color(0f, 0f, 0f, 0.001f);
+        tapImg.raycastTarget = true;
+        var tapBtn = tapGo.AddComponent<Button>();
+        tapBtn.targetGraphic = tapImg;
+        tapBtn.transition = Selectable.Transition.None;
+        tapBtn.onClick.AddListener(() => stageIntroSkipRequested = true);
+
+        stageIntroRoot.SetActive(false);
     }
 
     /// <summary>
@@ -2221,6 +2457,7 @@ public class LevelManager : MonoBehaviour
     {
         isRestarting = true;
         yield return new WaitForSeconds(restartDelaySeconds);
+        skipNextStageIntro = true;
         LoadLevel(currentLevelIndex);
     }
 

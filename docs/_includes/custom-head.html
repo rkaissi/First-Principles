@@ -1,6 +1,21 @@
 {%- comment -%}
   MathJax 3 — renders \(…\) inline and \[…\] / $$…$$ display in Markdown pages.
+  RTL locales (Arabic docs): set page.dir: rtl and page.lang: ar in front matter.
 {%- endcomment -%}
+{% if page.dir == 'rtl' %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  html { direction: rtl; }
+  body { direction: rtl; text-align: right; font-family: 'Noto Naskh Arabic', 'Segoe UI Historic', Tahoma, sans-serif; }
+  .site-header, .site-nav, .site-title, .post-list-heading, .post-link, h1, h2, h3, p, li, td, th { text-align: right; }
+  .site-nav .page-link { margin-left: 1rem; margin-right: 0; }
+  pre, code { direction: ltr; text-align: left; unicode-bidi: isolate; }
+  .highlight { direction: ltr; text-align: left; }
+  table { direction: rtl; }
+</style>
+{% endif %}
 <script>
   window.MathJax = {
     tex: {

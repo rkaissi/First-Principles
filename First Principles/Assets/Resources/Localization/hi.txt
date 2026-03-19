@@ -6,6 +6,7 @@ ui.graphing_calculator_mode=ग्राफ़िंग कैलकुलेट
 ui.loading=लोड हो रहा है…
 ui.language=भाषा
 ui.tap_change_language=बदलने के लिए टैप करें
+ui.stage_intro_hint=जारी रखने के लिए कहीं भी टैप करें
 ui.close=बंद करें
 ui.math_concepts=गणित अवधारणाएँ
 ui.jump=कूद

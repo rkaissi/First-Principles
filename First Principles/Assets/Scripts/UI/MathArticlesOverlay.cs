@@ -11,6 +11,7 @@ public static class MathArticlesOverlay
     private const string OverlayName = "MathArticlesOverlayRoot";
 
     private static TextMeshProUGUI closeButtonTmp;
+    private static TextMeshProUGUI articleBodyTmp;
 
     /// <param name="canvasTransform">Usually the scene Canvas; overlay becomes its last sibling.</param>
     public static void Open(Transform canvasTransform)
@@ -23,6 +24,7 @@ public static class MathArticlesOverlay
         {
             existing.gameObject.SetActive(true);
             existing.SetAsLastSibling();
+            RefreshArticleBodyAndLayout(existing);
             return;
         }
 
@@ -38,7 +40,12 @@ public static class MathArticlesOverlay
         dim.color = new Color(0.04f, 0.05f, 0.11f, 0.93f);
         dim.raycastTarget = true;
 
-        void Close() => UnityEngine.Object.Destroy(root);
+        void Close()
+        {
+            LocalizationManager.LanguageChanged -= RefreshArticleBodyGlobal;
+            articleBodyTmp = null;
+            UnityEngine.Object.Destroy(root);
+        }
 
         var dimBtn = root.AddComponent<Button>();
         dimBtn.targetGraphic = dim;
@@ -90,6 +97,8 @@ public static class MathArticlesOverlay
         LocalizationManager.ApplyTextDirection(closeButtonTmp);
         LocalizationManager.LanguageChanged -= RefreshCloseLabel;
         LocalizationManager.LanguageChanged += RefreshCloseLabel;
+        LocalizationManager.LanguageChanged -= RefreshArticleBodyGlobal;
+        LocalizationManager.LanguageChanged += RefreshArticleBodyGlobal;
 
         var scrollGo = new GameObject("Scroll");
         var scrollRt = scrollGo.AddComponent<RectTransform>();
@@ -144,6 +153,7 @@ public static class MathArticlesOverlay
         tmpRt.sizeDelta = new Vector2(-40f, 0f);
 
         var body = tmpGo.AddComponent<TextMeshProUGUI>();
+        articleBodyTmp = body;
         body.text = LearningArticleLibrary.GetLevelSelectArticleRichText();
         body.fontSize = UiTypography.Scale(tablet ? 27 : (Screen.height <= 950 ? 22 : 25));
         body.lineSpacing = 4f;
@@ -167,6 +177,31 @@ public static class MathArticlesOverlay
         scroll.verticalNormalizedPosition = 1f;
 
         root.transform.SetAsLastSibling();
+    }
+
+    private static void RefreshArticleBodyGlobal() => RefreshArticleBodyText();
+
+    private static void RefreshArticleBodyText()
+    {
+        if (articleBodyTmp == null)
+            return;
+        articleBodyTmp.text = LearningArticleLibrary.GetLevelSelectArticleRichText();
+        LocalizationManager.ApplyTextDirection(articleBodyTmp);
+        articleBodyTmp.ForceMeshUpdate(true);
+        var contentRt = articleBodyTmp.rectTransform.parent as RectTransform;
+        if (contentRt != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRt);
+    }
+
+    private static void RefreshArticleBodyAndLayout(Transform overlayRoot)
+    {
+        var bodyTr = overlayRoot.Find("Panel/Scroll/Viewport/Content/ArticleText");
+        articleBodyTmp = bodyTr != null ? bodyTr.GetComponent<TextMeshProUGUI>() : null;
+        RefreshArticleBodyText();
+        var scrollTr = overlayRoot.Find("Panel/Scroll");
+        var scroll = scrollTr != null ? scrollTr.GetComponent<ScrollRect>() : null;
+        if (scroll != null)
+            scroll.verticalNormalizedPosition = 1f;
     }
 
     private static void RefreshCloseLabel()
