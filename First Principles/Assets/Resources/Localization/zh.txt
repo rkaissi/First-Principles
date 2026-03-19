@@ -51,8 +51,8 @@ level.15=工程：悬链线（cosh）
 level.16=工程：整流交流（|sin|）
 level.17=BC：反正切与反三角
 level.18=BC：逻辑斯蒂增长（dP/dt = kP(1−P/L)）
-level.19=极坐标：心形线 r ∝ 1+cos θ
-level.20=极坐标：玫瑰线 r ∝ cos(nθ)
+level.19=极坐标：心形线 r ~ 1+cos θ
+level.20=极坐标：玫瑰线 r ~ cos(nθ)
 level.21=BC：sinh x 与双曲函数
 level.22=物理C：指数衰减（τ, RC）
 level.23=物理C：角动量与 L = Iω
@@ -70,7 +70,7 @@ level.34=航空：升力 C_L(α) 线性+失速
 level.35=航空：抛物型阻力极曲线 C_D(C_L)
 level.36=航空：等温大气 ρ(h)
 level.37=航空：起伏运动 / 阻尼俯仰-沉浮
-level.38=航空：牛顿流 Cp ∝ sin²α
+level.38=航空：牛顿流 Cp ~ sin²α
 level.39=航空：斯特劳哈尔 / 涡脱落音
 level.40=航空：再入衰减包络（ρV 加热）
 level.41=竞赛数学：ln、凹性与界

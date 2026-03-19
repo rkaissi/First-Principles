@@ -184,7 +184,8 @@ public static class TmpLatex
         s = ReplaceSimpleCommands(s, @"\geq", "\u2265");
         s = ReplaceSimpleCommands(s, @"\neq", "\u2260");
         s = ReplaceSimpleCommands(s, @"\approx", "\u2248");
-        s = ReplaceSimpleCommands(s, @"\propto", "\u221D");
+        // ASCII tilde: ∝ (U+221D) is missing from default TMP / LiberationSans SDF fallbacks.
+        s = ReplaceSimpleCommands(s, @"\propto", "~");
         s = ReplaceSimpleCommands(s, @"\infty", "\u221E");
         s = ReplaceSimpleCommands(s, @"\partial", "\u2202");
         s = ReplaceSimpleCommands(s, @"\nabla", "\u2207");

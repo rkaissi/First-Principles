@@ -51,8 +51,8 @@ level.15=Technik: Kettenlinie (cosh)
 level.16=Technik: gleichgerichtete AC (|sin|)
 level.17=BC: arctan & inverse Trig.
 level.18=BC: logistisches Wachstum (dP/dt = kP(1−P/L))
-level.19=Polar: Kardioide r ∝ 1+cos θ
-level.20=Polar: Rose r ∝ cos(nθ)
+level.19=Polar: Kardioide r ~ 1+cos θ
+level.20=Polar: Rose r ~ cos(nθ)
 level.21=BC: sinh x & Hyperbelfunktionen
 level.22=Physik C: exponentieller Zerfall (τ, RC)
 level.23=Physik C: Drehimpuls & L = Iω
@@ -70,7 +70,7 @@ level.34=Luftfahrt: Auftrieb C_L(α) linear + Strömungsabriss
 level.35=Luftfahrt: parabolische Widerstandspolare C_D(C_L)
 level.36=Luftfahrt: isotherme Atmosphäre ρ(h)
 level.37=Luftfahrt: Phugoid / gedämpfte Nick-Hubbewegung
-level.38=Luftfahrt: newtonsch Cp ∝ sin²α
+level.38=Luftfahrt: newtonsch Cp ~ sin²α
 level.39=Luftfahrt: Strouhal / Wirbelabwurf-Ton
 level.40=Luftfahrt: Wiedereintritts-Hülle (ρV Erwärmung)
 level.41=Wettkampf: ln, Krümmung & Schranken

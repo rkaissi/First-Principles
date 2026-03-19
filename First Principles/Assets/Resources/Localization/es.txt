@@ -51,8 +51,8 @@ level.15=Ingeniería: catenaria (cosh)
 level.16=Ingeniería: CA rectificada (|sin|)
 level.17=BC: arctan y trig. inversa
 level.18=BC: crecimiento logístico (dP/dt = kP(1−P/L))
-level.19=Polar: cardioide r ∝ 1+cos θ
-level.20=Polar: rosa r ∝ cos(nθ)
+level.19=Polar: cardioide r ~ 1+cos θ
+level.20=Polar: rosa r ~ cos(nθ)
 level.21=BC: sinh x e hiperbólicas
 level.22=Física C: decaimiento exponencial (τ, RC)
 level.23=Física C: momento angular y L = Iω
@@ -70,7 +70,7 @@ level.34=Aero: sustentación C_L(α) lineal + pérdida
 level.35=Aero: polar parabólica C⁠_D(C_L)
 level.36=Aero: atmósfera isoterma ρ(h)
 level.37=Aero: fugoide / cabeceo–heave amortiguado
-level.38=Aero: newtoniano Cp ∝ sin²α
+level.38=Aero: newtoniano Cp ~ sin²α
 level.39=Aero: Strouhal / tono de vórtices
 level.40=Aero: envolvente de reentrada (calor ρV)
 level.41=Competición: ln, concavidad y cotas

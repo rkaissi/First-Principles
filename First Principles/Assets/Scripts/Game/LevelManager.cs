@@ -1337,7 +1337,7 @@ public class LevelManager : MonoBehaviour
             power: 2,
             baseN: 2,
             story:
-                "<b>Polar coordinates</b>: describe points by <color=#fde047>(r, θ)</color> instead of (x, y). A <b>cardioid</b> has the family flavor r ∝ 1 + cos θ — a heartbeat‑shaped loop.\n\n" +
+                "<b>Polar coordinates</b>: describe points by <color=#fde047>(r, θ)</color> instead of (x, y). A <b>cardioid</b> has the family flavor r ~ 1 + cos θ — a heartbeat‑shaped loop.\n\n" +
                 "Here the horizontal axis stands in for θ and the vertical for r(θ) (same trick AP uses when you first graph polar equations before converting to x = r cos θ, y = r sin θ).\n\n" +
                 "<size=92%><color=#a8b2d1>Area in polar uses ½∫ r² dθ; tangent slope needs dr/dθ.</color></size>",
             derivativePopTriggerCountOverride: 3,
@@ -1359,7 +1359,7 @@ public class LevelManager : MonoBehaviour
             power: 5,
             baseN: 2,
             story:
-                "<b>Polar rose</b>: r ∝ cos(nθ) traces petals meeting at the origin. Odd <b>n</b> here gives <b>n</b> petals for this cosine form (a classic exam plot).\n\n" +
+                "<b>Polar rose</b>: r ~ cos(nθ) traces petals meeting at the origin. Odd <b>n</b> here gives <b>n</b> petals for this cosine form (a classic exam plot).\n\n" +
                 "Symmetry and period tell you how many times the radius returns to zero — great practice for converting polar area and arc length integrals.\n\n" +
                 "<size=92%><color=#a8b2d1>Watch derivative pops where r changes fastest — those are steep walls on the petal edges.</color></size>",
             derivativePopTriggerCountOverride: 4,
@@ -1403,7 +1403,7 @@ public class LevelManager : MonoBehaviour
             power: 2,
             baseN: 2,
             story:
-                "<b>AP Physics C (calculus‑based)</b> — exponential decay: charge on a discharging capacitor, current in an RL loop, or any quantity Q(t) with dQ/dt ∝ −Q.\n\n" +
+                "<b>AP Physics C (calculus‑based)</b> — exponential decay: charge on a discharging capacitor, current in an RL loop, or any quantity Q(t) with dQ/dt ~ −Q.\n\n" +
                 "Solution: <color=#38bdf9>Q = Q₀ e^{−t/τ}</color>; τ (time constant) sets how fast the tail relaxes — the same picture as “half‑life” thinking.\n\n" +
                 "<size=92%><color=#a8b2d1>The graph is a one‑sided bump; the derivative carries the sign of “still leaking toward zero.”</color></size>",
             derivativePopTriggerCountOverride: 3,
@@ -1713,7 +1713,7 @@ public class LevelManager : MonoBehaviour
             power: 2,
             baseN: 4,
             story:
-                "<b>Atmosphere (isothermal cartoon)</b> — pressure and density drop roughly <color=#86efac>exponentially</color> with altitude: p, ρ ∝ e^{−h/H} with <b>scale height</b> H (temperature & mean molar mass set the mood in the real ISA).\n\n" +
+                "<b>Atmosphere (isothermal cartoon)</b> — pressure and density drop roughly <color=#86efac>exponentially</color> with altitude: p, ρ ~ e^{−h/H} with <b>scale height</b> H (temperature & mean molar mass set the mood in the real ISA).\n\n" +
                 "Aero engineers live in these curves: thrust, Reynolds, Mach, dynamic pressure q = ½ρV² all track ρ(h).\n\n" +
                 "<size=92%><color=#a8b2d1>Plot uses h ≥ 0 on the transformed axis; negative side clips—like launching from sea level only.</color></size>",
             derivativePopTriggerCountOverride: 3,

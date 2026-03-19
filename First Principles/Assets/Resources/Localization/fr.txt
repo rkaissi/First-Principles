@@ -51,8 +51,8 @@ level.15=Ingénierie : chaînette (cosh)
 level.16=Ingénierie : AC redressée (|sin|)
 level.17=BC : arctan & trig réciproques
 level.18=BC : croissance logistique (dP/dt = kP(1−P/L))
-level.19=Polaire : cardioïde r ∝ 1+cos θ
-level.20=Polaire : rose r ∝ cos(nθ)
+level.19=Polaire : cardioïde r ~ 1+cos θ
+level.20=Polaire : rose r ~ cos(nθ)
 level.21=BC : sinh x & fonctions hyperboliques
 level.22=Physique C : décroissance exponentielle (τ, RC)
 level.23=Physique C : moment angulaire & L = Iω
@@ -70,7 +70,7 @@ level.34=Aéro : portance C_L(α) linéaire + décrochage
 level.35=Aéro : polaire de traînée parabolique C_D(C_L)
 level.36=Aéro : atmosphère isotherme ρ(h)
 level.37=Aéro : phugoïde / oscillation amortie tangage–pilonnement
-level.38=Aéro : newtonien Cp ∝ sin²α
+level.38=Aéro : newtonien Cp ~ sin²α
 level.39=Aéro : Strouhal / tonalité tourbillonnaire
 level.40=Aéro : enveloppe rentrée (échauffement ρV)
 level.41=Concours : ln, concavité & bornes

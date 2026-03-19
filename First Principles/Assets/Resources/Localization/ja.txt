@@ -51,8 +51,8 @@ level.15=工学：カテナリー（cosh）
 level.16=工学：整流AC（|sin|）
 level.17=BC：arctanと逆三角関数
 level.18=BC：ロジスティック成長（dP/dt = kP(1−P/L)）
-level.19=極座標：カージオイド r ∝ 1+cos θ
-level.20=極座標：バラ曲線 r ∝ cos(nθ)
+level.19=極座標：カージオイド r ~ 1+cos θ
+level.20=極座標：バラ曲線 r ~ cos(nθ)
 level.21=BC：sinh xと双曲線関数
 level.22=物理C：指数減衰（τ, RC）
 level.23=物理C：角運動量と L = Iω
@@ -70,7 +70,7 @@ level.34=航空：揚力C_L(α) 線形＋失速
 level.35=航空：放物型抗力極曲線 C_D(C_L)
 level.36=航空：等温大気 ρ(h)
 level.37=航空：フゴイド／減衰ピッチ・上下動
-level.38=航空：ニュートン流 Cp ∝ sin²α
+level.38=航空：ニュートン流 Cp ~ sin²α
 level.39=航空：ストルーハル／渦放出音
 level.40=航空：再突入減衰包絡線（ρV加熱）
 level.41=競技数学：ln、凹性と境界

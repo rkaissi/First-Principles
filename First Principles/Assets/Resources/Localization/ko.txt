@@ -51,8 +51,8 @@ level.15=공학: 현수선 (cosh)
 level.16=공학: 정류 AC (|sin|)
 level.17=BC: 아크탄젠트와 역삼각
 level.18=BC: 로지스틱 성장 (dP/dt = kP(1−P/L))
-level.19=극좌표: 카디오이드 r ∝ 1+cos θ
-level.20=극좌표: 장미 r ∝ cos(nθ)
+level.19=극좌표: 카디오이드 r ~ 1+cos θ
+level.20=극좌표: 장미 r ~ cos(nθ)
 level.21=BC: sinh x와 쌍곡선 함수
 level.22=물리C: 지수 감쇠 (τ, RC)
 level.23=물리C: 각운동량과 L = Iω
@@ -70,7 +70,7 @@ level.34=항공: 양력 C_L(α) 선형 및 실속
 level.35=항공: 포물형 항극곡선 C_D(C_L)
 level.36=항공: 등온 대기 ρ(h)
 level.37=항공: 퓨고이드 / 감쇠 피치-헤이브
-level.38=항공: 뉴턴 Cp ∝ sin²α
+level.38=항공: 뉴턴 Cp ~ sin²α
 level.39=항공: 스트루할 / 와류 방출 음
 level.40=항공: 재진입 감쇠 포락선 (ρV 가열)
 level.41=경시: ln, 오목성과 경계

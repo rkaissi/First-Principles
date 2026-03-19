@@ -292,7 +292,7 @@ public class FunctionPlotter : MonoBehaviour
         return peak * Mathf.Exp(-(Mathf.Abs(u) - stall) * 1.12f) + c;
     }
 
-    /// <summary>ρ/ρ₀ ∝ e^{−h/H} for h≥0; u as scaled altitude. baseN scales 1/H.</summary>
+    /// <summary>ρ/ρ₀ ~ e^{−h/H} for h≥0; u as scaled altitude. baseN scales 1/H.</summary>
     private static float AeroIsothermalDensityY(float u, float rhoScale, float c, int scaleHeightInv)
     {
         float h = Mathf.Max(0f, u);
@@ -300,7 +300,7 @@ public class FunctionPlotter : MonoBehaviour
         return rhoScale * Mathf.Exp(-invH * h) + c;
     }
 
-    /// <summary>Newtonian impact theory mood: Cp ∝ sin²α for α∈[0,π/2].</summary>
+    /// <summary>Newtonian impact theory mood: Cp ~ sin²α for α∈[0,π/2].</summary>
     private static float AeroNewtonianSinSquaredY(float u, float a, float c)
     {
         float rad = Mathf.Clamp(u, 0f, 1.48f);

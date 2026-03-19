@@ -53,8 +53,8 @@ level.15=Engineering: catenary (cosh)
 level.16=Engineering: rectified AC (|sin|)
 level.17=BC: arctan & inverse trig
 level.18=BC: logistic growth (dP/dt = kP(1−P/L))
-level.19=Polar: cardioid r ∝ 1+cos θ
-level.20=Polar: rose r ∝ cos(nθ)
+level.19=Polar: cardioid r ~ 1+cos θ
+level.20=Polar: rose r ~ cos(nθ)
 level.21=BC: sinh x & hyperbolic functions
 level.22=Physics C: exponential decay (τ, RC)
 level.23=Physics C: angular momentum & L = Iω
@@ -72,7 +72,7 @@ level.34=Aerospace: lift C_L(α) linear + stall
 level.35=Aerospace: parabolic drag polar C_D(C_L)
 level.36=Aerospace: isothermal atmosphere ρ(h)
 level.37=Aerospace: phugoid / damped pitch–heave mood
-level.38=Aerospace: Newtonian Cp ∝ sin²α
+level.38=Aerospace: Newtonian Cp ~ sin²α
 level.39=Aerospace: Strouhal / vortex shedding tone
 level.40=Aerospace: re-entry decay envelope (ρV heating mood)
 level.41=Competition math: ln, concavity & bound tricks
