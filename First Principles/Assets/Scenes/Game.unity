@@ -2388,6 +2388,7 @@ GameObject:
   - component: {fileID: 1441103585}
   - component: {fileID: 1441103584}
   - component: {fileID: 1441103586}
+  - component: {fileID: 1441103587}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2448,6 +2449,21 @@ MonoBehaviour:
   fadeOutUIImage1: {fileID: 1553087944}
   fadeOutUIImage2: {fileID: 1207753122}
   fadeSpeed: 0.8
+--- !u!114 &1441103587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441103583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a2b3c4d5e64f78901234567890abcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultStageCount: 3
+  deathMinYGrid: -2
+  restartDelaySeconds: 0.15
 --- !u!1 &1471649599
 GameObject:
   m_ObjectHideFlags: 0

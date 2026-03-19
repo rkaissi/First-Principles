@@ -36,7 +36,7 @@ public class GridRendererUI : Graphic
         base.Reset();
 
         if (labelManager == null)
-            labelManager = FindObjectOfType<LabelManager>();
+            labelManager = FindAnyObjectByType<LabelManager>();
         labelManager.GenerateLabels();
         SetVerticesDirty();
     }

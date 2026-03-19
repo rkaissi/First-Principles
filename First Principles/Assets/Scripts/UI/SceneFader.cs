@@ -44,6 +44,12 @@ public class SceneFader : MonoBehaviour
 
 			// FindObjectOfType<AudioManager>().PlayMusic("ClassicalMusic");
 		}
+		else if (currentScene.name == "LevelSelect")
+		{
+			fadeOutUIImage = fadeOutUIImage2;
+			fadeOutUIImage.gameObject.SetActive(true);
+			fadeOutUIImage1.gameObject.SetActive(false);
+		}
 
 		StartCoroutine(Fade(FadeDirection.Out));
 	}
@@ -98,8 +104,17 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(true);
 
 		// Coroutine allows developers to run different tasks simultaneously (for multitasking)
-		StartCoroutine(GameObject.FindObjectOfType<SceneFader>().FadeAndLoadScene(SceneFader.FadeDirection.In, "Game"));
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Game"));
     }
+
+	public void LoadLevelSelect()
+	{
+		fadeOutUIImage.gameObject.SetActive(false);
+		fadeOutUIImage = fadeOutUIImage2;
+		fadeOutUIImage.gameObject.SetActive(true);
+
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
+	}
 
 	public void LoadMenu()
     {
@@ -107,7 +122,7 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage = fadeOutUIImage1;
 		fadeOutUIImage.gameObject.SetActive(true);
 
-		StartCoroutine(GameObject.FindObjectOfType<SceneFader>().FadeAndLoadScene(SceneFader.FadeDirection.In, "Menu"));
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Menu"));
     }
 
 	public void QuitGame()

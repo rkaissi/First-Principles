@@ -1604,7 +1604,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 421954568}
         m_TargetAssemblyTypeName: SceneFader, Assembly-CSharp
-        m_MethodName: LoadGame
+        m_MethodName: LoadLevelSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

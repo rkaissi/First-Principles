@@ -65,10 +65,7 @@ public class FunctionPlotter : MonoBehaviour
 
     public void InitPlotFunction()
     {
-        FunctionType functionType;
-        functionType = this.functionType;
-
-        PlotFunction(functionType);
+        PlotFunction(this.functionType);
     }
 
     // Refresh ONLY the original function graph, not the derivative one
@@ -86,14 +83,17 @@ public class FunctionPlotter : MonoBehaviour
 
     public void RefreshGrid()
     {
-        FindObjectOfType<GridRendererUI>().enabled = false;
-        FindObjectOfType<GridRendererUI>().enabled = true;
+        var grid = FindAnyObjectByType<GridRendererUI>();
+        if (grid == null)
+            return;
+        grid.enabled = false;
+        grid.enabled = true;
     }
 
     private void PlotFunction(FunctionType type)
     {
-        lineRenderer = FindObjectOfType<LineRendererUI>();
-        derivRenderer = FindObjectOfType<DerivRendererUI>();
+        lineRenderer = FindAnyObjectByType<LineRendererUI>();
+        derivRenderer = FindAnyObjectByType<DerivRendererUI>();
 
         if (lineRenderer != null)
         {
@@ -131,86 +131,96 @@ public class FunctionPlotter : MonoBehaviour
 
     public void ComputeGraph(FunctionType functionType, float transA, float transK, float transC, float transD, int power, int baseN)
     {
+        if (equationText != null)
+            UpdateEquationText(functionType, transA, transK, transC, transD, power, baseN);
+
         Vector2Int gridOrigin = lineRenderer.gridSize / 2;
 
         for (float i = xStart; i <= xEnd; i += step)
         {
             float xValue = i;
-            float yValue = 0;
+            float yValue = EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue);
+            float dyValue = (EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue + hValue) - EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue - hValue)) / (hValue * 2);
 
-            float dyValue = 0;
-
-            // Power of N Function
-            if (functionType == FunctionType.Power)
+            if (IsFinite(yValue))
             {
-                yValue = transA * (float)(Mathf.Pow(transK * (xValue - transD), power) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Pow(transK * ((xValue + hValue) - transD), power) + transC)) - (transA * (float)(Mathf.Pow(transK * ((xValue - hValue) - transD), power) + transC))) / (hValue * 2);
-
-                // Remove zeroes from the equation output
-                equationText.text = $"f(x) = {transA}".Replace("1", "") + $"({transK}(x - {transD}))^{power}" + $" + ({transC})".Replace(" + (0)", "");
-            }
-            // Absolute Value Function
-            else if (functionType == FunctionType.Absolute)
-            {
-                yValue = transA * (float)(Mathf.Abs(transK * (xValue - transD)) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Abs(transK * ((xValue + hValue) - transD)) + transC)) - (transA * (float)(Mathf.Abs(transK * ((xValue - hValue) - transD)) + transC))) / (hValue * 2);
-
-                equationText.text = $"f(x) = {transA}".Replace("1", "") + $"|{transK}(x - {transD}))|" + $" + ({transC})".Replace(" + (0)", "");
-            }
-            // Exponential Function
-            else if (functionType == FunctionType.Exponential)
-            {
-                yValue = transA * (float)(Mathf.Pow(baseN, (transK * (xValue - transD))) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Pow(baseN, ((transK * (xValue + hValue) - transD))) + transC)) - (transA * (float)(Mathf.Pow(baseN, ((transK * (xValue - hValue) - transD))) + transC))) / (hValue * 2);
-            }
-            else if (functionType == FunctionType.NaturalExp)
-            {
-                yValue = transA * (float)(Mathf.Exp((transK * (xValue - transD))) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Exp(((transK * (xValue + hValue) - transD))) + transC)) - (transA * (float)(Mathf.Exp(((transK * (xValue - hValue) - transD))) + transC))) / (hValue * 2);
-            }
-            // Square Root Function
-            else if (functionType == FunctionType.SquareRoot)
-            {
-                yValue = transA * (float)(Mathf.Sqrt(transK * (xValue - transD)) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Sqrt(transK * ((xValue + hValue) - transD)) + transC)) - (transA * (float)(Mathf.Sqrt(transK * ((xValue - hValue) - transD)) + transC))) / (hValue * 2);
+                // Add the coordinates to the array
+                this.points.Add(new Vector2(xValue + gridOrigin.x, yValue + gridOrigin.y));
             }
 
-            else if (functionType == FunctionType.Sine)
+            if (IsFinite(dyValue))
             {
-                yValue = transA * (float)(Mathf.Sin(transK * (xValue - transD)) + transC);
-
-                // Differentiate numerically using the centred three-point method
-                dyValue = transA * (float)(Mathf.Cos(transK * (xValue - transD)) + transC);
+                // Get the differentiated coordinates to another array
+                this.dPoints.Add(new Vector2(xValue + gridOrigin.x, dyValue + gridOrigin.y));
             }
-            else if (functionType == FunctionType.Cosine)
-            {
-                yValue = transA * (float)(Mathf.Cos(transK * (xValue - transD)) + transC);
+        }
+    }
 
-                // Differentiate numerically using the centred three-point method
-                dyValue = transA * (float)(Mathf.Sin(transK * (xValue - transD)) + transC);
-            }
-            else if (functionType == FunctionType.Tangent)
-            {
-                yValue = transA * (float)(Mathf.Tan(transK * (xValue - transD)) + transC);
+    private float EvaluateFunctionY(FunctionType type, float transA, float transK, float transC, float transD, int power, int baseN, float xValue)
+    {
+        float u = transK * (xValue - transD);
 
-                // Differentiate numerically using the centred three-point method
-                dyValue = ((transA * (float)(Mathf.Tan(transK * ((xValue + hValue) - transD)) + transC)) - (transA * (float)(Mathf.Tan(transK * ((xValue - hValue) - transD)) + transC))) / (hValue * 2);
-            }
-            // Add the coordinates to the array
-            this.points.Add(new Vector2(xValue + gridOrigin.x, yValue + gridOrigin.y));
+        return type switch
+        {
+            FunctionType.Power => transA * (Mathf.Pow(u, power) + transC),
+            FunctionType.Absolute => transA * (Mathf.Abs(u) + transC),
+            FunctionType.Exponential => transA * (Mathf.Pow(baseN, u) + transC),
+            FunctionType.NaturalExp => transA * (Mathf.Exp(u) + transC),
+            FunctionType.Log => transA * (Mathf.Log10(u) + transC),
+            FunctionType.NaturalLog => transA * (Mathf.Log(u) + transC),
+            FunctionType.SquareRoot => transA * (Mathf.Sqrt(u) + transC),
+            FunctionType.Sine => transA * (Mathf.Sin(u) + transC),
+            FunctionType.Cosine => transA * (Mathf.Cos(u) + transC),
+            FunctionType.Tangent => transA * (Mathf.Tan(u) + transC),
+            _ => 0f
+        };
+    }
 
-            // Get the differentiated coordinates to another array
-            this.dPoints.Add(new Vector2(xValue + gridOrigin.x, dyValue + gridOrigin.y));
+    private static bool IsFinite(float f) => !(float.IsNaN(f) || float.IsInfinity(f));
+
+    private void UpdateEquationText(FunctionType type, float transA, float transK, float transC, float transD, int power, int baseN)
+    {
+        // Keep equation text simple and consistent; domain errors (e.g. log/sqrt of non-positive) are handled by skipping non-finite points.
+        string a = transA.ToString();
+        string k = transK.ToString();
+        string c = transC.ToString();
+        string d = transD.ToString();
+
+        switch (type)
+        {
+            case FunctionType.Power:
+                equationText.text = $"f(x) = {a}*(({k}*(x - {d}))^{power} + ({c}))";
+                break;
+            case FunctionType.Absolute:
+                equationText.text = $"f(x) = {a}*(|{k}*(x - {d})| + ({c}))";
+                break;
+            case FunctionType.Exponential:
+                equationText.text = $"f(x) = {a}*({baseN}^({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.NaturalExp:
+                equationText.text = $"f(x) = {a}*(e^({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.Log:
+                equationText.text = $"f(x) = {a}*(log10({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.NaturalLog:
+                equationText.text = $"f(x) = {a}*(ln({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.SquareRoot:
+                equationText.text = $"f(x) = {a}*(sqrt({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.Sine:
+                equationText.text = $"f(x) = {a}*(sin({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.Cosine:
+                equationText.text = $"f(x) = {a}*(cos({k}*(x - {d})) + ({c}))";
+                break;
+            case FunctionType.Tangent:
+                equationText.text = $"f(x) = {a}*(tan({k}*(x - {d})) + ({c}))";
+                break;
+            default:
+                equationText.text = "f(x)";
+                break;
         }
     }
 }
