@@ -35,4 +35,10 @@ A puzzle game that visualizes the nature of a curve and its corresponding deriva
 
 ---
 
+## Troubleshooting (Unity / UGUI compile errors)
+
+If you see errors like missing `UnityEngine.UI`, `UIToolkitInteroperabilityBridge`, or broken `UnityEngine.TestTools` types inside package paths, your **`Library`** cache and/or **`Packages/com.unity.*`** folders are usually corrupted (never edit packages under `Library/PackageCache` or embedded registry duplicates). **Quit Unity**, run **`./clean-unity-library.sh`** from the repo root (it removes `First Principles/Library` and stray `Packages/com.unity.ugui` / `com.unity.test-framework` if present), then reopen Unity. Details: [Docs/Fix-Unity-UGUI-PackageErrors.md](First%20Principles/Docs/Fix-Unity-UGUI-PackageErrors.md).
+
+---
+
 **MIT** License | **First Principles** is a part of a **not-for-profit** and an **open-source** project *College Math For Toddlers*.
