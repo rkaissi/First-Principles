@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 /// <summary>
 /// Central place for **screen-dependent layout policy** used by HUD, level select, touch bar, CanvasScaler tuning.
@@ -17,7 +20,19 @@ public static class DeviceLayout
     public static bool PreferOnScreenGameControls =>
         Application.isMobilePlatform ||
         SystemInfo.deviceType == DeviceType.Handheld ||
-        SystemInfo.touchSupported;
+        HasTouchscreenDevice();
+
+    private static bool HasTouchscreenDevice()
+    {
+#if ENABLE_INPUT_SYSTEM
+        foreach (var d in InputSystem.devices)
+        {
+            if (d is Touchscreen)
+                return true;
+        }
+#endif
+        return false;
+    }
 
     /// <summary>
     /// iPad-class devices: shortest side in approximate dp (avoids mislabeling phones by pixel count alone).

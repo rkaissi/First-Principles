@@ -55,4 +55,6 @@ The project uses the **[Input System](https://docs.unity3d.com/Packages/com.unit
 - **Faxas pinch zoom** (`GraphPinchZoom`): **Enhanced Touch** (`Touch.activeTouches`).
 - **uGUI**: `EventSystemInputModuleBootstrap` replaces any scene **`StandaloneInputModule`** with **`InputSystemUIInputModule`** on load (defaults are assigned automatically).
 
-If **Package Manager** fails to resolve `com.unity.inputsystem`, match the version to your Unity editor (try **Window → Package Manager** → Input System).
+If **Package Manager** fails to resolve `com.unity.inputsystem`, open **Window → Package Manager**, select **Input System**, and use the **version Unity recommends** for your editor; then align `Packages/manifest.json` with that version.
+
+If you see **`TypeLoadException` … `InputActionAsset` from assembly `Unity.InputSystem`**, the Input System DLLs in `Library/` are often out of sync: close Unity, delete the project’s **`Library`** folder (and let the editor reimport), or **Reimport** the Input System package. The repo pins a version verified for **Unity 6000.4** (`manifest.json`); adjust if your patch release differs.
