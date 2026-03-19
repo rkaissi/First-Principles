@@ -7,7 +7,7 @@ title: Home
 
 **Release: Beta 1.0**
 
-**First Principles** is a **Unity 6** project (proprietary; see [`LICENSE`](../LICENSE)) that combines a **graphing calculator** (functions and numeric derivatives on a grid) with a **Limbo-inspired 2D platformer**: platforms and hazards are driven by the curve and its derivative, with **staged progression** and per-level themes (including primer, series, multivariable slices, **integral / Riemann-sum** stages, and **engineering math** graphs). **Readable article snippets** live in **`docs/math-concepts.md`**, **`docs/engineering-math.md`**, and **four separated exam-prep notes** — **`docs/tmua-calculus.md`**, **`docs/mat-calculus.md`**, **`docs/ap-calculus-bc.md`**, **`docs/ap-physics-c.md`** (all unofficial; not past papers)—plus in-app **Level select → Math tips & snippets** with matching **TMUA / MAT / AP BC / AP Physics C** blocks.
+**First Principles** is a **Unity 6** project (proprietary; see [`LICENSE`](../LICENSE)) that combines a **graphing calculator** (functions and numeric derivatives on a grid) with a **Limbo-inspired 2D platformer**: platforms and hazards are driven by the curve and its derivative, with **staged progression** and per-level themes (including primer, series, multivariable slices, **integral / Riemann-sum** stages, and **engineering math** graphs). **Readable article snippets** live in **`docs/math-concepts.md`**, **[`docs/competition-math.md`]({% link competition-math.md %})**, **`docs/engineering-math.md`**, and **four separated exam-prep notes** — **`docs/tmua-calculus.md`**, **`docs/mat-calculus.md`**, **`docs/ap-calculus-bc.md`**, **`docs/ap-physics-c.md`** (all unofficial; not past papers)—plus in-app **Level select → Math tips & snippets** with matching **competition / TMUA / MAT / AP BC / AP Physics C** blocks.
 
 ## Developers
 
@@ -22,6 +22,7 @@ title: Home
 | [Setup]({% link setup.md %}) | Unity version, clone, open the correct project folder |
 | [Gameplay]({% link gameplay.md %}) | Controls, stages, level select, how the graph affects the world |
 | [Math concepts & snippets]({% link math-concepts.md %}) | Plain-language notes for every curriculum theme in the game |
+| [Competition math]({% link competition-math.md %}) | Contest-style bounds, concavity & \(\ln\) — maps to the in-game competition stage |
 | [Engineering math]({% link engineering-math.md %}) | Damped motion, catenary, AC rectification, phasors/transforms (intro) |
 | [TMUA — calculus]({% link tmua-calculus.md %}) | UK TMUA — MCQ-style calculus topic map (unofficial) |
 | [MAT — calculus]({% link mat-calculus.md %}) | UK MAT (Oxford-style) — reasoning & calculus lens (unofficial) |

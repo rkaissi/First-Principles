@@ -102,11 +102,12 @@ More rectangles → usually **closer** to the true integral.
 
 ## 9. Exam preparation — separate guides
 
-These are **four standalone** pages (plus **engineering** below). Each uses **official exam materials** for real questions; the repo only provides **unofficial topic maps** and **game cross-links**.
+These are **four standalone** pages (plus **competition** and **engineering** below). Each uses **official exam materials** for real questions; the repo only provides **unofficial topic maps** and **game cross-links**.
 
 | Guide | Audience |
 |--------|-----------|
-| **[TMUA — calculus]({% link tmua-calculus.md %})** | UK **TMUA** — two-paper **multiple choice**; calculus fluency & elimination |
+| **[Competition math]({% link competition-math.md %})** | **Contest lens** — AMC/AIME-style bounding, **concavity**, \(\ln\) tricks (not affiliated with MAA) |
+| **[TMUA — calculus]({% link tmua-calculus.md %})** | UK **TMUA** — two-player **multiple choice**; calculus fluency & elimination |
 | **[MAT — calculus & reasoning]({% link mat-calculus.md %})** | UK **MAT** (Oxford, etc.) — careful reasoning & multi-step work |
 | **[AP Calculus BC — prep]({% link ap-calculus-bc.md %})** | US **AP BC** — series, polar/parametric/vector, DEs, FRQ/MC pairing |
 | **[AP Physics C — prep]({% link ap-physics-c.md %})** | US **Physics C** — calculus-first mechanics & E&M hooks |
@@ -127,6 +128,12 @@ Engineering math is still “calculus + algebra + models,” but the **goal** is
 
 ---
 
+## Competition math stage (level select)
+
+Level select includes **“Competition math: ln, concavity & bound tricks”** — a \(\ln\)-shaped run framed for **contest-style** thinking (bounds, concavity, domain care). Unofficial context and study map: **[Competition math]({% link competition-math.md %})**.
+
+---
+
 ## BOSS: Mandelbrot escape slice (final stage)
 
 The **Mandelbrot set** is the set of complex numbers **c** for which \(z \mapsto z^{2} + c\) (starting from \(z = 0\)) stays bounded. The famous boundary is infinitely detailed; deep zooms are heavy.
@@ -144,7 +151,7 @@ This is a **teaching** view (moderate iteration cap, wide sample step), not a de
 | Where | What |
 |--------|------|
 | **Level select → Math tips & snippets** | Short TMP article + **four separated prep blocks** (TMUA, MAT, AP BC, AP Physics C). |
-| **This site (`math-concepts.md`)** | Game concepts + index to exam prep pages. |
+| **This site (`math-concepts.md`)** | Game concepts + index to exam prep + **[competition math]({% link competition-math.md %})**. |
 | **`tmua-calculus.md`**, **`mat-calculus.md`**, **`ap-calculus-bc.md`**, **`ap-physics-c.md`** | Unofficial **standalone** prep notes (not past papers). |
 | **`engineering-math.md`** | Damped motion, phasors, transforms, linear algebra hooks. |
 
