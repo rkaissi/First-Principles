@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEditor;
 using TMPro;
 
+/// <summary>
+/// Spawns TMP axis labels from <see cref="GridRendererUI"/> extents. Editor-only dependency on UnityEditor
+/// for some workflows; keep labelPrefab assigned on the Graph canvas.
+/// </summary>
 public class LabelManager : MonoBehaviour
 {
     [SerializeField] private GameObject labelPrefab;

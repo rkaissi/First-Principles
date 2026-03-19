@@ -19,6 +19,8 @@ header_pages:
   - index.md
   - setup.md
   - gameplay.md
+  - math-concepts.md
+  - engineering-math.md
   - architecture.md
   - troubleshooting.md
 

@@ -20,7 +20,8 @@ Configured in `First Principles/ProjectSettings/EditorBuildSettings.asset`:
 Menu                    LevelSelect              Game
 ────                    ───────────              ────
 SceneFader              LevelSelectController    Canvas + graph renderers
-        LoadLevelSelect          │              FunctionPlotter
+        LoadLevelSelect   │  (scroll list +       FunctionPlotter
+                          │   MathArticlesOverlay / LearningArticleLibrary)
                                  └──► LevelSelection (static)
                                             │
                                             ▼
@@ -41,7 +42,11 @@ SceneFader              LevelSelectController    Canvas + graph renderers
 | `LevelManager` | Orchestrates levels, HUD (stage + controls + story), theme, obstacle regen, restart / advance. |
 | `GameLevelCatalog` | Display names + level count. |
 | `LevelSelection` | Static bridge: selected index from LevelSelect → Game. |
-| `LevelSelectController` | Builds list UI; loads **Game**. |
+| `LevelSelectController` | Builds **scrollable** list UI, **Math tips** button; loads **Game**. |
+| `LearningArticleLibrary` | Rich-text article snippets (curriculum + engineering) for the overlay. |
+| `MathArticlesOverlay` | Full-screen scroll reader on level select. |
+| `DeviceLayout`, `MobileUiRoots`, `CanvasSafeAreaBootstrap` | Safe-area insets & mobile layout. |
+| `MobileTouchControls`, `MobileInputBridge` | Touch game controls + bridge to `PlayerControllerUI2D`. |
 | `GraphObstacleGenerator` | Samples curve/derivative columns → `GraphWorld` (platforms, hazards, finish, spawn). |
 | `PlayerControllerUI2D` | Grid-space movement, jump, collisions vs `GridRect` list. |
 | `DerivativePopAnimator` | Short “pop” on derivative renderer at stage crossings. |

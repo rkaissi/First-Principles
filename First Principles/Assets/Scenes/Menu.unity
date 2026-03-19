@@ -591,12 +591,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<b><size=48>Alpha Build 0.3</b>
+  m_text: '<b><size=40>First Principles</b></size>
+    <size=30>Version 1.0</size>
 
-    <size=36>Powered by <b>Unity</b>.
+    <size=34><b>Credits</b></size>
+    <size=30><b>GAME GENESIS</b> (Rayan Kaissi) × <b>ORCH AEROSPACE</b> (John Wonmo Seong)</size>
 
-    <size=36>Developed
-    by <b>Rayan Kaissi</b> and <b>John Seong</b>.'
+    <size=26><color=#333333>Proprietary · All rights reserved · College Math For Toddlers</color></size>
+
+    <size=30>Made with <b>Unity</b>. Unity is a trademark of Unity Technologies.</size>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 79fe93baac0634b6a88831eb18f73b04, type: 2}
   m_sharedMaterial: {fileID: -5611889265188688309, guid: 79fe93baac0634b6a88831eb18f73b04, type: 2}
@@ -1026,6 +1029,7 @@ GameObject:
   - component: {fileID: 1372280671}
   - component: {fileID: 1372280670}
   - component: {fileID: 1372280669}
+  - component: {fileID: 2134999002}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1065,14 +1069,26 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.45
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
+--- !u!114 &2134999002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372280668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d5e6f708192a3b4c5d6e7f8090a1b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!223 &1372280671
 Canvas:
   m_ObjectHideFlags: 0

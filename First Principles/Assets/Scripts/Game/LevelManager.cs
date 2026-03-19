@@ -6,8 +6,29 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// =============================================================================
+// LevelManager — Game scene: curriculum levels, graph theme, platformer world
+// =============================================================================
+// Flow (single-scene Game):
+//   1. Start() → SetupReferences() finds FunctionPlotter / renderers / plane, adds
+//      GraphObstacleGenerator & DerivativePopAnimator if missing, creates runtime UI
+//      (ObstaclesRoot, player, story TMP, HUD), Riemann overlay helper, touch controls.
+//   2. BuildSampleLevels() populates `levels`. CRITICAL: index order must match
+//      GameLevelCatalog.DisplayNames (level select uses the same indices).
+//   3. LoadLevel(i) → ApplyLevelTheme(def) pushes params into FunctionPlotter and HUD
+//      state, then LoadWorldAfterThemeChange waits a frame so LineRenderer points exist,
+//      then regenerates obstacles + Riemann mesh and resets the player.
+//   4. Update() advances nextStageIndex when PlayerCenterGrid.x crosses
+//      stageTriggerXGrid[k], firing DerivativePopAnimator.
+// Dependencies: Cartesian plane RectTransform, Canvas with CanvasSafeAreaBootstrap for mobile.
+// =============================================================================
+
+/// <summary>
+/// Central coordinator for the playable “graph as level” mode on the Game scene.
+/// </summary>
 public class LevelManager : MonoBehaviour
 {
+    // --- Serialized tuning ---
     [Header("Stage Pops")]
     [SerializeField] private int defaultStageCount = 3;
 
@@ -24,6 +45,7 @@ public class LevelManager : MonoBehaviour
     private GraphObstacleGenerator obstacleGenerator;
     private PlayerControllerUI2D playerController;
     private DerivativePopAnimator popAnimator;
+    private RiemannStripRendererUI riemannRenderer;
 
     private RectTransform obstaclesRoot;
 
@@ -38,9 +60,11 @@ public class LevelManager : MonoBehaviour
     private Color savedGridCenterLine;
     private Color savedGridOutsideLine;
 
+    /// <summary>Runtime-built list of stages (also representable as LevelDefinition assets).</summary>
     private readonly List<LevelDefinition> levels = new List<LevelDefinition>();
     private int currentLevelIndex;
 
+    /// <summary>How many stage boundary thresholds the player has already crossed (derivative pops).</summary>
     private int nextStageIndex;
     private List<float> stageTriggerXGrid;
     private List<Color> stagePopColors;
@@ -62,10 +86,14 @@ public class LevelManager : MonoBehaviour
     {
         SetupReferences();
         BuildSampleLevels();
+        // LevelSelect sets LevelSelection; opening Game directly falls back to index 0.
         int startIndex = LevelSelection.ConsumeSelectedLevel(levels.Count);
         LoadLevel(startIndex);
     }
 
+    /// <summary>
+    /// One-time wiring: graph components, obstacle generator, player, HUD, Riemann UI hook, touch bar.
+    /// </summary>
     private void SetupReferences()
     {
         functionPlotter = FindAnyObjectByType<FunctionPlotter>();
@@ -98,6 +126,10 @@ public class LevelManager : MonoBehaviour
         CreateStoryTextIfNeeded();
         CreateGameplayHudIfNeeded();
         HideLegacyGraphTuningButtons();
+        EnsureRiemannRenderer();
+        var mainCanvas = FindAnyObjectByType<Canvas>();
+        if (mainCanvas != null)
+            MobileTouchControls.EnsureForGameCanvas(mainCanvas.transform);
 
         // Wire callbacks.
         playerController.SetDeathCallback(RestartCurrentLevel);
@@ -159,21 +191,26 @@ public class LevelManager : MonoBehaviour
         }
 
         var storyGo = new GameObject("StoryText");
-        storyGo.transform.SetParent(canvas.transform, false);
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        storyGo.transform.SetParent(safe != null ? safe : canvas.transform, false);
 
         var tmp = storyGo.AddComponent<TextMeshProUGUI>();
         tmp.text = "";
         tmp.fontSize = 32;
+        tmp.enableAutoSizing = true;
+        tmp.fontSizeMin = 20;
+        tmp.fontSizeMax = 34;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.richText = true;
+        tmp.enableWordWrapping = true;
         ApplyPrimaryUiTypography(tmp, FindPrimaryEquationTmp(), outlineWidth: 0.06f, outlineAlpha: 0.35f);
 
         var rt = tmp.rectTransform;
-        rt.anchorMin = new Vector2(0.5f, 1f);
-        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.anchorMin = new Vector2(0.06f, 1f);
+        rt.anchorMax = new Vector2(0.94f, 1f);
         rt.pivot = new Vector2(0.5f, 1f);
-        rt.anchoredPosition = new Vector2(0, -90f);
-        rt.sizeDelta = new Vector2(900f, 120f);
+        rt.anchoredPosition = new Vector2(0, -72f);
+        rt.sizeDelta = new Vector2(0f, 200f);
 
         tmp.color = new Color(1f, 1f, 1f, 0f);
 
@@ -204,12 +241,14 @@ public class LevelManager : MonoBehaviour
         {
             var panelGo = new GameObject("StageHudPanel");
             var panelRt = panelGo.AddComponent<RectTransform>();
-            panelRt.SetParent(canvas.transform, false);
+            var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+            panelRt.SetParent(safe != null ? safe : canvas.transform, false);
             panelRt.anchorMin = new Vector2(0f, 1f);
             panelRt.anchorMax = new Vector2(0f, 1f);
             panelRt.pivot = new Vector2(0f, 1f);
-            panelRt.anchoredPosition = new Vector2(22f, -20f);
-            panelRt.sizeDelta = new Vector2(340f, 76f);
+            float topPad = DeviceLayout.PreferOnScreenGameControls ? 12f : 20f;
+            panelRt.anchoredPosition = new Vector2(18f, -topPad);
+            panelRt.sizeDelta = new Vector2(380f, 80f);
 
             var panelBg = panelGo.AddComponent<Image>();
             panelBg.sprite = panelSprite;
@@ -244,7 +283,10 @@ public class LevelManager : MonoBehaviour
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.richText = true;
             tmp.enableWordWrapping = false;
-            tmp.fontSize = 30;
+            tmp.fontSize = 28;
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 18;
+            tmp.fontSizeMax = 30;
             tmp.alignment = TextAlignmentOptions.MidlineLeft;
             tmp.color = new Color(0.94f, 0.95f, 0.98f, 1f);
             tmp.characterSpacing = 0.35f;
@@ -257,14 +299,17 @@ public class LevelManager : MonoBehaviour
 
         if (controlsHintText == null)
         {
+            bool tabletUi = DeviceLayout.IsTabletLike();
             var barGo = new GameObject("ControlsHintPanel");
             var barRt = barGo.AddComponent<RectTransform>();
-            barRt.SetParent(canvas.transform, false);
+            var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+            barRt.SetParent(safe != null ? safe : canvas.transform, false);
             barRt.anchorMin = new Vector2(0.5f, 0f);
             barRt.anchorMax = new Vector2(0.5f, 0f);
             barRt.pivot = new Vector2(0.5f, 0f);
-            barRt.anchoredPosition = new Vector2(0f, 18f);
-            barRt.sizeDelta = new Vector2(620f, 54f);
+            float up = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
+            barRt.anchoredPosition = new Vector2(0f, up);
+            barRt.sizeDelta = new Vector2(tabletUi ? 900f : 760f, tabletUi ? 60f : 56f);
 
             var barBg = barGo.AddComponent<Image>();
             barBg.sprite = panelSprite;
@@ -283,20 +328,53 @@ public class LevelManager : MonoBehaviour
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.richText = true;
             tmp.enableWordWrapping = false;
-            tmp.fontSize = 22;
+            tmp.fontSize = 21;
+            tmp.enableWordWrapping = true;
             tmp.alignment = TextAlignmentOptions.Midline;
             tmp.color = new Color(0.82f, 0.85f, 0.92f, 0.92f);
             tmp.characterSpacing = 0.25f;
             ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.5f);
-            tmp.text =
-                "<color=#7a8399>Move</color>  " +
-                "<b><color=#ffd978>\u2190</color></b>  <b><color=#ffd978>\u2192</color></b>  " +
-                "<color=#5c6577>·</color>  " +
-                "<color=#7a8399>Jump</color>  " +
-                "<b><color=#ffd978>Space</color></b>";
+            tmp.text = DeviceLayout.PreferOnScreenGameControls
+                ? "<color=#7a8399>Move</color>  <b><color=#ffd978>\u25C0 \u25B6</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>tap</color></b>  <size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>"
+                : "<color=#7a8399>Move</color>  " +
+                  "<b><color=#ffd978>\u2190</color></b>  <b><color=#ffd978>\u2192</color></b>  " +
+                  "<color=#5c6577>·</color>  " +
+                  "<color=#7a8399>Jump</color>  " +
+                  "<b><color=#ffd978>Space</color></b>";
 
             controlsHintText = tmp;
         }
+
+        CreateSceneCreditsFooterStrip(canvas, equationStyle, panelSprite);
+    }
+
+    private void CreateSceneCreditsFooterStrip(Canvas canvas, TextMeshProUGUI equationStyle, Sprite panelSprite)
+    {
+        if (canvas == null || GameObject.Find("SceneCreditsFooter") != null)
+            return;
+
+        bool tabletUi = DeviceLayout.IsTabletLike();
+        var footerGo = new GameObject("SceneCreditsFooter");
+        var footerRt = footerGo.AddComponent<RectTransform>();
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        footerRt.SetParent(safe != null ? safe : canvas.transform, false);
+        footerRt.anchorMin = new Vector2(0.5f, 0f);
+        footerRt.anchorMax = new Vector2(0.5f, 0f);
+        footerRt.pivot = new Vector2(0.5f, 0f);
+        float controlsUp = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
+        float barH = tabletUi ? 60f : 56f;
+        footerRt.anchoredPosition = new Vector2(0f, controlsUp + barH + 12f);
+        footerRt.sizeDelta = new Vector2(tabletUi ? 960f : 880f, 74f);
+
+        var ftmp = footerGo.AddComponent<TextMeshProUGUI>();
+        ftmp.text = SceneCreditsFooter.BuildCompactRichText();
+        ftmp.richText = true;
+        ftmp.enableWordWrapping = true;
+        ftmp.fontSize = tabletUi ? 16 : 14;
+        ftmp.alignment = TextAlignmentOptions.Bottom;
+        ftmp.color = new Color(0.88f, 0.89f, 0.92f, 0.9f);
+        ftmp.raycastTarget = false;
+        ApplyPrimaryUiTypography(ftmp, equationStyle, outlineWidth: 0.1f, outlineAlpha: 0.45f);
     }
 
     /// <summary>The big equation label in <c>Game</c> — used as the typography reference for all gameplay HUD copy.</summary>
@@ -400,6 +478,37 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Finds or creates <see cref="RiemannStripRendererUI"/> under the cartesian plane, sibling-ordered under the main curve line.
+    /// </summary>
+    private void EnsureRiemannRenderer()
+    {
+        if (riemannRenderer == null)
+            riemannRenderer = FindAnyObjectByType<RiemannStripRendererUI>();
+
+        if (riemannRenderer != null || curveRenderer == null || cartesianPlaneRect == null)
+            return;
+
+        var go = new GameObject("RiemannStrips");
+        go.transform.SetParent(cartesianPlaneRect, false);
+        var rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        riemannRenderer = go.AddComponent<RiemannStripRendererUI>();
+        riemannRenderer.raycastTarget = false;
+
+        int lineIdx = curveRenderer.transform.GetSiblingIndex();
+        go.transform.SetSiblingIndex(lineIdx);
+    }
+
+    /// <summary>
+    /// Constructs all built-in <see cref="LevelDefinition"/> instances. When adding a level:
+    /// append to <see cref="GameLevelCatalog.DisplayNames"/> with the SAME index, then add a
+    /// matching <c>levels.Add(MakeLevel(...))</c> block here using that display name index.
+    /// </summary>
     private void BuildSampleLevels()
     {
         levels.Clear();
@@ -599,8 +708,618 @@ public class LevelManager : MonoBehaviour
             gridOutside: new Color(0.4f, 0.35f, 0.22f, 0.11f),
             storyPauseSecondsOverride: 2.35f
         ));
+
+        var integralStageColors = new[]
+        {
+            new Color(0.45f, 0.82f, 1f, 1f),
+            new Color(0.95f, 0.72f, 0.35f, 1f),
+            new Color(0.75f, 0.55f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[10],
+            FunctionType.NaturalExp,
+            curveColor: new Color(0.98f, 0.88f, 0.48f, 1f),
+            derivativeColor: new Color(0.3f, 0.78f, 1f, 1f),
+            transA: 0.34f,
+            transK: 0.2f,
+            transC: -1.88f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "The <color=#fde047>definite integral</color> of a nonnegative rate is the <b>accumulated amount</b> — here, the <i>area under the curve</i> between two x-values.\n\n" +
+                "The blue glass columns are a <b>Riemann sum</b>: chop the interval into equal widths Δx, pick a sample height f(x*) in each slice, and add up <b>f(x*)·Δx</b>. With more rectangles, the sum hugs the true area — <b>∫ f(x) dx</b>.\n\n" +
+                "<size=92%><color=#a8b2d1>Your trail still follows the smooth graph; the shading only <i>approximates</i> what integration measures.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.22f, 0.4f, 0.58f, 0.38f),
+            gridOutside: new Color(0.16f, 0.28f, 0.42f, 0.11f),
+            levelStageColors: integralStageColors,
+            storyPauseSecondsOverride: 2.75f,
+            riemannRule: RiemannRule.None,
+            riemannRectCount: 22,
+            showRiemannVisualization: true,
+            useRiemannStairPlatforms: false,
+            riemannFillColor: new Color(0.25f, 0.52f, 0.92f, 0.3f)
+        ));
+
+        var riemannLeftColors = new[]
+        {
+            new Color(0.98f, 0.45f, 0.42f, 1f),
+            new Color(1f, 0.78f, 0.35f, 1f),
+            new Color(0.55f, 0.95f, 0.62f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[11],
+            FunctionType.Power,
+            curveColor: new Color(1f, 0.82f, 0.35f, 1f),
+            derivativeColor: new Color(0.95f, 0.35f, 0.42f, 1f),
+            transA: 0.44f,
+            transK: 0.36f,
+            transC: -1.82f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Left-handed Riemann sum:</b> in each subinterval [xᵢ, xᵢ₊₁], take the rectangle height <b>f(xᵢ)</b> — the <color=#f87171>left endpoint</color>.\n\n" +
+                "If f is increasing, left samples are always the <i>shortest</i> side of the strip, so the sum <b>underestimates</b> the area.\n\n" +
+                "<size=92%><color=#a8b2d1>Platforms are flat steps at those left heights — feel the conservative staircase under the parabola.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.52f, 0.28f, 0.22f, 0.36f),
+            gridOutside: new Color(0.38f, 0.2f, 0.18f, 0.1f),
+            levelStageColors: riemannLeftColors,
+            storyPauseSecondsOverride: 2.55f,
+            riemannRule: RiemannRule.Left,
+            riemannRectCount: 14,
+            showRiemannVisualization: true,
+            useRiemannStairPlatforms: true,
+            riemannFillColor: new Color(0.95f, 0.35f, 0.4f, 0.32f)
+        ));
+
+        var riemannRightColors = new[]
+        {
+            new Color(0.35f, 0.72f, 1f, 1f),
+            new Color(0.55f, 0.95f, 0.85f, 1f),
+            new Color(0.85f, 0.55f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[12],
+            FunctionType.Power,
+            curveColor: new Color(1f, 0.82f, 0.35f, 1f),
+            derivativeColor: new Color(0.35f, 0.75f, 1f, 1f),
+            transA: 0.44f,
+            transK: 0.36f,
+            transC: -1.82f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Right-handed Riemann sum:</b> height <b>f(xᵢ₊₁)</b> — the <color=#38bdf8>right endpoint</color> of each slice.\n\n" +
+                "For an increasing function, right endpoints are <i>taller</i>, so this rule <b>overestimates</b> the area — the mirror story of the left sum.\n\n" +
+                "<size=92%><color=#a8b2d1>Each step jumps at the right edge; compare mentally with the left-endpoint stage.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.2f, 0.38f, 0.55f, 0.37f),
+            gridOutside: new Color(0.15f, 0.28f, 0.4f, 0.1f),
+            levelStageColors: riemannRightColors,
+            storyPauseSecondsOverride: 2.55f,
+            riemannRule: RiemannRule.Right,
+            riemannRectCount: 14,
+            showRiemannVisualization: true,
+            useRiemannStairPlatforms: true,
+            riemannFillColor: new Color(0.25f, 0.55f, 0.95f, 0.3f)
+        ));
+
+        var riemannMidColors = new[]
+        {
+            new Color(0.65f, 1f, 0.55f, 1f),
+            new Color(0.98f, 0.72f, 0.95f, 1f),
+            new Color(0.72f, 0.78f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[13],
+            FunctionType.Power,
+            curveColor: new Color(1f, 0.82f, 0.35f, 1f),
+            derivativeColor: new Color(0.55f, 0.95f, 0.5f, 1f),
+            transA: 0.44f,
+            transK: 0.36f,
+            transC: -1.82f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Midpoint rule:</b> sample at the <color=#86efac>center</color> (xᵢ + xᵢ₊₁)/2. The rectangle straddles the strip symmetrically.\n\n" +
+                "On curved graphs, midpoints often cancel over/under-shoot from one side to the other — a practical choice when you want a <i>tight</i> approximation without taking many rectangles.\n\n" +
+                "<size=92%><color=#a8b2d1>Steps sit halfway along each slice; notice how the walk hugs the bowl more evenly than pure left or right rules.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.25f, 0.48f, 0.28f, 0.36f),
+            gridOutside: new Color(0.18f, 0.34f, 0.22f, 0.1f),
+            levelStageColors: riemannMidColors,
+            storyPauseSecondsOverride: 2.55f,
+            riemannRule: RiemannRule.Midpoint,
+            riemannRectCount: 14,
+            showRiemannVisualization: true,
+            useRiemannStairPlatforms: true,
+            riemannFillColor: new Color(0.45f, 0.85f, 0.55f, 0.28f)
+        ));
+
+        var engDampColors = new[]
+        {
+            new Color(0.4f, 0.85f, 1f, 1f),
+            new Color(1f, 0.55f, 0.25f, 1f),
+            new Color(0.85f, 0.45f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[14],
+            FunctionType.DampedOscillator,
+            curveColor: new Color(0.35f, 0.9f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.5f, 0.2f, 1f),
+            transA: 0.52f,
+            transK: 0.48f,
+            transC: -1.95f,
+            transD: 0f,
+            power: 5,
+            baseN: 2,
+            story:
+                "<b>Damped oscillation</b> shows up everywhere in engineering: springs, circuits, structures.\n\n" +
+                "Imagine a weight bobbing on a spring with friction: it still wiggles, but the wiggle <color=#38bdf9>shrinks over time</color> — that decay is the exponential envelope; the sine part is the vibration.\n\n" +
+                "<size=92%><color=#a8b2d1>Your path is the graph; the derivative still decides safe columns — watch how the slope behaves near the peaks of each ring-down.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.15f, 0.38f, 0.5f, 0.38f),
+            gridOutside: new Color(0.12f, 0.26f, 0.36f, 0.1f),
+            levelStageColors: engDampColors,
+            storyPauseSecondsOverride: 2.6f
+        ));
+
+        var engCatColors = new[]
+        {
+            new Color(0.95f, 0.75f, 0.35f, 1f),
+            new Color(0.45f, 0.55f, 1f, 1f),
+            new Color(0.5f, 0.95f, 0.65f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[15],
+            FunctionType.HyperbolicCosine,
+            curveColor: new Color(1f, 0.82f, 0.4f, 1f),
+            derivativeColor: new Color(0.35f, 0.45f, 1f, 1f),
+            transA: 0.16f,
+            transK: 0.38f,
+            transC: -2.15f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "A hanging chain or cable suspended at two points forms a <b>catenary</b>. In many idealized setups it is modeled with <color=#fde047>cosh</color> — the hyperbolic cosine.\n\n" +
+                "Unlike a parabola (projectile motion in uniform gravity), the catenary comes from balancing tension along a flexible rope under its own weight — a classic intro to <i>hyperbolic functions</i> in statics.\n\n" +
+                "<size=92%><color=#a8b2d1>The graph climbs gently at first then steepens; engineers use these curves for arches and cables.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.48f, 0.36f, 0.2f, 0.36f),
+            gridOutside: new Color(0.35f, 0.26f, 0.15f, 0.1f),
+            levelStageColors: engCatColors,
+            storyPauseSecondsOverride: 2.55f
+        ));
+
+        var engAcColors = new[]
+        {
+            new Color(0.95f, 0.4f, 0.9f, 1f),
+            new Color(0.45f, 0.9f, 1f, 1f),
+            new Color(1f, 0.85f, 0.4f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[16],
+            FunctionType.FullWaveRectifiedSine,
+            curveColor: new Color(1f, 0.5f, 0.85f, 1f),
+            derivativeColor: new Color(0.4f, 0.85f, 1f, 1f),
+            transA: 0.42f,
+            transK: 0.58f,
+            transC: -1.95f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>|sin(x)|</b> is a <color=#f0abfc>full-wave rectified</color> AC sine: flip everything below the axis upward — like a simple model after a rectifier in power electronics.\n\n" +
+                "The smooth humps touch zero; the corners where sin crosses zero become sharp points, so the derivative jumps (engineering tasks often use averages / RMS values for power calculations).\n\n" +
+                "<size=92%><color=#a8b2d1>Use this stage as a bridge from pure trig to how waveforms look after circuits reshape them.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.45f, 0.22f, 0.42f, 0.36f),
+            gridOutside: new Color(0.32f, 0.16f, 0.3f, 0.1f),
+            levelStageColors: engAcColors,
+            storyPauseSecondsOverride: 2.5f
+        ));
+
+        // ---- AP Calculus BC + polar + Physics C (indices 17–32) --------------------------------
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[17],
+            FunctionType.Arctangent,
+            curveColor: new Color(0.45f, 0.82f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.55f, 0.35f, 1f),
+            transA: 1.05f,
+            transK: 0.32f,
+            transC: -2.05f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>AP Calculus BC — inverse trig.</b> <color=#38bdf8>Arctan</color> is the hero of bounded slopes: d/dx arctan(x) = 1/(1+x²).\n\n" +
+                "It shows up in integrals that produce arctangent, in related‑rate geometry problems, and whenever an angle is defined from a ratio that grows slowly.\n\n" +
+                "<size=92%><color=#a8b2d1>The graph levels toward horizontal asymptotes — a visual for limits at ±∞.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.22f, 0.4f, 0.55f, 0.36f),
+            gridOutside: new Color(0.16f, 0.28f, 0.4f, 0.1f),
+            storyPauseSecondsOverride: 2.45f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[18],
+            FunctionType.Logistic,
+            curveColor: new Color(0.4f, 0.95f, 0.65f, 1f),
+            derivativeColor: new Color(0.95f, 0.35f, 0.55f, 1f),
+            transA: 1.65f,
+            transK: 0.28f,
+            transC: -3.15f,
+            transD: 0f,
+            power: 2,
+            baseN: 4,
+            story:
+                "<b>Logistic differential equation</b> (BC staple): dP/dt = kP(1 − P/L). Growth is nearly exponential when P is small, then <color=#86efac>curves</color> as it nears carrying capacity <b>L</b>.\n\n" +
+                "Population models, rumor spread, and saturated chemical reactions share this S‑shape. Separation of variables leads here; the inflection point is where growth is fastest.\n\n" +
+                "<size=92%><color=#a8b2d1>Read the rise as “early exponential,” the bend as competition, the top as equilibrium.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.2f, 0.45f, 0.32f, 0.35f),
+            gridOutside: new Color(0.14f, 0.32f, 0.24f, 0.1f),
+            storyPauseSecondsOverride: 2.75f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[19],
+            FunctionType.PolarCardioid,
+            curveColor: new Color(1f, 0.72f, 0.35f, 1f),
+            derivativeColor: new Color(0.45f, 0.55f, 1f, 1f),
+            transA: 0.52f,
+            transK: 0.34f,
+            transC: -2.35f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Polar coordinates</b>: describe points by <color=#fde047>(r, θ)</color> instead of (x, y). A <b>cardioid</b> has the family flavor r ∝ 1 + cos θ — a heartbeat‑shaped loop.\n\n" +
+                "Here the horizontal axis stands in for θ and the vertical for r(θ) (same trick AP uses when you first graph polar equations before converting to x = r cos θ, y = r sin θ).\n\n" +
+                "<size=92%><color=#a8b2d1>Area in polar uses ½∫ r² dθ; tangent slope needs dr/dθ.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.5f, 0.34f, 0.18f, 0.35f),
+            gridOutside: new Color(0.36f, 0.24f, 0.14f, 0.1f),
+            storyPauseSecondsOverride: 2.7f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[20],
+            FunctionType.PolarRose,
+            curveColor: new Color(0.95f, 0.45f, 0.9f, 1f),
+            derivativeColor: new Color(0.45f, 0.9f, 1f, 1f),
+            transA: 0.78f,
+            transK: 0.3f,
+            transC: -2f,
+            transD: 0f,
+            power: 5,
+            baseN: 2,
+            story:
+                "<b>Polar rose</b>: r ∝ cos(nθ) traces petals meeting at the origin. Odd <b>n</b> here gives <b>n</b> petals for this cosine form (a classic exam plot).\n\n" +
+                "Symmetry and period tell you how many times the radius returns to zero — great practice for converting polar area and arc length integrals.\n\n" +
+                "<size=92%><color=#a8b2d1>Watch derivative pops where r changes fastest — those are steep walls on the petal edges.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.42f, 0.22f, 0.48f, 0.36f),
+            gridOutside: new Color(0.3f, 0.16f, 0.34f, 0.1f),
+            storyPauseSecondsOverride: 2.65f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[21],
+            FunctionType.HyperbolicSine,
+            curveColor: new Color(0.55f, 0.95f, 0.55f, 1f),
+            derivativeColor: new Color(0.95f, 0.5f, 0.35f, 1f),
+            transA: 0.072f,
+            transK: 0.38f,
+            transC: -2.05f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Hyperbolic sine & cosine</b> (BC): sinh x = (e^x − e^{−x})/2, cosh x = (e^x + e^{−x})/2, and cosh² − sinh² = 1 (a hyperbola identity).\n\n" +
+                "They solve linear ODEs, describe hanging cables alongside cosh, and mirror trig identities with occasional sign flips.\n\n" +
+                "<size=92%><color=#a8b2d1>You already met the catenary’s cosh; sinh is its odd, rise‑from‑zero partner.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.22f, 0.48f, 0.28f, 0.35f),
+            gridOutside: new Color(0.16f, 0.34f, 0.2f, 0.1f),
+            storyPauseSecondsOverride: 2.5f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[22],
+            FunctionType.ExponentialDecay,
+            curveColor: new Color(0.5f, 0.78f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.65f, 0.25f, 1f),
+            transA: 1.15f,
+            transK: 0.095f,
+            transC: -2.25f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>AP Physics C (calculus‑based)</b> — exponential decay: charge on a discharging capacitor, current in an RL loop, or any quantity Q(t) with dQ/dt ∝ −Q.\n\n" +
+                "Solution: <color=#38bdf9>Q = Q₀ e^{−t/τ}</color>; τ (time constant) sets how fast the tail relaxes — the same picture as “half‑life” thinking.\n\n" +
+                "<size=92%><color=#a8b2d1>The graph is a one‑sided bump; the derivative carries the sign of “still leaking toward zero.”</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.15f, 0.35f, 0.5f, 0.36f),
+            gridOutside: new Color(0.12f, 0.25f, 0.36f, 0.1f),
+            storyPauseSecondsOverride: 2.55f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[23],
+            FunctionType.Cosine,
+            curveColor: new Color(0.65f, 0.85f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.55f, 0.85f, 1f),
+            transA: 0.92f,
+            transK: 0.52f,
+            transC: -2f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Physics C — rotation & angular momentum.</b> For rigid spin about a fixed axis, <color=#7dd3fc>L = I ω</color> (angular momentum = moment of inertia × angular speed).\n\n" +
+                "Net torque τ = dL/dt (like F = dp for linear motion). Small oscillations of many rotational systems look <i>sinusoidal</i> — the same graph as linear SHM, now dressed as θ(t) or ω(t).\n\n" +
+                "<size=92%><color=#a8b2d1>Energy sloshes between kinetic ½Iω² and restoring “spring” terms in ϕ — walk the cosine as a rotation story.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.24f, 0.36f, 0.55f, 0.35f),
+            gridOutside: new Color(0.18f, 0.26f, 0.4f, 0.1f),
+            storyPauseSecondsOverride: 2.7f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[24],
+            FunctionType.Power,
+            curveColor: new Color(0.95f, 0.82f, 0.35f, 1f),
+            derivativeColor: new Color(0.5f, 0.75f, 1f, 1f),
+            transA: -0.26f,
+            transK: 0.36f,
+            transC: 7.7f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Projectile height vs time</b> (constant g): y(t) = y₀ + v₀ t − ½ g t² — a <color=#fde047>downward parabola</color> in t for vertical motion.\n\n" +
+                "Derivatives give vertical velocity, then acceleration −g: the Physics C calculus trilogy x, v, a shows up in every kinematics sprint.\n\n" +
+                "<size=92%><color=#a8b2d1>Peak is where velocity (derivative) crosses zero — a free optimization problem.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.48f, 0.38f, 0.2f, 0.34f),
+            gridOutside: new Color(0.34f, 0.26f, 0.14f, 0.1f),
+            storyPauseSecondsOverride: 2.45f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[25],
+            FunctionType.MaclaurinCosSeries,
+            curveColor: new Color(0.55f, 0.92f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.45f, 0.65f, 1f),
+            transA: 0.5f,
+            transK: 0.48f,
+            transC: -2f,
+            transD: 0f,
+            power: 8,
+            baseN: 2,
+            story:
+                "<b>Maclaurin for cos(x)</b> uses even powers alternating signs: 1 − x²/2! + x⁴/4! − … — the partner series to sine’s odd powers.\n\n" +
+                "On the AP exam you estimate errors with Taylor remainders and reason about radius of convergence — here you get to <i>see</i> the polynomial hug the true cosine near 0.\n\n" +
+                "<size=92%><color=#a8b2d1>More terms ⇢ wider trustworthy fit; the derivative polynomials track −sin x in spirit.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.2f, 0.42f, 0.55f, 0.35f),
+            gridOutside: new Color(0.14f, 0.3f, 0.42f, 0.1f),
+            storyPauseSecondsOverride: 2.45f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[26],
+            FunctionType.NaturalLog,
+            curveColor: new Color(0.65f, 0.95f, 0.55f, 1f),
+            derivativeColor: new Color(0.85f, 0.45f, 1f, 1f),
+            transA: 0.48f,
+            transK: 0.15f,
+            transC: -2.1f,
+            transD: -25f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Natural logarithm</b> is the star of ∫ (1/x) dx = ln|x| + C and shows up in p‑growth comparisons, half‑lives, and ε–δ arguments about slow divergence.\n\n" +
+                "Domain x > 0 (here ensured by shifting the graph so u stays positive): slopes are always positive but shrink as x grows — classic “diminishing returns.”\n\n" +
+                "<size=92%><color=#a8b2d1>BC links ln x to harmonic series / integral test intuitions.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.28f, 0.45f, 0.24f, 0.35f),
+            gridOutside: new Color(0.2f, 0.32f, 0.18f, 0.1f),
+            storyPauseSecondsOverride: 2.35f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[27],
+            FunctionType.SquareRoot,
+            curveColor: new Color(0.95f, 0.6f, 0.4f, 1f),
+            derivativeColor: new Color(0.45f, 0.65f, 1f, 1f),
+            transA: 0.55f,
+            transK: 0.14f,
+            transC: -2.15f,
+            transD: -20f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>√x</b> — domain restriction hero. d/dx √x = 1/(2√x) blows up approaching 0 from the right: infinite slope at the vertical tangent place (a classic BC “improper behavior” discussion).\n\n" +
+                "Substitution integrals and arc length formulas love √(1 + (dy/dx)²); the cusp language matches “watch the derivative.”\n\n" +
+                "<size=92%><color=#a8b2d1>Gameplay still samples smooth pieces; the story is the analytic caution at the boundary.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.48f, 0.3f, 0.18f, 0.35f),
+            gridOutside: new Color(0.34f, 0.22f, 0.12f, 0.1f),
+            storyPauseSecondsOverride: 2.35f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[28],
+            FunctionType.Tangent,
+            curveColor: new Color(0.6f, 0.85f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.4f, 0.35f, 1f),
+            transA: 0.42f,
+            transK: 0.048f,
+            transC: -2f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Tangent</b> packs vertical asymptotes where cos → 0 — limits sprint material on every AP sheet.\n\n" +
+                "Here the window is chosen so you explore a single smooth branch between asymptotes: sec²x is the derivative, always ≥ 1 when defined.\n\n" +
+                "<size=92%><color=#a8b2d1>BC parametric/polar work often reduces to chasing trig identities; tan is a spine in those algebra stories.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.2f, 0.38f, 0.52f, 0.35f),
+            gridOutside: new Color(0.14f, 0.28f, 0.38f, 0.1f),
+            storyPauseSecondsOverride: 2.3f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[29],
+            FunctionType.NaturalExp,
+            curveColor: new Color(0.4f, 1f, 0.75f, 1f),
+            derivativeColor: new Color(1f, 0.55f, 0.45f, 1f),
+            transA: 0.2f,
+            transK: 0.065f,
+            transC: -2.05f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Exponential growth ODE</b>: if y′ = k y then y = Ce^{kx} — the reason e^x is “its own derivative” up to scaling.\n\n" +
+                "Separable equations, slope fields, and half‑life problems all orbit this curve before you meet logistic saturation next door.\n\n" +
+                "<size=92%><color=#a8b2d1>Contrast with the ∫ e^x dx level earlier: there we shaded area; here we emphasize <i>rate proportional to amount</i>.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.18f, 0.42f, 0.3f, 0.35f),
+            gridOutside: new Color(0.13f, 0.3f, 0.22f, 0.1f),
+            storyPauseSecondsOverride: 2.35f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[30],
+            FunctionType.Sine,
+            curveColor: new Color(0.82f, 0.55f, 1f, 1f),
+            derivativeColor: new Color(0.45f, 0.95f, 0.75f, 1f),
+            transA: 0.95f,
+            transK: 0.48f,
+            transC: -2f,
+            transD: 0.35f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Phase & SHM.</b> sin(ωt + ϕ) is the same motion as cosine, just time‑shifted — <color=#e9d5ff>energy swaps</color> between kinetic and potential in an ideal spring.\n\n" +
+                "Parametric circles (x = R cos t, y = R sin t) project to these components; BC’s vector‑valued motion unit leans on the same trig backbone.\n\n" +
+                "<size=92%><color=#a8b2d1>Derivative cos tracks velocity up to constants: the platform logic is “who leads, who lags?”</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.38f, 0.22f, 0.5f, 0.35f),
+            gridOutside: new Color(0.28f, 0.16f, 0.36f, 0.1f),
+            storyPauseSecondsOverride: 2.4f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[31],
+            FunctionType.Power,
+            curveColor: new Color(0.95f, 0.5f, 0.45f, 1f),
+            derivativeColor: new Color(0.55f, 0.55f, 1f, 1f),
+            transA: 0.055f,
+            transK: 0.38f,
+            transC: -1.88f,
+            transD: 0f,
+            power: 3,
+            baseN: 2,
+            story:
+                "<b>Cubic graph sketching</b> — a BC classroom ritual: find critical points, inflection where y″ flips sign, end behavior ±∞.\n\n" +
+                "<color=#fca5a5>Inflection</color> is where curvature changes; the derivative has a local max/min there for smooth cubics.\n\n" +
+                "<size=92%><color=#a8b2d1>Your feet feel one hump + one valley pattern typical of monotone‑derivative pieces between flexes.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.5f, 0.24f, 0.2f, 0.34f),
+            gridOutside: new Color(0.36f, 0.17f, 0.15f, 0.1f),
+            storyPauseSecondsOverride: 2.35f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[32],
+            FunctionType.Exponential,
+            curveColor: new Color(0.85f, 0.75f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.6f, 0.35f, 1f),
+            transA: 0.32f,
+            transK: 0.088f,
+            transC: -2.05f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>General exponential</b> b^x has derivative proportional to itself: d/dx b^x = (ln b) b^x.\n\n" +
+                "That constant <color=#c4b5fd>ln b</color> is the bridge from base‑10 or base‑2 growth to the natural base e where the constant becomes 1.\n\n" +
+                "<size=92%><color=#a8b2d1>Pair mentally with the Maclaurin and logistic levels — three lenses on “growth language.”</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.4f, 0.32f, 0.55f, 0.35f),
+            gridOutside: new Color(0.28f, 0.22f, 0.4f, 0.1f),
+            storyPauseSecondsOverride: 2.3f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[33],
+            FunctionType.CircleUpper,
+            curveColor: new Color(0.55f, 0.82f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.65f, 0.45f, 1f),
+            transA: 2.65f,
+            transK: 1f,
+            transC: -2.15f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Circle equation</b> in standard form: <color=#7dd3fc>(x − h)² + (y − k)² = R²</color>. A full circle is not a single y = f(x) graph — it fails the vertical line test — so we walk the <b>upper semicircle</b>:\n\n" +
+                "y = k + √(R² − (x − h)²) on |x − h| ≤ R. <b>Implicit differentiation</b> on the circle gives dy/dx = −(x − h)/(y − k) (away from y = k on the full curve).\n\n" +
+                "<size=92%><color=#a8b2d1>Parametric form x = h + R cos t, y = k + R sin t is another AP favorite; this stage keeps you on the top arc.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.22f, 0.36f, 0.52f, 0.36f),
+            gridOutside: new Color(0.16f, 0.26f, 0.38f, 0.1f),
+            storyPauseSecondsOverride: 2.65f
+        ));
     }
 
+    /// <summary>
+    /// Factory for a runtime <see cref="LevelDefinition"/> ScriptableObject instance (not saved as an asset).
+    /// Optional Riemann args apply integral / stair visualization stages.
+    /// </summary>
     private LevelDefinition MakeLevel(
         string name,
         FunctionType functionType,
@@ -618,7 +1337,12 @@ public class LevelManager : MonoBehaviour
         Color gridCenter = default,
         Color gridOutside = default,
         Color[] levelStageColors = null,
-        float storyPauseSecondsOverride = 0f)
+        float storyPauseSecondsOverride = 0f,
+        RiemannRule riemannRule = RiemannRule.None,
+        int riemannRectCount = 18,
+        bool showRiemannVisualization = false,
+        bool useRiemannStairPlatforms = false,
+        Color? riemannFillColor = null)
     {
         var def = ScriptableObject.CreateInstance<LevelDefinition>();
         def.levelName = name;
@@ -671,9 +1395,18 @@ public class LevelManager : MonoBehaviour
         }
 
         def.storyText = story;
+
+        def.riemannRule = riemannRule;
+        def.riemannRectCount = riemannRectCount;
+        def.showRiemannVisualization = showRiemannVisualization;
+        def.useRiemannStairPlatforms = useRiemannStairPlatforms;
+        if (riemannFillColor.HasValue)
+            def.riemannFillColor = riemannFillColor.Value;
+
         return def;
     }
 
+    /// <summary>Loads a level by index, applies theme, fades story, rebuilds collision world.</summary>
     private void LoadLevel(int index)
     {
         if (levels.Count == 0 || functionPlotter == null)
@@ -690,6 +1423,10 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(LoadWorldAfterThemeChange(def));
     }
 
+    /// <summary>
+    /// Copies <paramref name="def"/> into FunctionPlotter + line colors + grid theme + stage triggers + story text.
+    /// Does not rebuild physics platforms (see <see cref="LoadWorldAfterThemeChange"/>).
+    /// </summary>
     private void ApplyLevelTheme(LevelDefinition def)
     {
         functionPlotter.functionType = def.functionType;
@@ -705,6 +1442,18 @@ public class LevelManager : MonoBehaviour
         functionPlotter.power = def.power;
         functionPlotter.baseN = def.baseN;
         functionPlotter.differentiate = true;
+
+        if (def.showRiemannVisualization)
+        {
+            if (def.riemannRule == RiemannRule.None)
+                functionPlotter.SetEquationExtraSuffix($"Area ≈ Σ f(x*) Δx, n={def.riemannRectCount} (Δx=(b−a)/n)");
+            else
+                functionPlotter.SetEquationExtraSuffix($"Riemann {def.riemannRule}: n={def.riemannRectCount}");
+        }
+        else if (def.useRiemannStairPlatforms && def.riemannRule != RiemannRule.None)
+            functionPlotter.SetEquationExtraSuffix($"Stairs: {def.riemannRule} rule, n={def.riemannRectCount}");
+        else
+            functionPlotter.SetEquationExtraSuffix("");
 
         curveRenderer.color = def.curveColor;
         derivRenderer.color = def.derivativeColor;
@@ -766,6 +1515,10 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// After theme swap, FunctionPlotter.Update repopulates points; we defer one frame so
+    /// <see cref="LineRendererUI.points"/> / derivative lists are current before sampling columns.
+    /// </summary>
     private IEnumerator LoadWorldAfterThemeChange(LevelDefinition def)
     {
         // Wait for the plot to regenerate points with the new parameters.
@@ -781,10 +1534,14 @@ public class LevelManager : MonoBehaviour
         var unitHeight = cartesianPlaneRect.rect.height / (float)gridSize.y;
         obstacleGenerator.SetLayout(obstaclesRoot, gridSize, unitWidth, unitHeight);
 
+        EnsureRiemannRenderer();
+        if (riemannRenderer != null)
+            riemannRenderer.Rebuild(def, functionPlotter);
+
         var curvePoints = curveRenderer.points;
         var derivPoints = derivRenderer.points;
 
-        var world = obstacleGenerator.GenerateWorld(def, curvePoints, derivPoints);
+        var world = obstacleGenerator.GenerateWorld(def, curvePoints, derivPoints, functionPlotter);
         playerController.SetWorld(world);
         playerController.ResetToSpawn(world);
     }
@@ -819,6 +1576,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>HUD refresh + derivative “pop” triggers based on player X in grid space.</summary>
     private void Update()
     {
         if (playerController == null || stageTriggerXGrid == null)

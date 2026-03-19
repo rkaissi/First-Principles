@@ -1,4 +1,5 @@
-// Written by Rayan Kaissi
+// Written by Rayan Kaissi — uGUI Graphic: thick polyline for f(x) in grid coordinates.
+// FunctionPlotter fills `points`; OnPopulateMesh extrudes segments. Keep gridSize aligned with GridRendererUI.
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +9,8 @@ public class LineRendererUI : Graphic
 {
     public Vector2Int gridSize;
 
+    /// <summary>Polyline in grid space (x,y) matching FunctionPlotter’s sampled curve.</summary>
     public List<Vector2> points = new List<Vector2>();
-
-    // List that stores the coordinates of the derivative graph; if showDerivative is false, draw the derivative graph on top of the original graph on the cartesian plane
 
     public float thickness = 10f;
 

@@ -1,9 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// -----------------------------------------------------------------------------
+// LevelDefinition — Data container for one playable graph stage
+// -----------------------------------------------------------------------------
+// Used in two ways: (1) CreateAssetMenu .asset files in the editor, (2) runtime
+// ScriptableObject.CreateInstance in LevelManager.MakeLevel. Keep field semantics in
+// sync with LevelManager.ApplyLevelTheme and GraphObstacleGenerator.GenerateWorld.
+// -----------------------------------------------------------------------------
+
 /// <summary>
 /// Defines a single stage: which curve to plot, what colors to use, and how the derivative
-/// should influence gameplay (safe vs hazard/gaps), plus the story text.
+/// should influence gameplay (safe vs hazard/gaps), plus story text and optional Riemann UX.
 /// </summary>
 [CreateAssetMenu(menuName = "FirstPrinciples/Level Definition", fileName = "LevelDefinition")]
 public class LevelDefinition : ScriptableObject

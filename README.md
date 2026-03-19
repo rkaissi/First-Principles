@@ -1,13 +1,13 @@
 # First Principles: An Interactive Module
 
 A **graphing calculator** and **derivative-driven platformer** built in **Unity 6**.  
-Developed by [Rayan Kaissi](https://github.com/GameGenesis) and [John Seong](https://github.com/wonmor). Part of the not-for-profit, open-source **College Math For Toddlers** initiative (**MIT**).
+Credits: **GAME GENESIS** ([Rayan Kaissi](https://github.com/GameGenesis)) × **ORCH AEROSPACE** ([John Wonmo Seong](https://github.com/wonmor)). Part of the not-for-profit **College Math For Toddlers** initiative. **Proprietary** — see [`LICENSE`](LICENSE) and [`CREDITS.md`](CREDITS.md) for terms, App Store–style attribution, and third-party notices.
 
 ---
 
 ## Beta build 1.0
 
-The project pairs a **Cartesian graph UI** (functions + numeric derivatives) with **Limbo-style** gameplay: **platforms** follow the curve and **gaps / hazards** follow derivative rules, with **staged progression** (HUD), **level select**, primer plus **Taylor / Maclaurin / series / multivar** levels, and typography matched to the main equation label.
+The project pairs a **Cartesian graph UI** (functions + numeric derivatives) with **Limbo-style** gameplay: **platforms** follow the curve and **gaps / hazards** follow derivative rules, with **staged progression** (HUD), **level select**, primer plus **Taylor / Maclaurin / series / multivar** levels, **area-under-the-curve / Riemann sum** stages (left, right, midpoint rectangles + optional stair platforms), an **AP Calculus BC** extension (polar rose/cardioid, logistic, inverse trig, transcendental-tooling levels), and **AP Physics C** hooks (decay, projectile, angular momentum / rotation stories), and typography matched to the main equation label. **Mobile / touch:** portrait-oriented scaler, **safe-area** UI, **scrollable** level list, and **on-screen move/jump** controls on handheld / touch builds.
 
 **Player build version** (Unity **Project Settings → Player**): **1.0** (`bundleVersion`).
 
@@ -24,7 +24,7 @@ Comprehensive docs for setup, gameplay, architecture, and troubleshooting live i
 | **Browse in repo** | [`docs/index.md`](docs/index.md) |
 | **Published site** | After you enable **Settings → Pages → `/docs`**: `https://<user>.github.io/First-Principles/` (set `url` / `baseurl` in [`docs/_config.yml`](docs/_config.yml)) |
 
-Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu → Level select → Game**, controls (**arrows / WASD**, **Space** jump), **stages HUD**, package restore script, TextMeshPro, and Pages **404** fixes.
+Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu → Level select → Game**, **Math tips & snippets** overlay on level select, controls (**arrows / WASD**, **Space** jump), **stages HUD**, package restore script, TextMeshPro, and Pages **404** fixes. Learning writeups: [`docs/math-concepts.md`](docs/math-concepts.md), [`docs/engineering-math.md`](docs/engineering-math.md), and **separate** unofficial prep: [`docs/tmua-calculus.md`](docs/tmua-calculus.md), [`docs/mat-calculus.md`](docs/mat-calculus.md), [`docs/ap-calculus-bc.md`](docs/ap-calculus-bc.md), [`docs/ap-physics-c.md`](docs/ap-physics-c.md).
 
 ---
 
@@ -36,6 +36,7 @@ Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu 
 | **`docs/`** | GitHub Pages documentation (Jekyll). |
 | **`clean-unity-library.sh`** | Deletes `First Principles/Library` and stray `Packages/com.unity.*` embeds; use when packages are corrupt. |
 | **`README.md`** | This file. |
+| **`CREDITS.md`** | Attribution & third-party summary (App Store / support pages). |
 
 ---
 
@@ -68,9 +69,9 @@ Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu 
 
 ## Screenshots
 
-<img width="1728" alt="Screen Shot 2022-03-15 at 2 57 39 PM" src="https://user-images.githubusercontent.com/35755386/158451505-71e056ee-cca4-42ee-a621-38c092c806f2.png">
+<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 39 PM" src="https://user-images.githubusercontent.com/35755386/158451505-71e056ee-cca4-42ee-a621-38c092c806f2.png">
 
-<img width="1728" alt="Screen Shot 2022-03-15 at 2 57 31 PM" src="https://user-images.githubusercontent.com/35755386/158451522-61e0c14c-57c3-4819-b023-b7d7c13075aa.png">
+<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 31 PM" src="https://user-images.githubusercontent.com/35755386/158451522-61e0c14c-57c3-4819-b023-b7d7c13075aa.png">
 
 ---
 
@@ -91,4 +92,4 @@ Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu 
 
 ---
 
-**MIT License** · **First Principles** · *College Math For Toddlers*
+**Proprietary** · **First Principles** · *College Math For Toddlers*

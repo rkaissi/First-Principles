@@ -3,11 +3,21 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
+// -----------------------------------------------------------------------------
+// SceneFader — full-screen Image alpha fade between Menu / LevelSelect / Game
+// -----------------------------------------------------------------------------
+// OnEnable picks white vs black overlay by scene name, then fades Out (opaque→clear).
+// Public API loads scenes after fading In (clear→opaque) via coroutines. Assign both
+// Images in the inspector on Menu (or shared prefab).
+// -----------------------------------------------------------------------------
+
 public class SceneFader : MonoBehaviour
 {
 
 	#region FIELDS
+	/// <summary>Typically used on Menu (lighter fade).</summary>
 	public Image fadeOutUIImage1; // White background
+	/// <summary>Typically used on Game / LevelSelect (darker fade).</summary>
 	public Image fadeOutUIImage2; // Black background
 
 	private Image fadeOutUIImage;

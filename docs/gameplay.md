@@ -13,16 +13,20 @@ permalink: /gameplay/
 
 Level parameters (colors, function type, transformation coefficients, story text) are defined in code via **`LevelManager`** sample levels / **`LevelDefinition`**.
 
-### Sample level lineup (10)
+### Sample level lineup (`GameLevelCatalog`)
 
-| # | Theme |
-|---|--------|
-| 1 | **First Principles Primer** — rich tutorial copy, aurora grid, four stage pops |
-| 2–5 | Classic **Power / Sine / Cosine / Absolute** |
-| 6 | **Maclaur partial sum of e^x** |
-| 7 | **Maclaurin partial sum of sin(x)** |
-| 8 | **Geometric series** partial sum Σu^k |
-| 9–10 | **Multivar slices** — saddle z = x² − y₀² and paraboloid z = x² + y₀² |
+Titles are built at runtime from **`GameLevelCatalog.DisplayNames`** (order matches **`LevelManager`** sample levels). Expect **30+** named stages spanning primer → integrals → engineering → **AP Calculus BC** motifs → **polar** plots → **Physics C** hooks, including:
+
+| Block | Examples |
+|--------|-----------|
+| Primer + classics | Primer, parabola, sine, cosine, absolute |
+| Series / multivar | Maclaurin e^x & sin, geometric tail, saddle & paraboloid slices |
+| Integrals | Area under the curve, Riemann left / right / midpoint |
+| Engineering | Damped oscillation, catenary (cosh), full-wave rectified sine `|sin(x)|` |
+| AP BC + polar | Arctan, logistic, Maclaurin cos, ln & √x, tan window, e^{kx}, cubic sketching, b^x; polar cardioid & rose; **circle** (upper semicircle / implicit form) |
+| Physics C | Exponential decay (τ / RC), projectile parabola, angular momentum / L = Iω (SHM framing) |
+
+Open **Math tips & snippets** on the level-select screen for **short article text** plus **separate** blocks for **TMUA**, **MAT**, **AP Calculus BC**, and **AP Physics C**. Longer notes: **`docs/math-concepts.md`**, **`docs/engineering-math.md`**, **`docs/tmua-calculus.md`**, **`docs/mat-calculus.md`**, **`docs/ap-calculus-bc.md`**, **`docs/ap-physics-c.md`**.
 
 Special levels can **tint the grid** and adjust how long story text stays on screen.
 
@@ -33,6 +37,14 @@ Special levels can **tint the grid** and adjust how long story text stays on scr
 | **← / →** or **A / D** | Move |
 | **Space**, **W**, or **↑** | Jump |
 | **Jump** axis / gamepad | Still supported via Unity **Input Manager** |
+| **Touch** (phones / tablets) | **On-screen ◀ ▶ and Jump** when the build is mobile/touch-capable; safe-area layout keeps them above the home indicator. Keyboard still works on devices that have one. |
+
+### Mobile-friendly UI
+
+- **CanvasScaler** uses reference **1080×1920** with a **dynamic** `matchWidthOrHeight` (via `CanvasSafeAreaBootstrap`): phones stay near **0.42–0.45**; **~4:3 iPad / tablet** sizes lean toward **0.5–0.52** so landscape and portrait both stay balanced.
+- **Tablet detection** uses shortest side in **dp** (`DeviceLayout.IsTabletLike`, threshold ~592dp) so high-res phones are not mistaken for iPads.
+- **`CanvasSafeAreaBootstrap`** wraps existing Canvas children in a **`_SafeContent`** root inset with **`Screen.safeArea`** (notches / rounded corners).
+- Runtime HUD (**story**, **stage**, **controls hint**, level-select list, math overlay) parents to that safe root where applicable.
 
 Legacy **Trans** / **Scale** tuning buttons on the Game UI are **disabled**; tuning is driven by **level definitions**, not free sliders.
 
@@ -44,8 +56,8 @@ Legacy **Trans** / **Scale** tuning buttons on the Game UI are **disabled**; tun
 
 ## Level flow
 
-1. **Menu** — Entry and scene fade.
-2. **LevelSelect** — `LevelSelectController` builds a list from **`GameLevelCatalog.DisplayNames`**; choosing a level calls **`LevelSelection.SetSelectedLevel`** and loads **Game**.
+1. **Menu** — Entry and scene fade; footer shows **Credits** (GAME GENESIS × ORCH AEROSPACE), version, proprietary / initiative line, and **Unity** trademark notice ([`CREDITS.md`](../CREDITS.md) for full attribution).
+2. **LevelSelect** — `LevelSelectController` builds a **scrollable** list from **`GameLevelCatalog.DisplayNames`**, plus a **Math tips & snippets** button that opens **`MathArticlesOverlay`** (`LearningArticleLibrary`). Choosing a level calls **`LevelSelection.SetSelectedLevel`** and loads **Game**.
 3. **Game** — `LevelManager` reads **`LevelSelection.ConsumeSelectedLevel`**, applies the level theme to **`FunctionPlotter`**, regenerates obstacles, and spawns / resets the player.
 
 ## Spawn position

@@ -28,5 +28,9 @@ Open `http://127.0.0.1:4000/First-Principles/` (adjust for your `baseurl`).
 | `index.md` | Documentation home |
 | `setup.md` | Unity setup & clean restore |
 | `gameplay.md` | Controls, stages, flow |
+| `math-concepts.md` | Game math notes + index to exam prep |
+| `tmua-calculus.md` / `mat-calculus.md` | Unofficial UK admissions calculus prep |
+| `ap-calculus-bc.md` / `ap-physics-c.md` | Unofficial US AP prep maps |
+| `engineering-math.md` | Applied / engineering angle |
 | `architecture.md` | Scenes & scripts |
 | `troubleshooting.md` | Packages, TMP, Pages |

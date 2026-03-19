@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Semi-transparent quads under the main curve. Rebuild when level loads (LevelManager → Rebuild).
+// Strips use plotter math space + gridOrigin like FunctionPlotter; RiemannRule.None draws midpoint samples.
 /// <summary>
 /// Draws semi-transparent vertical strips for Riemann rectangles (from x-axis to sample height).
 /// Grid coordinates match <see cref="LineRendererUI"/> (same parent <see cref="GridRendererUI"/>).

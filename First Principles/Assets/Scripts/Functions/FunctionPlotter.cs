@@ -1,9 +1,12 @@
 /*
- * FunctionPlotter.cs Written by John Seong
- * An Open-Source Project
- * Main Features:
- * 1. Plot Functions
- * 2. Plot Their Corresponding First Derivatives
+ * FunctionPlotter.cs — John Seong / First Principles
+ *
+ * Maintenance overview:
+ *   • Each Update() calls InitPlotFunction → samples f and numeric f' over [xStart,xEnd].
+ *   • Points are in “grid space”: (xPlot + gridOrigin.x, yPlot + gridOrigin.y).
+ *   • To add a new curve: extend FunctionType, EvaluateFunctionY, and UpdateEquationText.
+ *   • LevelManager sets public fields to match LevelDefinition; differentiate=true feeds DerivRendererUI.
+ *   • SampleCurvePlotterY / SetEquationExtraSuffix support Riemann overlay & TMP sub-lines.
  */
 
 using System.Collections.Generic;
@@ -201,8 +204,50 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.MultivarParaboloidSlice => transA * (u * u + transC * transC),
             FunctionType.MultivarSaddleSlice => transA * (u * u - transC * transC),
 
+            // Engineering / applied: u = transK*(x - transD); `power` ↔ oscillation index; `baseN` ↔ decay strength.
+            FunctionType.DampedOscillator => DampedOscillatorY(u, transA, transC, power, baseN),
+            FunctionType.HyperbolicCosine => transA * (Mathf.Cosh(Mathf.Clamp(u, -8f, 8f)) + transC),
+            FunctionType.FullWaveRectifiedSine => transA * (Mathf.Abs(Mathf.Sin(u)) + transC),
+
+            // AP Calculus BC & polar: u = transK*(x - transD) plays the role of θ in polar captions.
+            FunctionType.Arctangent => transA * Mathf.Atan(u) + transC,
+            FunctionType.Logistic => LogisticY(u, transA, transC, baseN),
+            FunctionType.HyperbolicSine => transA * Mathf.Sinh(Mathf.Clamp(u, -4f, 4f)) + transC,
+            FunctionType.ExponentialDecay => transA * Mathf.Exp(-Mathf.Max(0.02f, transK) * Mathf.Abs(u)) + transC,
+            FunctionType.PolarCardioid => transA * (1f + Mathf.Cos(u)) + transC,
+            FunctionType.PolarRose => transA * Mathf.Cos(Mathf.Max(1, power) * u) + transC,
+
+            // Upper half of (u)² + (y−k)² = R² with u = transK·(x−h), R = |transA|, k = transC, h = transD.
+            FunctionType.CircleUpper => CircleUpperY(u, transA, transC),
+
             _ => 0f
         };
+    }
+
+    /// <summary>y = k + √(R² − u²) for |u|≤R; outside domain uses k so samples stay finite (flat shoulder).</summary>
+    private static float CircleUpperY(float u, float radiusSigned, float k)
+    {
+        float r = Mathf.Max(0.02f, Mathf.Abs(radiusSigned));
+        float s = r * r - u * u;
+        if (s < 0f)
+            return float.NaN;
+        return k + Mathf.Sqrt(s);
+    }
+
+    /// <summary>S-curve L/(1+e^{-s u}) + C; <paramref name="baseN"/> scales steepness (larger → sharper transition).</summary>
+    private static float LogisticY(float u, float carryingCapacity, float c, int steepnessFromBaseN)
+    {
+        float s = 0.05f * Mathf.Max(1, steepnessFromBaseN > 0 ? steepnessFromBaseN : 1);
+        float z = Mathf.Clamp(-s * u, -30f, 30f);
+        return carryingCapacity / (1f + Mathf.Exp(z)) + c;
+    }
+
+    /// <summary>Underdamped-style envelope A·e^(-α|u|)·sin(ωu) + C (u = scaled time/position).</summary>
+    private static float DampedOscillatorY(float u, float a, float c, int power, int baseN)
+    {
+        float omega = 0.28f * Mathf.Max(1, power);
+        float decay = 0.042f * Mathf.Max(1, baseN);
+        return a * Mathf.Exp(-decay * Mathf.Abs(u)) * Mathf.Sin(omega * u) + c;
     }
 
     /// <summary>e^u ≈ Σ_{k=0}^{N} u^k/k!</summary>
@@ -329,6 +374,36 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.MultivarSaddleSlice:
                 equationText.text = $"z = {a}·( u^2 - y0^2 ), u={k}(x-{d}), y0={c}  — saddle";
                 break;
+            case FunctionType.DampedOscillator:
+                equationText.text = $"f(x) = {a}·e^(−α|u|)·sin(ωu) + ({c}), u={k}(x-{d})";
+                break;
+            case FunctionType.HyperbolicCosine:
+                equationText.text = $"f(x) = {a}·(cosh(u) + ({c})), u={k}(x-{d}) — catenary model";
+                break;
+            case FunctionType.FullWaveRectifiedSine:
+                equationText.text = $"f(x) = {a}·(|sin(u)| + ({c})), u={k}(x-{d})";
+                break;
+            case FunctionType.Arctangent:
+                equationText.text = $"f(x) = {a}·arctan(u) + ({c}), u={k}(x-{d})";
+                break;
+            case FunctionType.Logistic:
+                equationText.text = $"Logistic S-curve: L≈{a}, u={k}(x-{d}), steepness∝{baseN}";
+                break;
+            case FunctionType.HyperbolicSine:
+                equationText.text = $"f(x) = {a}·sinh(u) + ({c}), u={k}(x-{d})";
+                break;
+            case FunctionType.ExponentialDecay:
+                equationText.text = $"f(x) = {a}·e^(−{k}|u|) + ({c}), u={k}(x-{d})";
+                break;
+            case FunctionType.PolarCardioid:
+                equationText.text = $"Polar: r ∝ (1+cos θ); θ↔ u={k}(x-{d})";
+                break;
+            case FunctionType.PolarRose:
+                equationText.text = $"Polar: r ∝ cos({power}·θ); θ↔ u={k}(x-{d})";
+                break;
+            case FunctionType.CircleUpper:
+                equationText.text = $"Upper arc: u² + (y−{c})² = {a}², u={k}(x−{d}), R=|{a}|";
+                break;
             default:
                 equationText.text = "f(x)";
                 break;
@@ -360,7 +435,23 @@ public enum FunctionType
 
     // Multivariable surfaces as 1D slices (fixed y₀ = transC, δ = transD shift)
     MultivarParaboloidSlice,
-    MultivarSaddleSlice
+    MultivarSaddleSlice,
+
+    // Engineering / applied classical shapes
+    DampedOscillator,
+    HyperbolicCosine,
+    FullWaveRectifiedSine,
+
+    // AP Calculus BC extras, polar (r vs θ plotted with θ on the horizontal axis), Physics C hooks
+    Arctangent,
+    Logistic,
+    HyperbolicSine,
+    ExponentialDecay,
+    PolarCardioid,
+    PolarRose,
+
+    // Upper semicircle: y = k + √(R²−u²), u = transK·(x−transD), R = |transA|, center (transD, transC) when transK = 1.
+    CircleUpper
 }
 
 /* 

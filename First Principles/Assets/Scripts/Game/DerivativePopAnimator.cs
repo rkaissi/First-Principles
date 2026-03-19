@@ -2,7 +2,9 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Briefly scales derivative line thickness and tint for a "pop" when the player crosses stage thresholds.
+/// Briefly scales <see cref="DerivRendererUI"/> thickness and swaps tint when the player
+/// crosses horizontal stage thresholds (see <c>LevelManager.stageTriggerXGrid</c>).
+/// Coroutine-based; starting a new <see cref="Pop"/> stops the previous animation.
 /// </summary>
 public class DerivativePopAnimator : MonoBehaviour
 {

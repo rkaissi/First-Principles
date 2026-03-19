@@ -1,10 +1,18 @@
 using UnityEngine;
 
+// -----------------------------------------------------------------------------
+// GameLevelCatalog + LevelSelection — strings & handoff from LevelSelect → Game
+// -----------------------------------------------------------------------------
+// DisplayNames[i] MUST correspond to levels[i] from LevelManager.BuildSampleLevels.
+// LevelSelection is static session state cleared after ConsumeSelectedLevel.
+// -----------------------------------------------------------------------------
+
 /// <summary>
 /// Shared level titles (must match the order built in <see cref="LevelManager"/> sample levels).
 /// </summary>
 public static class GameLevelCatalog
 {
+    /// <summary>Human-readable titles; indices drive LevelSelectController button order.</summary>
     public static readonly string[] DisplayNames =
     {
         "First Principles Primer",
@@ -16,7 +24,32 @@ public static class GameLevelCatalog
         "Maclaurin: sin(x)",
         "Series: geometric tail",
         "Saddle slice (multivar)",
-        "Paraboloid slice (multivar)"
+        "Paraboloid slice (multivar)",
+        "Area under the curve",
+        "Riemann: left endpoints",
+        "Riemann: right endpoints",
+        "Riemann: midpoint rule",
+        "Engineering: damped oscillation",
+        "Engineering: catenary (cosh)",
+        "Engineering: rectified AC (|sin|)",
+        // --- AP Calculus BC + Physics C extension (order must match LevelManager.BuildSampleLevels) ---
+        "BC: arctan & inverse trig",
+        "BC: logistic growth (dP/dt = kP(1−P/L))",
+        "Polar: cardioid r ∝ 1+cos θ",
+        "Polar: rose r ∝ cos(nθ)",
+        "BC: sinh x & hyperbolic functions",
+        "Physics C: exponential decay (τ, RC)",
+        "Physics C: angular momentum & L = Iω",
+        "Physics C: projectile height y(t)",
+        "BC: Maclaurin cos(x)",
+        "BC: ln x & ∫ dx/x",
+        "BC: √x & domain / cusp craft",
+        "BC: tan x between asymptotes",
+        "BC: e^{kx} & y′ = ky",
+        "BC: phase & SHM (energy swaps)",
+        "BC: cubic & inflection (sketching)",
+        "BC: b^x & d/dx b^x",
+        "Circle: (x−h)² + (y−k)² = R²"
     };
 
     public static int LevelCount => DisplayNames.Length;

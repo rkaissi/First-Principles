@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// =============================================================================
+// PlayerControllerUI2D — UI RectTransform “character” in graph grid space
+// =============================================================================
+// Simulation runs in abstract grid units (same as GraphWorld / GridRect). Each frame:
+//   • Reads horizontal intent (keys → axis → MobileInputBridge touch cluster).
+//   • Applies gravity, resolves AABB vs platforms, hazards, fall death Y, finish band.
+// Visual position maps grid → pixels via unitWidth/Height from LevelManager.
+// =============================================================================
+
+/// <summary>Side-scroller controller built for uGUI under the Cartesian plane.</summary>
 public class PlayerControllerUI2D : MonoBehaviour
 {
     [Header("Movement (Grid Units)")]
@@ -90,6 +100,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         this.finishCallback = finishCallback;
     }
 
+    /// <summary>Integrate movement, resolve collisions, invoke death/finish callbacks.</summary>
     private void Update()
     {
         if (world == null || playerRect == null)
@@ -108,6 +119,8 @@ public class PlayerControllerUI2D : MonoBehaviour
             inputX += 1f;
         if (Mathf.Approximately(inputX, 0f))
             inputX = Input.GetAxisRaw("Horizontal");
+        if (Mathf.Approximately(inputX, 0f))
+            inputX = MobileInputBridge.TouchHorizontal;
 
         velGrid.x = inputX * moveSpeedGridPerSec;
 
@@ -116,6 +129,8 @@ public class PlayerControllerUI2D : MonoBehaviour
             Input.GetKeyDown(KeyCode.W) ||
             Input.GetKeyDown(KeyCode.UpArrow) ||
             Input.GetButtonDown("Jump");
+        if (!jumpPressed)
+            jumpPressed = MobileInputBridge.ConsumeJump();
 
         if (grounded && jumpPressed)
         {
@@ -191,6 +206,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         }
     }
 
+    /// <summary>Land on platform tops when falling; bonk head when rising through thin solids.</summary>
     private void ResolveVerticalPlatforms(Vector2 prevPos, ref Vector2 pos, ref bool groundedOut)
     {
         groundedOut = false;

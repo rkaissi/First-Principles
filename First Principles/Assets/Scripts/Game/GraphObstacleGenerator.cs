@@ -2,6 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// =============================================================================
+// GraphObstacleGenerator — curve & derivative → platform / hazard columns
+// =============================================================================
+// For each integer column of the graph grid, samples f and f' (or Rieman stair rule)
+// to decide SAFE (solid platform) vs hazard gap. Visuals are child UI Images under
+// obstaclesRoot; logical rects live in GraphWorld for PlayerControllerUI2D.
+// Coordinate space: same as LineRendererUI points (grid cells, origin at grid center).
+// =============================================================================
+
+/// <summary>Axis-aligned rectangle in graph grid units (column slices, finish band, etc.).</summary>
 public struct GridRect
 {
     public float xMin;
@@ -53,6 +63,7 @@ public class GraphObstacleGenerator : MonoBehaviour
         obstacleSprite = TryGetSquareSprite();
     }
 
+    /// <param name="functionPlotter">Required for Riemann stair mode; used to evaluate exact f at sample x.</param>
     public GraphWorld GenerateWorld(LevelDefinition def, List<Vector2> curvePoints, List<Vector2> derivPoints, FunctionPlotter functionPlotter = null)
     {
         if (obstaclesRoot == null)
