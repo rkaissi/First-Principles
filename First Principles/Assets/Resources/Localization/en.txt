@@ -2,6 +2,13 @@
 # Stories: optional keys story.N override embedded English when present in other locale files.
 
 ui.choose_stage=Choose a graph stage
+ui.level_select.back_categories=All categories
+level_select.cat.core=Core & series
+level_select.cat.integration=Multivar & integration
+level_select.cat.engineering=Engineering
+level_select.cat.ap_bc=AP Calculus BC & Physics C
+level_select.cat.aerospace=Aerospace
+level_select.cat.finale=Advanced & boss
 ui.math_tips=Math tips & snippets
 ui.back_menu=Back to Menu
 ui.graphing_calculator_mode=Graphing calculator

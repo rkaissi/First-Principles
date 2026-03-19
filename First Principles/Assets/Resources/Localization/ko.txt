@@ -1,5 +1,12 @@
 # 한국어
 ui.choose_stage=그래프 스테이지 선택
+ui.level_select.back_categories=모든 주제
+level_select.cat.core=기초 & 급수
+level_select.cat.integration=다변수 & 적분
+level_select.cat.engineering=공학
+level_select.cat.ap_bc=AP 미적분 BC · 물리 C
+level_select.cat.aerospace=항공우주
+level_select.cat.finale=심화 & 보스
 ui.math_tips=수학 팁 모음
 ui.back_menu=메뉴로
 ui.graphing_calculator_mode=그래프 계산기

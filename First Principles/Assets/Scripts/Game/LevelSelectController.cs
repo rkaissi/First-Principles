@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -24,7 +25,22 @@ public class LevelSelectController : MonoBehaviour
     private TextMeshProUGUI mathTipsTmp;
     private TextMeshProUGUI backTmp;
     private TextMeshProUGUI levelSelectLangTmp;
-    private readonly System.Collections.Generic.List<TextMeshProUGUI> levelRowLabels = new System.Collections.Generic.List<TextMeshProUGUI>();
+    private readonly List<TextMeshProUGUI> categoryRowLabels = new List<TextMeshProUGUI>();
+    private readonly List<TextMeshProUGUI> levelRowLabels = new List<TextMeshProUGUI>();
+    private TextMeshProUGUI backToCategoriesTmp;
+
+    private ScrollRect _levelScroll;
+    private RectTransform _levelContentRt;
+    private LayoutElement _levelContentLayoutElement;
+    private VerticalLayoutGroup _levelContentVlg;
+    private int _levelContentPadVertical;
+    private float _levelRowHeight;
+    private float _levelRowSpacing;
+
+    private bool _levelPickMode;
+    private int _levelViewStart;
+    private int _levelViewEnd;
+    private int _selectedCategoryIndex = -1;
 
     private void OnEnable()
     {
@@ -40,7 +56,18 @@ public class LevelSelectController : MonoBehaviour
     {
         if (titleTmp != null)
         {
-            titleTmp.text = LocalizationManager.Get("ui.choose_stage", "Choose a graph stage");
+            if (_levelPickMode
+                && _selectedCategoryIndex >= 0
+                && _selectedCategoryIndex < GameLevelCatalog.SelectCategories.Length)
+            {
+                var cat = GameLevelCatalog.SelectCategories[_selectedCategoryIndex];
+                titleTmp.text = LocalizationManager.Get(cat.TitleLocalizationKey, cat.DefaultTitle);
+            }
+            else
+            {
+                titleTmp.text = LocalizationManager.Get("ui.choose_stage", "Choose a graph stage");
+            }
+
             LocalizationManager.ApplyTextDirection(titleTmp);
         }
         if (mathTipsTmp != null)
@@ -53,12 +80,29 @@ public class LevelSelectController : MonoBehaviour
             backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
             LocalizationManager.ApplyTextDirection(backTmp);
         }
+        if (backToCategoriesTmp != null)
+        {
+            backToCategoriesTmp.text = LocalizationManager.Get("ui.level_select.back_categories", "All categories");
+            LocalizationManager.ApplyTextDirection(backToCategoriesTmp);
+        }
+
+        for (int i = 0; i < categoryRowLabels.Count; i++)
+        {
+            var tmp = categoryRowLabels[i];
+            if (tmp == null || i >= GameLevelCatalog.SelectCategories.Length)
+                continue;
+            var cat = GameLevelCatalog.SelectCategories[i];
+            tmp.text = LocalizationManager.Get(cat.TitleLocalizationKey, cat.DefaultTitle);
+            LocalizationManager.ApplyTextDirection(tmp);
+        }
+
         for (int i = 0; i < levelRowLabels.Count; i++)
         {
             var tmp = levelRowLabels[i];
             if (tmp == null)
                 continue;
-            tmp.text = GameLevelCatalog.GetLocalizedDisplayName(i);
+            int levelIdx = _levelViewStart + i;
+            tmp.text = GameLevelCatalog.GetLocalizedDisplayName(levelIdx);
             LocalizationManager.ApplyTextDirection(tmp);
         }
 
@@ -115,7 +159,7 @@ public class LevelSelectController : MonoBehaviour
 
         CreateLevelSelectLanguagePicker(panel.transform);
 
-        // Scrollable list (many levels + readable on small screens).
+        // Scrollable list (categories first, then per-category stages).
         var scrollGo = new GameObject("LevelScroll");
         var scrollRt = scrollGo.AddComponent<RectTransform>();
         scrollRt.SetParent(panel.transform, false);
@@ -124,11 +168,11 @@ public class LevelSelectController : MonoBehaviour
         scrollRt.offsetMin = Vector2.zero;
         scrollRt.offsetMax = Vector2.zero;
 
-        var scroll = scrollGo.AddComponent<ScrollRect>();
-        scroll.horizontal = false;
-        scroll.vertical = true;
-        scroll.movementType = ScrollRect.MovementType.Clamped;
-        scroll.scrollSensitivity = DeviceLayout.LevelSelectScrollSensitivity;
+        _levelScroll = scrollGo.AddComponent<ScrollRect>();
+        _levelScroll.horizontal = false;
+        _levelScroll.vertical = true;
+        _levelScroll.movementType = ScrollRect.MovementType.Clamped;
+        _levelScroll.scrollSensitivity = DeviceLayout.LevelSelectScrollSensitivity;
 
         var viewportGo = new GameObject("Viewport");
         var viewportRt = viewportGo.AddComponent<RectTransform>();
@@ -137,12 +181,11 @@ public class LevelSelectController : MonoBehaviour
         viewportRt.anchorMax = Vector2.one;
         viewportRt.offsetMin = Vector2.zero;
         viewportRt.offsetMax = Vector2.zero;
-        // Mask + Image with alpha 0 often produces an empty stencil so list rows never show.
         viewportGo.AddComponent<RectMask2D>();
         var vImg = viewportGo.AddComponent<Image>();
         vImg.color = new Color(0f, 0f, 0f, 0f);
         vImg.raycastTarget = true;
-        scroll.viewport = viewportRt;
+        _levelScroll.viewport = viewportRt;
 
         var contentGo = new GameObject("Content");
         var contentRt = contentGo.AddComponent<RectTransform>();
@@ -153,39 +196,32 @@ public class LevelSelectController : MonoBehaviour
         contentRt.anchoredPosition = Vector2.zero;
         contentRt.sizeDelta = new Vector2(0f, 0f);
 
-        scroll.content = contentRt;
+        _levelScroll.content = contentRt;
+        _levelContentRt = contentRt;
 
-        var vlg = contentGo.AddComponent<VerticalLayoutGroup>();
-        vlg.childAlignment = TextAnchor.UpperCenter;
-        vlg.spacing = tablet ? 20f : 18f;
-        vlg.padding = new RectOffset(tablet ? 16 : 12, tablet ? 16 : 12, tablet ? 14 : 12, tablet ? 14 : 12);
-        vlg.childControlHeight = true;
-        vlg.childControlWidth = true;
-        vlg.childForceExpandHeight = false;
-        vlg.childForceExpandWidth = true;
+        _levelContentVlg = contentGo.AddComponent<VerticalLayoutGroup>();
+        _levelContentVlg.childAlignment = TextAnchor.UpperCenter;
+        _levelRowSpacing = tablet ? 20f : 18f;
+        _levelContentVlg.spacing = _levelRowSpacing;
+        _levelContentVlg.padding = new RectOffset(tablet ? 16 : 12, tablet ? 16 : 12, tablet ? 14 : 12, tablet ? 14 : 12);
+        _levelContentVlg.childControlHeight = true;
+        _levelContentVlg.childControlWidth = true;
+        _levelContentVlg.childForceExpandHeight = false;
+        _levelContentVlg.childForceExpandWidth = true;
 
         var fitter = contentGo.AddComponent<ContentSizeFitter>();
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        float rowH = tablet ? 92f : 84f;
-        float spacingY = tablet ? 20f : 18f;
-        int rowCount = GameLevelCatalog.LevelCount;
-        int padVertical = vlg.padding.top + vlg.padding.bottom;
-        var contentLe = contentGo.AddComponent<LayoutElement>();
-        contentLe.minHeight = rowCount * rowH + Mathf.Max(0, rowCount - 1) * spacingY + padVertical;
+        _levelRowHeight = tablet ? 92f : 84f;
+        _levelContentPadVertical = _levelContentVlg.padding.top + _levelContentVlg.padding.bottom;
+        _levelContentLayoutElement = contentGo.AddComponent<LayoutElement>();
+        _levelContentLayoutElement.minHeight = 400f;
 
-        for (int i = 0; i < GameLevelCatalog.LevelCount; i++)
-        {
-            int idx = i;
-            var rowTmp = CreateLevelButton(contentRt, GameLevelCatalog.GetLocalizedDisplayName(i), () => StartGameAt(idx));
-            levelRowLabels.Add(rowTmp);
-        }
+        BuildCategoryView(false);
 
-        RebuildScrollContent(scroll, contentRt);
-
-        // After TMP mesh/layout settles (esp. first frame), rebuild again so rows aren't height 0.
-        StartCoroutine(FinalizeScrollAfterTmpLayout(scroll, contentRt));
+        RebuildScrollContent(_levelScroll, contentRt);
+        StartCoroutine(FinalizeScrollAfterTmpLayout(_levelScroll, contentRt));
 
         // Under scroll in hierarchy so the list stays visible; chip sits in the band above scroll (see anchors).
         CreateMathArticlesButton(panel.transform, canvas.transform);
@@ -318,7 +354,7 @@ public class LevelSelectController : MonoBehaviour
     }
 
     /// <returns>Label <see cref="TextMeshProUGUI"/> for live language updates.</returns>
-    private TextMeshProUGUI CreateLevelButton(Transform parent, string label, UnityAction onClick)
+    private TextMeshProUGUI CreateLevelButton(Transform parent, string label, UnityAction onClick, Color? backgroundOverride = null)
     {
         var go = new GameObject("LevelButton");
         var rt = go.AddComponent<RectTransform>();
@@ -329,13 +365,14 @@ public class LevelSelectController : MonoBehaviour
         le.preferredHeight = tablet ? 92f : 84f;
         le.minHeight = tablet ? 92f : 84f;
 
+        Color bg = backgroundOverride ?? buttonColor;
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
-        img.color = buttonColor;
+        img.color = bg;
 
         var btn = go.AddComponent<Button>();
         btn.targetGraphic = img;
-        RuntimeUiPolish.ApplyButtonTransitions(btn, buttonColor,
+        RuntimeUiPolish.ApplyButtonTransitions(btn, bg,
             RuntimeUiPolish.ButtonNeutralHover,
             new Color(0.12f, 0.13f, 0.16f, 1f));
         RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(1.5f, -2.5f), 0.2f);
@@ -401,6 +438,97 @@ public class LevelSelectController : MonoBehaviour
         LocalizationManager.ApplyTextDirection(backTmp);
 
         btn.onClick.AddListener(() => SceneTransitionHost.LoadSingleScene("Menu"));
+    }
+
+    private void ClearLevelScrollContent()
+    {
+        if (_levelContentRt == null)
+            return;
+        for (int i = _levelContentRt.childCount - 1; i >= 0; i--)
+            Destroy(_levelContentRt.GetChild(i).gameObject);
+        categoryRowLabels.Clear();
+        levelRowLabels.Clear();
+        backToCategoriesTmp = null;
+    }
+
+    private void UpdateLevelScrollMinHeight(int rowCount)
+    {
+        if (_levelContentLayoutElement == null)
+            return;
+        _levelContentLayoutElement.minHeight =
+            rowCount * _levelRowHeight + Mathf.Max(0, rowCount - 1) * _levelRowSpacing + _levelContentPadVertical;
+    }
+
+    /// <param name="scrollToTop">When true, snap scroll after rebuild (e.g. returning from a submenu).</param>
+    private void BuildCategoryView(bool scrollToTop)
+    {
+        _levelPickMode = false;
+        _selectedCategoryIndex = -1;
+        ClearLevelScrollContent();
+
+        for (int c = 0; c < GameLevelCatalog.SelectCategories.Length; c++)
+        {
+            int catIdx = c;
+            var cat = GameLevelCatalog.SelectCategories[c];
+            var tmp = CreateLevelButton(
+                _levelContentRt,
+                LocalizationManager.Get(cat.TitleLocalizationKey, cat.DefaultTitle),
+                () => OpenCategory(catIdx));
+            categoryRowLabels.Add(tmp);
+        }
+
+        UpdateLevelScrollMinHeight(GameLevelCatalog.SelectCategories.Length);
+        RefreshLocalizedStrings();
+        RebuildScrollContent(_levelScroll, _levelContentRt);
+        if (scrollToTop && _levelScroll != null)
+            _levelScroll.verticalNormalizedPosition = 1f;
+        if (isActiveAndEnabled && _levelScroll != null && _levelContentRt != null)
+            StartCoroutine(FinalizeScrollAfterTmpLayout(_levelScroll, _levelContentRt));
+    }
+
+    private void OpenCategory(int categoryIndex)
+    {
+        if (categoryIndex < 0 || categoryIndex >= GameLevelCatalog.SelectCategories.Length)
+            return;
+
+        var cat = GameLevelCatalog.SelectCategories[categoryIndex];
+        BuildLevelViewForCategory(categoryIndex, cat.FirstLevelIndex, cat.LastLevelIndexInclusive);
+    }
+
+    private void BuildLevelViewForCategory(int categoryIndex, int firstLevel, int lastLevel)
+    {
+        _levelPickMode = true;
+        _selectedCategoryIndex = categoryIndex;
+        _levelViewStart = firstLevel;
+        _levelViewEnd = lastLevel;
+        ClearLevelScrollContent();
+
+        Color backTint = new Color(0.15f, 0.17f, 0.24f, 0.96f);
+        backToCategoriesTmp = CreateLevelButton(
+            _levelContentRt,
+            LocalizationManager.Get("ui.level_select.back_categories", "All categories"),
+            () => BuildCategoryView(true),
+            backTint);
+
+        int n = lastLevel - firstLevel + 1;
+        for (int i = 0; i < n; i++)
+        {
+            int idx = firstLevel + i;
+            int capture = idx;
+            var rowTmp = CreateLevelButton(
+                _levelContentRt,
+                GameLevelCatalog.GetLocalizedDisplayName(capture),
+                () => StartGameAt(capture));
+            levelRowLabels.Add(rowTmp);
+        }
+
+        UpdateLevelScrollMinHeight(n + 1);
+        RefreshLocalizedStrings();
+        RebuildScrollContent(_levelScroll, _levelContentRt);
+        if (_levelScroll != null)
+            _levelScroll.verticalNormalizedPosition = 1f;
+        if (isActiveAndEnabled && _levelScroll != null && _levelContentRt != null)
+            StartCoroutine(FinalizeScrollAfterTmpLayout(_levelScroll, _levelContentRt));
     }
 
     private void StartGameAt(int index)

@@ -10,6 +10,25 @@ using UnityEngine;
 /// <summary>
 /// Shared level titles (must match the order built in <see cref="LevelManager"/> sample levels).
 /// </summary>
+/// <summary>Level-select submenu: contiguous level index range (inclusive).</summary>
+public readonly struct LevelSelectCategory
+{
+    public readonly string TitleLocalizationKey;
+    public readonly string DefaultTitle;
+    public readonly int FirstLevelIndex;
+    public readonly int LastLevelIndexInclusive;
+
+    public LevelSelectCategory(string titleLocalizationKey, string defaultTitle, int firstLevelIndex, int lastLevelIndexInclusive)
+    {
+        TitleLocalizationKey = titleLocalizationKey;
+        DefaultTitle = defaultTitle;
+        FirstLevelIndex = firstLevelIndex;
+        LastLevelIndexInclusive = lastLevelIndexInclusive;
+    }
+
+    public int LevelCount => LastLevelIndexInclusive - FirstLevelIndex + 1;
+}
+
 public static class GameLevelCatalog
 {
     /// <summary>Human-readable titles; indices drive LevelSelectController button order.</summary>
@@ -63,6 +82,19 @@ public static class GameLevelCatalog
     };
 
     public static int LevelCount => DisplayNames.Length;
+
+    /// <summary>
+    /// Grouped picker on the Level Select scene (indices must match <see cref="DisplayNames"/> / <see cref="LevelManager"/>).
+    /// </summary>
+    public static readonly LevelSelectCategory[] SelectCategories =
+    {
+        new LevelSelectCategory("level_select.cat.core", "Core & series", 0, 8),
+        new LevelSelectCategory("level_select.cat.integration", "Multivar & integration", 9, 13),
+        new LevelSelectCategory("level_select.cat.engineering", "Engineering", 14, 16),
+        new LevelSelectCategory("level_select.cat.ap_bc", "AP Calculus BC & Physics C", 17, 33),
+        new LevelSelectCategory("level_select.cat.aerospace", "Aerospace", 34, 40),
+        new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 42),
+    };
 
     /// <summary>First index of the contiguous <b>Aerospace:</b> block (must match <see cref="LevelManager"/> sample levels).</summary>
     public const int AerospaceLevelsBeginIndex = 34;

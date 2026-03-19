@@ -47,6 +47,13 @@ public class GraphWorld
 /// </summary>
 public class GraphObstacleGenerator : MonoBehaviour
 {
+    [Header("Fair gaps")]
+    [Tooltip("Derivative-gated hazard columns cannot exceed this many in a row — extra columns become walkable bridges so jumps stay feasible.")]
+    [SerializeField] private int maxConsecutiveDerivativeHazards = 4;
+
+    [Tooltip("When sampling the curve mesh, allow the nearest vertex this far in grid X (wider = fewer missing platforms).")]
+    [SerializeField] private float curveSampleMaxGridDx = 2.35f;
+
     private RectTransform obstaclesRoot;
     private Vector2Int gridSize;
     private float unitWidth;
@@ -105,6 +112,9 @@ public class GraphObstacleGenerator : MonoBehaviour
         float spawnYTop = float.PositiveInfinity;
         bool spawnChosen = false;
 
+        int hazardRun = 0;
+        int maxHazardRun = Mathf.Max(1, maxConsecutiveDerivativeHazards);
+
         // Generate columns.
         for (int col = 0; col < gridSize.x; col++)
         {
@@ -153,15 +163,22 @@ public class GraphObstacleGenerator : MonoBehaviour
             bool forcedSafeEnd = col >= gridSize.x - def.forcePlatformsAtEndColumns;
             bool safe = safeByDerivative || forcedSafeStart || forcedSafeEnd;
 
+            // Long runs of derivative hazards create horizontal chasms the jump arc cannot clear — bridge with a platform.
+            if (!safe && hazardRun >= maxHazardRun)
+                safe = true;
+
             // Skip columns that are completely out of range to avoid off-screen platforms.
             if (!safe)
             {
+                hazardRun++;
                 var hazard = new GridRect(col, col + 1f, 0f, def.hazardHeightGrid);
                 world.hazards.Add(hazard);
                 // Make hazards follow the derivative theme color for stronger readability.
                 CreateRectVisual($"Hazard_{col}", hazard, def.derivativeColor);
                 continue;
             }
+
+            hazardRun = 0;
 
             // Safe platform height based on the curve.
             float platformTop = hasCurve ? yCurve : originY;
@@ -293,7 +310,7 @@ public class GraphObstacleGenerator : MonoBehaviour
         }
 
         // Reject if the nearest sample is too far away (avoids nonsense at extreme edges).
-        if (bestDist > 1.25f)
+        if (bestDist > curveSampleMaxGridDx)
             return false;
 
         if (float.IsNaN(bestY) || float.IsInfinity(bestY))
