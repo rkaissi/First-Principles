@@ -1,0 +1,39 @@
+# Unity project: compile + run Edit Mode tests (if any) via GameCI.
+# Requires repo secret UNITY_LICENSE — see docs/ci.md
+name: Unity
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'First Principles/**'
+      - '.github/workflows/unity.yml'
+  pull_request:
+    paths:
+      - 'First Principles/**'
+      - '.github/workflows/unity.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: unity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-editmode:
+    name: Edit Mode tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: "First Principles"
+          unityVersion: 6000.4.0f1
+          testMode: editmode

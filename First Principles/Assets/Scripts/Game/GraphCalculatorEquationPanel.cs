@@ -1,0 +1,203 @@
+using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// Runtime <see cref="TMP_InputField"/> for graphic calculator mode: user types <c>f(u)</c> (variable <c>x</c> in the formula = inner <c>u</c> after Trans).
+/// </summary>
+public static class GraphCalculatorEquationPanel
+{
+    private const string RootName = "GraphicCalculatorEquationRoot";
+    private const string LegacyRootName = "FaxasEquationInputRoot";
+
+    private static TextMeshProUGUI labelTmp;
+    private static TextMeshProUGUI placeholderTmp;
+    private static TextMeshProUGUI statusTmp;
+
+    public static void Ensure(RectTransform parent, FunctionPlotter plotter, TextMeshProUGUI typographyReference, float bottomY, float panelHeight)
+    {
+        if (parent == null || plotter == null)
+            return;
+        if (GameObject.Find(RootName) != null)
+            return;
+
+        var legacyRoot = GameObject.Find(LegacyRootName);
+        if (legacyRoot != null)
+        {
+            legacyRoot.name = RootName;
+            return;
+        }
+
+        bool tablet = DeviceLayout.IsTabletLike();
+        float w = tablet ? 980f : 900f;
+
+        var root = new GameObject(RootName);
+        var rt = root.AddComponent<RectTransform>();
+        rt.SetParent(parent, false);
+        rt.anchorMin = new Vector2(0.5f, 0f);
+        rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot = new Vector2(0.5f, 0f);
+        rt.anchoredPosition = new Vector2(0f, bottomY);
+        rt.sizeDelta = new Vector2(w, panelHeight);
+
+        var bg = root.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(bg);
+        bg.color = new Color(0.1f, 0.11f, 0.15f, 0.92f);
+        bg.raycastTarget = true;
+
+        var labelGo = new GameObject("Label");
+        var lrt = labelGo.AddComponent<RectTransform>();
+        lrt.SetParent(rt, false);
+        lrt.anchorMin = new Vector2(0f, 1f);
+        lrt.anchorMax = new Vector2(0f, 1f);
+        lrt.pivot = new Vector2(0f, 1f);
+        lrt.anchoredPosition = new Vector2(tablet ? 16f : 12f, -6f);
+        lrt.sizeDelta = new Vector2(220f, 28f);
+        var label = labelGo.AddComponent<TextMeshProUGUI>();
+        label.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
+        label.fontSize = tablet ? 26 : 24;
+        label.alignment = TextAlignmentOptions.MidlineLeft;
+        label.color = new Color(0.85f, 0.88f, 0.95f, 0.9f);
+        CopyFont(label, typographyReference);
+
+        var inputShell = new GameObject("TMP_InputField");
+        var irt = inputShell.AddComponent<RectTransform>();
+        irt.SetParent(rt, false);
+        irt.anchorMin = new Vector2(0f, 0f);
+        irt.anchorMax = new Vector2(1f, 1f);
+        irt.offsetMin = new Vector2(tablet ? 96f : 88f, 10f);
+        irt.offsetMax = new Vector2(-14f, -36f);
+
+        var inputBg = inputShell.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(inputBg);
+        inputBg.color = new Color(0.15f, 0.16f, 0.21f, 0.95f);
+
+        var textArea = new GameObject("Text Area", typeof(RectTransform), typeof(RectMask2D));
+        textArea.transform.SetParent(inputShell.transform, false);
+        var tArt = textArea.GetComponent<RectTransform>();
+        tArt.anchorMin = Vector2.zero;
+        tArt.anchorMax = Vector2.one;
+        tArt.offsetMin = new Vector2(10f, 8f);
+        tArt.offsetMax = new Vector2(-10f, -8f);
+
+        var textGo = new GameObject("Text");
+        var textRt = textGo.AddComponent<RectTransform>();
+        textRt.SetParent(textArea.transform, false);
+        textRt.anchorMin = Vector2.zero;
+        textRt.anchorMax = Vector2.one;
+        textRt.offsetMin = Vector2.zero;
+        textRt.offsetMax = Vector2.zero;
+        var textMesh = textGo.AddComponent<TextMeshProUGUI>();
+        textMesh.text = plotter.customExpression;
+        textMesh.fontSize = tablet ? 24 : 21;
+        textMesh.color = Color.white;
+        textMesh.alignment = TextAlignmentOptions.MidlineLeft;
+        CopyFont(textMesh, typographyReference);
+
+        var phGo = new GameObject("Placeholder");
+        var phRt = phGo.AddComponent<RectTransform>();
+        phRt.SetParent(textArea.transform, false);
+        phRt.anchorMin = Vector2.zero;
+        phRt.anchorMax = Vector2.one;
+        phRt.offsetMin = Vector2.zero;
+        phRt.offsetMax = Vector2.zero;
+        var ph = phGo.AddComponent<TextMeshProUGUI>();
+        ph.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
+        ph.fontSize = tablet ? 24 : 21;
+        ph.color = new Color(1f, 1f, 1f, 0.32f);
+        ph.fontStyle = FontStyles.Italic;
+        ph.alignment = TextAlignmentOptions.MidlineLeft;
+        CopyFont(ph, typographyReference);
+
+        var input = inputShell.AddComponent<TMP_InputField>();
+        input.textComponent = textMesh;
+        input.placeholder = ph;
+        input.textViewport = tArt;
+        input.lineType = TMP_InputField.LineType.SingleLine;
+        input.characterValidation = TMP_InputField.CharacterValidation.None;
+        input.text = plotter.customExpression;
+
+        var statusGo = new GameObject("Status");
+        var srt = statusGo.AddComponent<RectTransform>();
+        srt.SetParent(rt, false);
+        srt.anchorMin = new Vector2(0f, 0f);
+        srt.anchorMax = new Vector2(1f, 0f);
+        srt.pivot = new Vector2(0.5f, 0f);
+        srt.anchoredPosition = new Vector2(0f, 4f);
+        srt.sizeDelta = new Vector2(-24f, 22f);
+        var status = statusGo.AddComponent<TextMeshProUGUI>();
+        status.fontSize = tablet ? 16 : 14;
+        status.alignment = TextAlignmentOptions.Midline;
+        status.color = new Color(0.75f, 0.92f, 0.8f, 0.95f);
+        status.richText = true;
+        status.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
+        CopyFont(status, typographyReference);
+
+        labelTmp = label;
+        placeholderTmp = ph;
+        statusTmp = status;
+        LocalizationManager.ApplyTextDirection(labelTmp);
+        LocalizationManager.ApplyTextDirection(placeholderTmp);
+        LocalizationManager.ApplyTextDirection(statusTmp);
+        LocalizationManager.LanguageChanged -= RefreshEquationPanelStaticCopy;
+        LocalizationManager.LanguageChanged += RefreshEquationPanelStaticCopy;
+
+        void Apply(string s)
+        {
+            string t = string.IsNullOrWhiteSpace(s) ? "" : s.Trim();
+            if (string.IsNullOrEmpty(t))
+                return;
+
+            if (!MathExpressionEvaluator.TryValidateRough(t, out string err))
+            {
+                status.text = $"<color=#ff9a9a>{TmpEscape(err)}</color>";
+                return;
+            }
+
+            status.text = LocalizationManager.Get("graph.status_graphed", "<color=#8fd9b3>Graphed</color>");
+            plotter.SetCustomExpression(t);
+        }
+
+        input.onSubmit.AddListener(Apply);
+        input.onEndEdit.AddListener(Apply);
+    }
+
+    private static void RefreshEquationPanelStaticCopy()
+    {
+        if (labelTmp != null)
+        {
+            labelTmp.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
+            LocalizationManager.ApplyTextDirection(labelTmp);
+        }
+        if (placeholderTmp != null)
+        {
+            placeholderTmp.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
+            LocalizationManager.ApplyTextDirection(placeholderTmp);
+        }
+        if (statusTmp != null && statusTmp.text.IndexOf("#ff9a9a", StringComparison.Ordinal) < 0)
+        {
+            statusTmp.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
+            LocalizationManager.ApplyTextDirection(statusTmp);
+        }
+    }
+
+    private static string TmpEscape(string s)
+    {
+        if (string.IsNullOrEmpty(s))
+            return "";
+        return s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    }
+
+    private static void CopyFont(TextMeshProUGUI target, TextMeshProUGUI reference)
+    {
+        if (reference != null && reference.font != null)
+        {
+            target.font = reference.font;
+            if (reference.fontSharedMaterial != null)
+                target.fontSharedMaterial = reference.fontSharedMaterial;
+        }
+        else if (TMP_Settings.defaultFontAsset != null)
+            target.font = TMP_Settings.defaultFontAsset;
+    }
+}

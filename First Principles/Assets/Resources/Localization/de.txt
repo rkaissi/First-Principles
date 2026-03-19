@@ -1,0 +1,78 @@
+# Deutsch
+ui.choose_stage=Graph-Phase wählen
+ui.math_tips=Mathe-Tipps & Kurzinfos
+ui.back_menu=Zum Menü
+ui.graphic_calculator_mode=Grafikrechner-Modus
+ui.loading=Laden…
+ui.language=Sprache
+ui.tap_change_language=Tippen zum Wechseln
+ui.close=Schließen
+ui.math_concepts=Mathe-Konzepte
+ui.jump=Sprung
+ui.move=Bewegen
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(Tastatur: Pfeile / Leertaste)</color></size>
+hud.stage=PHASE
+controls.mobile=<color=#7a8399>Bewegen</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Sprung</color>  <b><color=#ffd978>Tipp</color></b>  <size=90%><color=#5c6577>(Tastatur: Pfeile / Leertaste)</color></size>
+controls.desktop=<color=#7a8399>Bewegen</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Sprung</color>  <b><color=#ffd978>Leertaste</color></b>
+controls.calculator=<color=#7a8399>Grafikrechner</color>  <b>f(u) eingeben</b>  ·  <b>Trans</b>  ·  <b>Maßstab</b>  ·  <b>Pinch</b>  ·  <b>Zurück</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) für x>0 · min(x,3)...
+graph.status_enter=Eingabe / außerhalb tippen zum Zeichnen
+graph.status_graphed=<color=#8fd9b3>Gezeichnet</color>
+graph.line1=<b>Grafikrechner-Modus</b>
+graph.line2=<size=88%><color=#c4d0e8>Geben Sie unten <b>f(u)</b> ein (Variable <b>x</b> im Feld = inneres u). Dann:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · Doppeltipp <b>+</b> · halten <b>−</b> · <b>Maßstab</b> hereinzoomen / halten herauszoomen · Zweifinger-<b>Pinch</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x in [{4},{5}]</color></size>
+graph.param_a=A (vertikaler Maßstab)
+graph.param_k=k (horizontaler Maßstab)
+graph.param_c=C (vertikale Verschiebung)
+graph.param_d=D (horizontale Verschiebung)
+graph.calculator_intro=<b>Grafikrechner-Modus</b>\n<size=88%>Geben Sie fast beliebiges <b>f(u)</b> ein (Variable <b>x</b> in Ihrer Formel); <b>Trans</b> stellt A, k, C, D ein; <b>Maßstab</b> und <b>Pinch</b> zoomen das Fenster.</size>
+footer.proprietary=© 2022-2026 · Proprietär · Alle Rechte vorbehalten · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=Stolze Absolventen der <b>Garth Webb Secondary School</b>, Oakville.
+footer.support=Vier Jahre Entwicklung — wenn Ihnen diese Arbeit etwas bedeutet, unterstützen Sie das Projekt. Danke.
+footer.unity=Erstellt mit <b>Unity</b>. Unity ist eine Marke der Unity Technologies.
+level.0=Einstieg: Erste Prinzipien
+level.1=Steigung der Parabel
+level.2=Sinuswellen
+level.3=Kosinusschatten
+level.4=Betragspfad
+level.5=Maclaurin: e^x
+level.6=Maclaurin: sin(x)
+level.7=Reihe: geometrischer Rest
+level.8=Sattelschnitt (mehrere Var.)
+level.9=Paraboloidschnitt (mehrere Var.)
+level.10=Fläche unter der Kurve
+level.11=Riemann: linke Endpunkte
+level.12=Riemann: rechte Endpunkte
+level.13=Riemann: Mittelpunktsregel
+level.14=Technik: gedämpfte Schwingung
+level.15=Technik: Kettenlinie (cosh)
+level.16=Technik: gleichgerichtete AC (|sin|)
+level.17=BC: arctan & inverse Trig.
+level.18=BC: logistisches Wachstum (dP/dt = kP(1−P/L))
+level.19=Polar: Kardioide r ~ 1+cos θ
+level.20=Polar: Rose r ~ cos(nθ)
+level.21=BC: sinh x & Hyperbelfunktionen
+level.22=Physik C: exponentieller Zerfall (τ, RC)
+level.23=Physik C: Drehimpuls & L = Iω
+level.24=Physik C: Wurfhöhe y(t)
+level.25=BC: Maclaurin cos(x)
+level.26=BC: ln x & ∫ dx/x
+level.27=BC: √x & Definitionsbereich / Spitze
+level.28=BC: tan x zwischen Asymptoten
+level.29=BC: e^{kx} & y′ = ky
+level.30=BC: Phase & SHM (Energie)
+level.31=BC: Kubik & Wendepunkt (Skizze)
+level.32=BC: b^x & d/dx b^x
+level.33=Kreis: (x−h)² + (y−k)² = R²
+level.34=Luftfahrt: Auftrieb C_L(α) linear + Strömungsabriss
+level.35=Luftfahrt: parabolische Widerstandspolare C_D(C_L)
+level.36=Luftfahrt: isotherme Atmosphäre ρ(h)
+level.37=Luftfahrt: Phugoid / gedämpfte Nick-Hubbewegung
+level.38=Luftfahrt: newtonsch Cp ~ sin²α
+level.39=Luftfahrt: Strouhal / Wirbelabwurf-Ton
+level.40=Luftfahrt: Wiedereintritts-Hülle (ρV Erwärmung)
+level.41=Wettkampf: ln, Krümmung & Schranken
+level.42=BOSS: Mandelbrot-Escapeschnitt (Fraktal)

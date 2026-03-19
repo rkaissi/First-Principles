@@ -1,0 +1,42 @@
+# Build Jekyll documentation (GitHub Pages source under /docs).
+# No secrets required.
+name: Documentation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  jekyll-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: docs
+
+      - name: Jekyll build
+        run: bundle exec jekyll build --destination ./_site

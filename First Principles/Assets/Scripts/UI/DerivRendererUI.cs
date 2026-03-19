@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Same rendering approach as <see cref="LineRendererUI"/> but used for numeric derivative samples.
+/// Tint/thickness animated by <see cref="DerivativePopAnimator"/> during stage transitions.
+/// </summary>
 public class DerivRendererUI : Graphic
 {
     public Vector2Int gridSize;

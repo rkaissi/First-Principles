@@ -1,0 +1,78 @@
+# 日本語
+ui.choose_stage=グラフのステージを選ぶ
+ui.math_tips=数学のヒント
+ui.back_menu=メニューへ戻る
+ui.graphic_calculator_mode=グラフ電卓モード
+ui.loading=読み込み中…
+ui.language=言語
+ui.tap_change_language=タップで切替
+ui.close=閉じる
+ui.math_concepts=数学コンセプト
+ui.jump=ジャンプ
+ui.move=移動
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>（キーボード：矢印／スペース）</color></size>
+hud.stage=ステージ
+controls.mobile=<color=#7a8399>移動</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>ジャンプ</color>  <b><color=#ffd978>タップ</color></b>  <size=90%><color=#5c6577>（キーボード：矢印／スペース）</color></size>
+controls.desktop=<color=#7a8399>移動</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>ジャンプ</color>  <b><color=#ffd978>スペース</color></b>
+controls.calculator=<color=#7a8399>グラフ電卓</color>  <b>f(u) を入力</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>ピンチ</b>  ·  <b>戻る</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) （x>0）· min(x,3)...
+graph.status_enter=Enter／外側タップでグラフ描画
+graph.status_graphed=<color=#8fd9b3>描画済み</color>
+graph.line1=<b>グラフ電卓モード</b>
+graph.line2=<size=88%><color=#c4d0e8>下に<b>f(u)</b>を入力（欄内の変数<b>x</b>は内側の u）。次に：</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · ダブルタップ <b>+</b> · 長押し <b>−</b> · <b>Scale</b> はタップで拡大／長押しで縮小 · 2本指<b>ピンチ</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x は [{4},{5}]</color></size>
+graph.param_a=A（縦スケール）
+graph.param_k=k（横スケール）
+graph.param_c=C（縦シフト）
+graph.param_d=D（横シフト）
+graph.calculator_intro=<b>グラフ電卓モード</b>\n<size=88%>ほぼ任意の<b>f(u)</b>を入力（式の変数<b>x</b>）；<b>Trans</b>で A,k,C,D を調整；<b>Scale</b>と<b>ピンチ</b>でウィンドウをズーム。</size>
+footer.proprietary=© 2022-2026 · 無断複製禁止 · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=<b>Garth Webb Secondary School</b>（オークビル）の誇り高き卒業生。
+footer.support=4年の開発 — よろしければプロジェクトを支援してください。ありがとうございます。
+footer.unity=<b>Unity</b>で制作。Unity は Unity Technologies の商標です。
+level.0=ファーストプリンシプル入門
+level.1=放物線の傾き
+level.2=サイン波
+level.3=コサインの陰
+level.4=絶対値の道
+level.5=マクローリン：e^x
+level.6=マクローリン：sin(x)
+level.7=級数：幾何級数の尾部
+level.8=サドル断面（多変数）
+level.9=放物面断面（多変数）
+level.10=曲線下の面積
+level.11=リーマン：左端点
+level.12=リーマン：右端点
+level.13=リーマン：中点公式
+level.14=工学：減衰振動
+level.15=工学：カテナリー（cosh）
+level.16=工学：整流AC（|sin|）
+level.17=BC：arctanと逆三角関数
+level.18=BC：ロジスティック成長（dP/dt = kP(1−P/L)）
+level.19=極座標：カージオイド r ~ 1+cos θ
+level.20=極座標：バラ曲線 r ~ cos(nθ)
+level.21=BC：sinh xと双曲線関数
+level.22=物理C：指数減衰（τ, RC）
+level.23=物理C：角運動量と L = Iω
+level.24=物理C：投射体の高さ y(t)
+level.25=BC：マクローリン cos(x)
+level.26=BC：ln x と ∫ dx/x
+level.27=BC：√x と定義域／カスプ
+level.28=BC：漸近線間の tan x
+level.29=BC：e^{kx} と y′ = ky
+level.30=BC：位相と単振動（エネルギー）
+level.31=BC：三次関数と変曲点（スケッチ）
+level.32=BC：b^x と d/dx b^x
+level.33=円：(x−h)² + (y−k)² = R²
+level.34=航空：揚力C_L(α) 線形＋失速
+level.35=航空：放物型抗力極曲線 C_D(C_L)
+level.36=航空：等温大気 ρ(h)
+level.37=航空：フゴイド／減衰ピッチ・上下動
+level.38=航空：ニュートン流 Cp ~ sin²α
+level.39=航空：ストルーハル／渦放出音
+level.40=航空：再突入減衰包絡線（ρV加熱）
+level.41=競技数学：ln、凹性と境界
+level.42=BOSS：マンデルブロ脱出断面（フラクタル）

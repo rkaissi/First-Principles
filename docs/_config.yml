@@ -1,0 +1,42 @@
+# Jekyll / GitHub Pages (publish from Settings → Pages → Branch: main, folder /docs)
+# Fix baseurl to match your repo name if different.
+title: "First Principles"
+description: "Beta 1.0 — Interactive Unity graphing calculator and derivative-driven platformer — documentation"
+url: "https://gamegenesis.github.io"
+baseurl: "/First-Principles"
+
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Kramdown options (LaTeX \(…\) / \[…\] is passed through for MathJax in _includes/custom-head.html)
+kramdown:
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Minima 3.x navigation (adds top links on the generated site)
+header_pages:
+  - index.md
+  - setup.md
+  - gameplay.md
+  - first-principles-business.md
+  - math-concepts.md
+  - competition-math.md
+  - amc-10-12.md
+  - engineering-math.md
+  - architecture.md
+  - ci.md
+  - troubleshooting.md
+
+# Minima skin (optional): dark, classic, solarized, solarized-dark
+# minima:
+#   skin: dark
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md

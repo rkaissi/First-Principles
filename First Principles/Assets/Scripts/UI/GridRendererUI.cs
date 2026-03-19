@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Draws the Cartesian grid behind graphs. gridSize drives Layout; LevelManager may tint centerLine/outsideLine per level.
+/// Paired with <see cref="LabelManager"/> for axis tick labels in editor/play.
+/// </summary>
 public class GridRendererUI : Graphic
 {
     public Vector2Int gridSize = new Vector2Int(2, 2);

@@ -1,17 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// -----------------------------------------------------------------------------
+// LevelDefinition — Data container for one playable graph stage
+// -----------------------------------------------------------------------------
+// Used in two ways: (1) CreateAssetMenu .asset files in the editor, (2) runtime
+// ScriptableObject.CreateInstance in LevelManager.MakeLevel. Keep field semantics in
+// sync with LevelManager.ApplyLevelTheme and GraphObstacleGenerator.GenerateWorld.
+// -----------------------------------------------------------------------------
+
 /// <summary>
 /// Defines a single stage: which curve to plot, what colors to use, and how the derivative
-/// should influence gameplay (safe vs hazard/gaps), plus the story text.
+/// should influence gameplay (safe vs hazard/gaps), plus story text and optional Riemann UX.
 /// </summary>
 [CreateAssetMenu(menuName = "FirstPrinciples/Level Definition", fileName = "LevelDefinition")]
 public class LevelDefinition : ScriptableObject
 {
     [Header("Identity")]
     public string levelName = "Stage";
-    [TextArea(2, 6)]
+    [TextArea(4, 12)]
     public string storyText = "Follow the curve. Watch the derivative.";
+    [Tooltip("Extra seconds the story stays readable after fading in (0 = use LevelManager default).")]
+    public float storyPauseSeconds = 0f;
 
     [Header("Graph Parameters (FunctionPlotter)")]
     public FunctionType functionType = FunctionType.Power;
@@ -53,6 +63,32 @@ public class LevelDefinition : ScriptableObject
 
     [Tooltip("X trigger positions (grid units, relative to left edge of the graph) where we pop the derivative.")]
     public List<float> stageTriggerX = new List<float>();
+
+    [Header("Level flow (optional)")]
+    [Tooltip("How many derivative-pop boundaries to use (0 = LevelManager default).")]
+    public int derivativePopTriggerCount = 0;
+
+    [Tooltip("Tint the background grid to match this level’s mood.")]
+    public bool applyGridTheming = false;
+
+    public Color gridCenterLineTheming = new Color(1f, 1f, 1f, 0.39f);
+    public Color gridOutsideLineTheming = new Color(1f, 1f, 1f, 0.14f);
+
+    [Header("Riemann sums & area under the curve")]
+    [Tooltip("Left / right / midpoint sample for rectangles and optional stair platforms.")]
+    public RiemannRule riemannRule = RiemannRule.None;
+
+    [Tooltip("Number of subintervals n (rectangles). Larger n → closer to ∫ f dx.")]
+    [Min(1)]
+    public int riemannRectCount = 16;
+
+    [Tooltip("Fill rectangles from the x-axis to f(x*) in the graph plane.")]
+    public bool showRiemannVisualization = false;
+
+    [Tooltip("Platforms are flat per subinterval at the Riemann sample height (step terrain under the curve).")]
+    public bool useRiemannStairPlatforms = false;
+
+    public Color riemannFillColor = new Color(0.25f, 0.55f, 0.95f, 0.32f);
 
     public void EnsureDefaultStagePopData(int stageCount)
     {

@@ -1,8 +1,19 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+// =============================================================================
+// PlayerControllerUI2D — UI RectTransform “character” in graph grid space
+// =============================================================================
+// Simulation runs in abstract grid units (same as GraphWorld / GridRect). Each frame:
+//   • Reads horizontal intent (keys → axis → MobileInputBridge touch cluster).
+//   • Applies gravity, resolves AABB vs platforms, hazards, fall death Y, finish band.
+// Visual position maps grid → pixels via unitWidth/Height from LevelManager.
+// =============================================================================
+
+/// <summary>Side-scroller controller built for uGUI under the Cartesian plane.</summary>
 public class PlayerControllerUI2D : MonoBehaviour
 {
     [Header("Movement (Grid Units)")]
@@ -90,6 +101,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         this.finishCallback = finishCallback;
     }
 
+    /// <summary>Integrate movement, resolve collisions, invoke death/finish callbacks.</summary>
     private void Update()
     {
         if (world == null || playerRect == null)
@@ -100,11 +112,18 @@ public class PlayerControllerUI2D : MonoBehaviour
 
         float dt = Time.deltaTime;
 
-        // Input -> velocity.
-        float inputX = Input.GetAxisRaw("Horizontal");
+        // Movement: keyboard (arrows / WASD), gamepad stick, then on-screen touch bridge.
+        float inputX = ReadHorizontalInput();
+        if (Mathf.Approximately(inputX, 0f))
+            inputX = MobileInputBridge.TouchHorizontal;
+
         velGrid.x = inputX * moveSpeedGridPerSec;
 
-        if (grounded && Input.GetButtonDown("Jump"))
+        bool jumpPressed = ReadJumpPressed();
+        if (!jumpPressed)
+            jumpPressed = MobileInputBridge.ConsumeJump();
+
+        if (grounded && jumpPressed)
         {
             velGrid.y = jumpVelocityGridPerSec;
             grounded = false;
@@ -146,6 +165,52 @@ public class PlayerControllerUI2D : MonoBehaviour
         ApplyVisualPosition();
     }
 
+    private static float ReadHorizontalInput()
+    {
+        float inputX = 0f;
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.leftArrowKey.isPressed || kb.aKey.isPressed)
+                inputX -= 1f;
+            if (kb.rightArrowKey.isPressed || kb.dKey.isPressed)
+                inputX += 1f;
+        }
+
+        if (Mathf.Approximately(inputX, 0f))
+        {
+            var gp = Gamepad.current;
+            if (gp != null)
+            {
+                float lx = gp.leftStick.x.ReadValue();
+                if (Mathf.Abs(lx) > 0.5f)
+                    inputX = Mathf.Sign(lx);
+                else if (Mathf.Abs(lx) > 0.12f)
+                    inputX = lx;
+            }
+        }
+
+        return inputX;
+    }
+
+    private static bool ReadJumpPressed()
+    {
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.spaceKey.wasPressedThisFrame ||
+                kb.wKey.wasPressedThisFrame ||
+                kb.upArrowKey.wasPressedThisFrame)
+                return true;
+        }
+
+        var gp = Gamepad.current;
+        if (gp != null && gp.buttonSouth.wasPressedThisFrame)
+            return true;
+
+        return false;
+    }
+
     private void ResolveHorizontalPlatforms(ref Vector2 pos)
     {
         float halfW = playerWidthGrid / 2f;
@@ -178,6 +243,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         }
     }
 
+    /// <summary>Land on platform tops when falling; bonk head when rising through thin solids.</summary>
     private void ResolveVerticalPlatforms(Vector2 prevPos, ref Vector2 pos, ref bool groundedOut)
     {
         groundedOut = false;

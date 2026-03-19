@@ -1,6 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Legacy / optional music cross-fade helper (SceneFader references are commented out).
+/// Singleton pattern via static <c>musicplay</c>; extend with your own track list if re-enabling.
+/// </summary>
 public class AudioManager : MonoBehaviour
 {
     private AudioSource[] _audioSources;

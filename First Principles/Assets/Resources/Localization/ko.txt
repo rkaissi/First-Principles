@@ -1,0 +1,78 @@
+# 한국어
+ui.choose_stage=그래프 스테이지 선택
+ui.math_tips=수학 팁 모음
+ui.back_menu=메뉴로
+ui.graphic_calculator_mode=그래픽 계산기 모드
+ui.loading=불러오는 중…
+ui.language=언어
+ui.tap_change_language=탭하여 변경
+ui.close=닫기
+ui.math_concepts=수학 개념
+ui.jump=점프
+ui.move=이동
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(키보드: 방향키 / 스페이스)</color></size>
+hud.stage=스테이지
+controls.mobile=<color=#7a8399>이동</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>점프</color>  <b><color=#ffd978>탭</color></b>  <size=90%><color=#5c6577>(키보드: 방향키 / 스페이스)</color></size>
+controls.desktop=<color=#7a8399>이동</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>점프</color>  <b><color=#ffd978>스페이스</color></b>
+controls.calculator=<color=#7a8399>그래픽 계산기</color>  <b>f(u) 입력</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>핀치</b>  ·  <b>뒤로</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) (x>0) · min(x,3)...
+graph.status_enter=Enter / 바깥 탭으로 그래프
+graph.status_graphed=<color=#8fd9b3>그래프 완료</color>
+graph.line1=<b>그래픽 계산기 모드</b>
+graph.line2=<size=88%><color=#c4d0e8>아래에 <b>f(u)</b> 입력(상자 안 변수 <b>x</b> = 내부 u). 그다음:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · 더블탭 <b>+</b> · 길게 <b>−</b> · <b>Scale</b> 탭 확대 / 길게 축소 · 두 손가락 <b>핀치</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
+graph.param_a=A (세로 스케일)
+graph.param_k=k (가로 스케일)
+graph.param_c=C (세로 이동)
+graph.param_d=D (가로 이동)
+graph.calculator_intro=<b>그래픽 계산기 모드</b>\n<size=88%>거의 모든 <b>f(u)</b> 입력(식의 변수 <b>x</b>); <b>Trans</b>로 A,k,C,D 조절; <b>Scale</b>·<b>핀치</b>로 창 확대.</size>
+footer.proprietary=© 2022-2026 · 무단 복제 금지 · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=<b>Garth Webb Secondary School</b>, Oakville 졸업생들이 자랑스럽습니다.
+footer.support=4년간의 개발 — 이 작품이 가치 있다면 프로젝트를 응원해 주세요. 감사합니다.
+footer.unity=<b>Unity</b>로 제작. Unity는 Unity Technologies의 상표입니다.
+level.0=첫 원리 입문
+level.1=포물선의 기울기
+level.2=사인 물결
+level.3=코사인의 그림자
+level.4=절대값 경로
+level.5=매클로린: e^x
+level.6=매클로린: sin(x)
+level.7=급수: 기하 꼬리
+level.8=안장 단면 (다변수)
+level.9=포물면 단면 (다변수)
+level.10=곡선 아래 면적
+level.11=리만: 왼쪽 끝점
+level.12=리만: 오른쪽 끝점
+level.13=리만: 중점 공식
+level.14=공학: 감쇠 진동
+level.15=공학: 현수선 (cosh)
+level.16=공학: 정류 AC (|sin|)
+level.17=BC: 아크탄젠트와 역삼각
+level.18=BC: 로지스틱 성장 (dP/dt = kP(1−P/L))
+level.19=극좌표: 카디오이드 r ~ 1+cos θ
+level.20=극좌표: 장미 r ~ cos(nθ)
+level.21=BC: sinh x와 쌍곡선 함수
+level.22=물리C: 지수 감쇠 (τ, RC)
+level.23=물리C: 각운동량과 L = Iω
+level.24=물리C: 포물선 높이 y(t)
+level.25=BC: 매클로린 cos(x)
+level.26=BC: ln x와 ∫ dx/x
+level.27=BC: √x와 정의역/뾰족점
+level.28=BC: 점근선 사이 tan x
+level.29=BC: e^{kx}와 y′ = ky
+level.30=BC: 위상과 단진동 (에너지)
+level.31=BC: 삼차함수와 변곡점 (스케치)
+level.32=BC: b^x와 d/dx b^x
+level.33=원: (x−h)² + (y−k)² = R²
+level.34=항공: 양력 C_L(α) 선형 및 실속
+level.35=항공: 포물형 항극곡선 C_D(C_L)
+level.36=항공: 등온 대기 ρ(h)
+level.37=항공: 퓨고이드 / 감쇠 피치-헤이브
+level.38=항공: 뉴턴 Cp ~ sin²α
+level.39=항공: 스트루할 / 와류 방출 음
+level.40=항공: 재진입 감쇠 포락선 (ρV 가열)
+level.41=경시: ln, 오목성과 경계
+level.42=보스: 만델브로 탈출 단면 (프랙탈)
