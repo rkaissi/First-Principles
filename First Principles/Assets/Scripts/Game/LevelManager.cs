@@ -37,17 +37,7 @@ public class LevelManager : MonoBehaviour
     private List<Color> stagePopColors;
 
     private bool isRestarting;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void Bootstrap()
-    {
-        var existing = FindObjectOfType<LevelManager>();
-        if (existing != null)
-            return;
-
-        var go = new GameObject("LevelManager");
-        go.AddComponent<LevelManager>();
-    }
+    private Coroutine storyFadeRoutine;
 
     private void Awake()
     {
@@ -63,7 +53,8 @@ public class LevelManager : MonoBehaviour
     {
         SetupReferences();
         BuildSampleLevels();
-        LoadLevel(0);
+        int startIndex = LevelSelection.ConsumeSelectedLevel(levels.Count);
+        LoadLevel(startIndex);
     }
 
     private void SetupReferences()
@@ -84,8 +75,13 @@ public class LevelManager : MonoBehaviour
         if (cartesianPlaneRect == null)
             cartesianPlaneRect = curveRenderer.GetComponent<RectTransform>();
 
-        obstacleGenerator = gameObject.AddComponent<GraphObstacleGenerator>();
-        popAnimator = gameObject.AddComponent<DerivativePopAnimator>();
+        obstacleGenerator = GetComponent<GraphObstacleGenerator>();
+        if (obstacleGenerator == null)
+            obstacleGenerator = gameObject.AddComponent<GraphObstacleGenerator>();
+
+        popAnimator = GetComponent<DerivativePopAnimator>();
+        if (popAnimator == null)
+            popAnimator = gameObject.AddComponent<DerivativePopAnimator>();
         popAnimator.SetTarget(derivRenderer);
 
         CreateObstaclesRootIfNeeded();
@@ -204,7 +200,7 @@ public class LevelManager : MonoBehaviour
 
         // Stage parameters are tuned to fit within the current UI grid range.
         levels.Add(MakeLevel(
-            "Slope of Parabola",
+            GameLevelCatalog.DisplayNames[0],
             FunctionType.Power,
             curveColor: new Color(0.9f, 0.3f, 1f, 1f),
             derivativeColor: new Color(1f, 0.76f, 0.1f, 1f),
@@ -219,7 +215,7 @@ public class LevelManager : MonoBehaviour
         ));
 
         levels.Add(MakeLevel(
-            "Waves of Sine",
+            GameLevelCatalog.DisplayNames[1],
             FunctionType.Sine,
             curveColor: new Color(0.2f, 1f, 0.7f, 1f),
             derivativeColor: new Color(0.2f, 0.8f, 1f, 1f),
@@ -234,7 +230,7 @@ public class LevelManager : MonoBehaviour
         ));
 
         levels.Add(MakeLevel(
-            "Shadows of Cosine",
+            GameLevelCatalog.DisplayNames[2],
             FunctionType.Cosine,
             curveColor: new Color(1f, 0.6f, 0.2f, 1f),
             derivativeColor: new Color(0.9f, 0.2f, 0.6f, 1f),
@@ -249,7 +245,7 @@ public class LevelManager : MonoBehaviour
         ));
 
         levels.Add(MakeLevel(
-            "Absolute Path",
+            GameLevelCatalog.DisplayNames[3],
             FunctionType.Absolute,
             curveColor: new Color(0.4f, 0.7f, 1f, 1f),
             derivativeColor: new Color(1f, 0.15f, 0.15f, 1f),
@@ -307,6 +303,7 @@ public class LevelManager : MonoBehaviour
             def.stageDerivativePopColors.Add(Color.Lerp(derivativeColor, Color.white, 0.35f * t));
         }
 
+        def.storyText = story;
         return def;
     }
 
@@ -363,8 +360,9 @@ public class LevelManager : MonoBehaviour
         if (storyText != null)
         {
             storyText.text = def.storyText;
-            StopCoroutine(nameof(FadeStoryTextRoutine));
-            StartCoroutine(FadeStoryTextRoutine());
+            if (storyFadeRoutine != null)
+                StopCoroutine(storyFadeRoutine);
+            storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());
         }
     }
 

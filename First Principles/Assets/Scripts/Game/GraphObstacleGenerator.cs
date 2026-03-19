@@ -109,7 +109,8 @@ public class GraphObstacleGenerator : MonoBehaviour
             {
                 var hazard = new GridRect(col, col + 1f, 0f, def.hazardHeightGrid);
                 world.hazards.Add(hazard);
-                CreateRectVisual($"Hazard_{col}", hazard, new Color(1f, 0.15f, 0.15f, 1f));
+                // Make hazards follow the derivative theme color for stronger readability.
+                CreateRectVisual($"Hazard_{col}", hazard, def.derivativeColor);
                 continue;
             }
 
@@ -133,12 +134,12 @@ public class GraphObstacleGenerator : MonoBehaviour
         if (!spawnChosen && world.platforms.Count > 0)
         {
             // Fallback: spawn on the first platform.
-            spawnXGrid = world.platforms[0].xMin + 0.5f;
+            world.spawnXGrid = world.platforms[0].xMin + 0.5f;
             spawnYTop = world.platforms[0].yMax;
         }
         else
         {
-            spawnXGrid = spawnCol + 0.5f;
+            world.spawnXGrid = spawnCol + 0.5f;
         }
 
         world.spawnYTopGrid = spawnYTop;
