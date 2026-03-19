@@ -2,7 +2,7 @@
 ui.choose_stage=그래프 스테이지 선택
 ui.math_tips=수학 팁 모음
 ui.back_menu=메뉴로
-ui.graphic_calculator_mode=그래픽 계산기 모드
+ui.graphic_calculator_mode=그래픽 계산기
 ui.loading=불러오는 중…
 ui.language=언어
 ui.tap_change_language=탭하여 변경
@@ -28,11 +28,7 @@ graph.param_k=k (가로 스케일)
 graph.param_c=C (세로 이동)
 graph.param_d=D (가로 이동)
 graph.calculator_intro=<b>그래픽 계산기 모드</b>\n<size=88%>거의 모든 <b>f(u)</b> 입력(식의 변수 <b>x</b>); <b>Trans</b>로 A,k,C,D 조절; <b>Scale</b>·<b>핀치</b>로 창 확대.</size>
-footer.proprietary=© 2022-2026 · 무단 복제 금지 · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=<b>Garth Webb Secondary School</b>, Oakville 졸업생들이 자랑스럽습니다.
-footer.support=4년간의 개발 — 이 작품이 가치 있다면 프로젝트를 응원해 주세요. 감사합니다.
-footer.unity=<b>Unity</b>로 제작. Unity는 Unity Technologies의 상표입니다.
+menu.home_footer=<b>First Principles</b> <color=#555555>(version 1.0)</color>\n\n<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
 level.0=첫 원리 입문
 level.1=포물선의 기울기
 level.2=사인 물결

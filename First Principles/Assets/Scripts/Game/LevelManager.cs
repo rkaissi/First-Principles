@@ -243,6 +243,38 @@ public class LevelManager : MonoBehaviour
         // Wire callbacks.
         playerController.SetDeathCallback(RestartCurrentLevel);
         playerController.SetFinishCallback(AdvanceLevel);
+        ConfigureGameBackButtonDestination();
+    }
+
+    /// <summary>
+    /// Graphic calculator is entered from the main menu only — back returns to <b>Menu</b>.
+    /// Levels use back to <b>LevelSelect</b> (scene default is replaced here for clarity).
+    /// </summary>
+    private void ConfigureGameBackButtonDestination()
+    {
+        var backGo = GameObject.Find("BackButton");
+        if (backGo == null)
+            return;
+        var btn = backGo.GetComponent<Button>();
+        if (btn == null)
+            return;
+
+        btn.onClick.RemoveAllListeners();
+        var fader = FindAnyObjectByType<SceneFader>();
+        if (graphCalculatorMode)
+        {
+            if (fader != null)
+                btn.onClick.AddListener(fader.LoadMenu);
+            else
+                btn.onClick.AddListener(() => SceneManager.LoadScene("Menu"));
+        }
+        else
+        {
+            if (fader != null)
+                btn.onClick.AddListener(fader.LoadLevelSelect);
+            else
+                btn.onClick.AddListener(() => SceneManager.LoadScene("LevelSelect"));
+        }
     }
 
     /// <summary>

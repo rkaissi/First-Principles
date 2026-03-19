@@ -4,7 +4,7 @@
 ui.choose_stage=Choose a graph stage
 ui.math_tips=Math tips & snippets
 ui.back_menu=Back to Menu
-ui.graphic_calculator_mode=Graphic calculator mode
+ui.graphic_calculator_mode=Graphic calculator
 ui.loading=Loading…
 ui.language=Language
 ui.tap_change_language=Tap to change
@@ -30,11 +30,7 @@ graph.param_k=k (horizontal scale)
 graph.param_c=C (vertical shift)
 graph.param_d=D (horizontal shift)
 graph.calculator_intro=<b>Graphic calculator mode</b>\n<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>
-footer.proprietary=© 2022-2026 · Proprietary · All rights reserved · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=Proud graduates of <b>Garth Webb Secondary School</b>, Oakville.
-footer.support=Four years of development — if you value this work, please support the project. Thank you.
-footer.unity=Made with <b>Unity</b>. Unity is a trademark of Unity Technologies.
+menu.home_footer=<b>First Principles</b> <color=#555555>(version 1.0)</color>\n\n<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
 level.0=First Principles Primer
 level.1=Slope of Parabola
 level.2=Waves of Sine

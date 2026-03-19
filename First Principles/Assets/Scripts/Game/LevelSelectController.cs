@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
@@ -24,7 +23,6 @@ public class LevelSelectController : MonoBehaviour
     private TextMeshProUGUI titleTmp;
     private TextMeshProUGUI mathTipsTmp;
     private TextMeshProUGUI backTmp;
-    private TextMeshProUGUI graphicCalculatorEntryTmp;
     private TextMeshProUGUI levelSelectLangTmp;
     private readonly System.Collections.Generic.List<TextMeshProUGUI> levelRowLabels = new System.Collections.Generic.List<TextMeshProUGUI>();
 
@@ -55,12 +53,6 @@ public class LevelSelectController : MonoBehaviour
             backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
             LocalizationManager.ApplyTextDirection(backTmp);
         }
-        if (graphicCalculatorEntryTmp != null)
-        {
-            graphicCalculatorEntryTmp.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
-            LocalizationManager.ApplyTextDirection(graphicCalculatorEntryTmp);
-        }
-
         for (int i = 0; i < levelRowLabels.Count; i++)
         {
             var tmp = levelRowLabels[i];
@@ -179,12 +171,10 @@ public class LevelSelectController : MonoBehaviour
 
         float rowH = tablet ? 92f : 84f;
         float spacingY = tablet ? 20f : 18f;
-        int rowCount = GameLevelCatalog.LevelCount + 1;
+        int rowCount = GameLevelCatalog.LevelCount;
         int padVertical = vlg.padding.top + vlg.padding.bottom;
         var contentLe = contentGo.AddComponent<LayoutElement>();
         contentLe.minHeight = rowCount * rowH + Mathf.Max(0, rowCount - 1) * spacingY + padVertical;
-
-        graphicCalculatorEntryTmp = CreateLevelButton(contentRt, LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode"), LaunchGraphCalculator);
 
         for (int i = 0; i < GameLevelCatalog.LevelCount; i++)
         {
@@ -382,7 +372,7 @@ public class LevelSelectController : MonoBehaviour
         rt.anchorMax = Vector2.zero;
         rt.pivot = Vector2.zero;
         rt.sizeDelta = new Vector2(tablet ? 220f : 195f, tablet ? 50f : 46f);
-        rt.anchoredPosition = new Vector2(margin, margin);
+        rt.anchoredPosition = new Vector2(margin, margin + 14f);
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -411,65 +401,12 @@ public class LevelSelectController : MonoBehaviour
         CopyFontFromAny(backTmp);
         LocalizationManager.ApplyTextDirection(backTmp);
 
-        btn.onClick.AddListener(() => StartCoroutine(LoadSceneRoutine("Menu")));
+        btn.onClick.AddListener(() => SceneTransitionHost.LoadSingleScene("Menu"));
     }
 
     private void StartGameAt(int index)
     {
         LevelSelection.SetSelectedLevel(index);
-        StartCoroutine(LoadSceneRoutine("Game"));
-    }
-
-    private static void LaunchGraphCalculator()
-    {
-        GraphCalculatorSession.RequestEnterFromMenu();
-        var ctrl = FindAnyObjectByType<LevelSelectController>();
-        if (ctrl != null)
-            ctrl.StartCoroutine(ctrl.LoadSceneRoutine("Game"));
-        else
-            SceneManager.LoadScene("Game");
-    }
-
-    private IEnumerator LoadSceneRoutine(string sceneName)
-    {
-        var canvas = FindAnyObjectByType<Canvas>();
-        var parentRt = canvas != null
-            ? MobileUiRoots.GetSafeContentParent(canvas.transform) as RectTransform ?? canvas.transform as RectTransform
-            : null;
-
-        GameObject veil = null;
-        if (parentRt != null)
-        {
-            veil = new GameObject("SceneLoadingVeil");
-            var vrt = veil.AddComponent<RectTransform>();
-            vrt.SetParent(parentRt, false);
-            vrt.SetAsLastSibling();
-            vrt.anchorMin = Vector2.zero;
-            vrt.anchorMax = Vector2.one;
-            vrt.offsetMin = Vector2.zero;
-            vrt.offsetMax = Vector2.zero;
-
-            var dim = veil.AddComponent<Image>();
-            dim.color = new Color(0.05f, 0.06f, 0.09f, 0.88f);
-            dim.raycastTarget = true;
-
-            var labelGo = new GameObject("LoadingText");
-            var lrt = labelGo.AddComponent<RectTransform>();
-            lrt.SetParent(veil.transform, false);
-            lrt.anchorMin = new Vector2(0.5f, 0.5f);
-            lrt.anchorMax = new Vector2(0.5f, 0.5f);
-            lrt.sizeDelta = new Vector2(720f, 120f);
-            var tmp = labelGo.AddComponent<TextMeshProUGUI>();
-            tmp.text = LocalizationManager.Get("ui.loading", "Loading…");
-            tmp.fontSize = 40;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = new Color(0.94f, 0.96f, 1f, 0.96f);
-            tmp.textWrappingMode = TextWrappingModes.NoWrap;
-            tmp.raycastTarget = false;
-            CopyFontFromAny(tmp);
-            LocalizationManager.ApplyTextDirection(tmp);
-        }
-
-        yield return AsyncSceneLoader.LoadCoroutine(sceneName);
+        SceneTransitionHost.LoadSingleScene("Game");
     }
 }

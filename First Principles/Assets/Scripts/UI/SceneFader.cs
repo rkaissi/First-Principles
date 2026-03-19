@@ -169,7 +169,7 @@ public class SceneFader : MonoBehaviour
     {
         if (graphicCalculatorMenuButtonText != null)
         {
-            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator");
             LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         }
 
@@ -178,6 +178,17 @@ public class SceneFader : MonoBehaviour
             menuLanguageButtonLabel.text =
                 $"{LocalizationManager.Get("ui.language", "Language")}: {LocalizationManager.GetLanguagePickerLabel(LocalizationManager.CurrentLanguage)}";
             LocalizationManager.ApplyTextDirection(menuLanguageButtonLabel);
+        }
+
+        if (string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
+        {
+            var creditsGo = GameObject.Find("MenuCreditsBlock");
+            var creditsTmp = creditsGo != null ? creditsGo.GetComponent<TextMeshProUGUI>() : null;
+            if (creditsTmp != null)
+            {
+                creditsTmp.text = LocalizationManager.Get("menu.home_footer", SceneCreditsFooter.HomeFooterDefault);
+                LocalizationManager.ApplyTextDirection(creditsTmp);
+            }
         }
     }
 
@@ -205,7 +216,8 @@ public class SceneFader : MonoBehaviour
         rt.anchorMax = playRt.anchorMax;
         rt.pivot = playRt.pivot;
         rt.sizeDelta = playRt.sizeDelta;
-        rt.anchoredPosition = playRt.anchoredPosition + new Vector2(0f, 168f);
+        // Former "Exit" slot: mirror Play button on the right (Play is at x=-180, exit was x=+180).
+        rt.anchoredPosition = playRt.anchoredPosition + new Vector2(360f, 0f);
 
         var playImg = play.GetComponent<Image>();
         var img = go.AddComponent<Image>();
@@ -236,7 +248,7 @@ public class SceneFader : MonoBehaviour
 
         graphicCalculatorMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
         bool tablet = DeviceLayout.IsTabletLike();
-        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator");
         graphicCalculatorMenuButtonText.fontSize = tablet ? 30 : 26;
         graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
         graphicCalculatorMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);

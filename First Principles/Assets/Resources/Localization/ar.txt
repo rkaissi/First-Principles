@@ -2,7 +2,7 @@
 ui.choose_stage=اختر مرحلة الرسم
 ui.math_tips=نصائح وقصاصات رياضية
 ui.back_menu=العودة للقائمة
-ui.graphic_calculator_mode=وضع آلة الرسوم البيانية
+ui.graphic_calculator_mode=آلة حاسبة رسومية
 ui.loading=جارٍ التحميل…
 ui.language=اللغة
 ui.tap_change_language=اضغط للتبديل
@@ -28,11 +28,7 @@ graph.param_k=k (مقياس أفقي)
 graph.param_c=C (إزاحة عمودية)
 graph.param_d=D (إزاحة أفقية)
 graph.calculator_intro=<b>وضع آلة الرسوم البيانية</b>\n<size=88%>اكتب تقريبًا أي <b>f(u)</b> (المتغير <b>x</b> في صيغتك)؛ <b>Trans</b> يضبط A و k و C و D؛ <b>Scale</b> و<b>القرصة</b> تكبّران النافذة.</size>
-footer.proprietary=© 2022-2026 · ملكية خاصة · جميع الحقوق محفوظة · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=خريجو <b>Garth Webb Secondary School</b> في أوكفيل، نفتخر بذلك.
-footer.support=أربع سنوات من التطوير — إن أعجبك العمل، يُرجى دعم المشروع. شكرًا.
-footer.unity=صُنع باستخدام <b>Unity</b>. Unity علامة تجارية لشركة Unity Technologies.
+menu.home_footer=<b>First Principles</b> <color=#555555>(version 1.0)</color>\n\n<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
 level.0=مقدمة المبادئ الأولى
 level.1=ميل قطع مكافئ
 level.2=أمواج الجيب

@@ -76,14 +76,12 @@ public class GraphObstacleGenerator : MonoBehaviour
         for (int i = obstaclesRoot.childCount - 1; i >= 0; i--)
         {
             var child = obstaclesRoot.GetChild(i);
-            if (child != null && child.name.StartsWith("Platform", System.StringComparison.OrdinalIgnoreCase))
+            if (child == null)
+                continue;
+            if (child.name.StartsWith("Platform", System.StringComparison.OrdinalIgnoreCase) ||
+                child.name.StartsWith("Hazard", System.StringComparison.OrdinalIgnoreCase) ||
+                child.name.StartsWith("FinishExitGradient", System.StringComparison.OrdinalIgnoreCase))
                 Destroy(child.gameObject);
-            else if (child != null && child.name.StartsWith("Hazard", System.StringComparison.OrdinalIgnoreCase))
-                Destroy(child.gameObject);
-            else
-            {
-                // For safety, do not remove arbitrary children.
-            }
         }
 
         var world = new GraphWorld();
@@ -197,7 +195,46 @@ public class GraphObstacleGenerator : MonoBehaviour
         if (float.IsPositiveInfinity(spawnYTop) && world.platforms.Count > 0)
             spawnYTop = world.platforms[0].yMax;
         world.spawnYTopGrid = spawnYTop;
+
+        CreateFinishExitGradient(world.finish);
         return world;
+    }
+
+    /// <summary>
+    /// Sky-blue horizontal gradient on the far right so the exit / finish band reads clearly.
+    /// Drawn above platforms (last sibling); player is parented to the plane, not this root.
+    /// </summary>
+    private void CreateFinishExitGradient(GridRect finishBand)
+    {
+        if (obstaclesRoot == null)
+            return;
+
+        const float fadeWidthGrid = 2.85f;
+        float xMax = finishBand.xMax;
+        float xMin = Mathf.Max(0f, xMax - fadeWidthGrid);
+        var rect = new GridRect(xMin, xMax, 0f, gridSize.y);
+
+        float pxX = rect.xMin * unitWidth;
+        float pxY = rect.yMin * unitHeight;
+        float pxW = (rect.xMax - rect.xMin) * unitWidth;
+        float pxH = (rect.yMax - rect.yMin) * unitHeight;
+
+        var go = new GameObject("FinishExitGradient");
+        go.transform.SetParent(obstaclesRoot, false);
+        go.transform.SetAsLastSibling();
+
+        var rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.zero;
+        rt.pivot = Vector2.zero;
+        rt.anchoredPosition = new Vector2(pxX, pxY);
+        rt.sizeDelta = new Vector2(pxW, pxH);
+
+        var grad = go.AddComponent<UiHorizontalGradientGraphic>();
+        grad.raycastTarget = false;
+        grad.SetGradientColors(
+            new Color(0.58f, 0.88f, 1f, 0f),
+            new Color(0.32f, 0.74f, 0.98f, 0.52f));
     }
 
     private static bool IsFiniteFloat(float v) => !float.IsNaN(v) && !float.IsInfinity(v);
