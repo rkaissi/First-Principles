@@ -172,8 +172,85 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.Sine => transA * (Mathf.Sin(u) + transC),
             FunctionType.Cosine => transA * (Mathf.Cos(u) + transC),
             FunctionType.Tangent => transA * (Mathf.Tan(u) + transC),
+
+            // Maclaurin (Taylor at 0) partial sums — `power` = number of nonzero terms beyond constant where applicable.
+            FunctionType.MaclaurinExpSeries => transA * (MaclaurinExpPartialSum(u, power) + transC),
+            FunctionType.MaclaurinSinSeries => transA * (MaclaurinSinPartialSum(u, power) + transC),
+            FunctionType.MaclaurinCosSeries => transA * (MaclaurinCosPartialSum(u, power) + transC),
+
+            // Geometric series partial sum Σ u^k, k=0..power — avoid |u|≥1 for stability in view.
+            FunctionType.GeometricSeriesPartial => transA * (GeometricPartialSum(u, power) + transC),
+
+            // Multivariable "slices": fix y0 = transC, plot z along x — u = transK*(x - transD). (transD is x-phase only.)
+            FunctionType.MultivarParaboloidSlice => transA * (u * u + transC * transC),
+            FunctionType.MultivarSaddleSlice => transA * (u * u - transC * transC),
+
             _ => 0f
         };
+    }
+
+    /// <summary>e^u ≈ Σ_{k=0}^{N} u^k/k!</summary>
+    private static float MaclaurinExpPartialSum(float u, int maxDegree)
+    {
+        maxDegree = Mathf.Clamp(maxDegree, 0, 18);
+        float sum = 0f;
+        float term = 1f;
+        sum += term;
+        for (int k = 1; k <= maxDegree; k++)
+        {
+            term *= u / k;
+            sum += term;
+            if (!IsFinite(sum)) break;
+        }
+        return sum;
+    }
+
+    /// <summary>sin u ≈ Σ (-1)^n u^{2n+1}/(2n+1)! up to n = maxN.</summary>
+    private static float MaclaurinSinPartialSum(float u, int maxN)
+    {
+        maxN = Mathf.Clamp(maxN, 0, 12);
+        float sum = 0f;
+        float term = u;
+        sum += term;
+        for (int n = 1; n <= maxN; n++)
+        {
+            term *= -u * u / ((2f * n) * (2f * n + 1f));
+            sum += term;
+            if (!IsFinite(sum)) break;
+        }
+        return sum;
+    }
+
+    /// <summary>cos u ≈ Σ (-1)^n u^{2n}/(2n)! up to n = maxN.</summary>
+    private static float MaclaurinCosPartialSum(float u, int maxN)
+    {
+        maxN = Mathf.Clamp(maxN, 0, 12);
+        float sum = 0f;
+        float term = 1f;
+        sum += term;
+        for (int n = 1; n <= maxN; n++)
+        {
+            term *= -u * u / ((2f * n - 1f) * (2f * n));
+            sum += term;
+            if (!IsFinite(sum)) break;
+        }
+        return sum;
+    }
+
+    /// <summary>Σ_{k=0}^{N} u^k for N = maxPower (geometric partial sum).</summary>
+    private static float GeometricPartialSum(float u, int maxPower)
+    {
+        maxPower = Mathf.Clamp(maxPower, 0, 24);
+        float sum = 0f;
+        float uPow = 1f;
+        sum += uPow;
+        for (int k = 1; k <= maxPower; k++)
+        {
+            uPow *= u;
+            sum += uPow;
+            if (!IsFinite(sum)) break;
+        }
+        return sum;
     }
 
     private static bool IsFinite(float f) => !(float.IsNaN(f) || float.IsInfinity(f));
@@ -218,6 +295,24 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.Tangent:
                 equationText.text = $"f(x) = {a}*(tan({k}*(x - {d})) + ({c}))";
                 break;
+            case FunctionType.MaclaurinExpSeries:
+                equationText.text = $"Maclaurin P_{power}[e^u], u={k}(x-{d}), N={power} terms";
+                break;
+            case FunctionType.MaclaurinSinSeries:
+                equationText.text = $"Maclaurin P_{power}[sin u], u={k}(x-{d})";
+                break;
+            case FunctionType.MaclaurinCosSeries:
+                equationText.text = $"Maclaurin P_{power}[cos u], u={k}(x-{d})";
+                break;
+            case FunctionType.GeometricSeriesPartial:
+                equationText.text = $"Sum u^k, k=0..{power}, u={k}(x-{d})";
+                break;
+            case FunctionType.MultivarParaboloidSlice:
+                equationText.text = $"z = {a}·( u^2 + y0^2 ), u={k}(x-{d}), y0={c}  — paraboloid";
+                break;
+            case FunctionType.MultivarSaddleSlice:
+                equationText.text = $"z = {a}·( u^2 - y0^2 ), u={k}(x-{d}), y0={c}  — saddle";
+                break;
             default:
                 equationText.text = "f(x)";
                 break;
@@ -227,7 +322,26 @@ public class FunctionPlotter : MonoBehaviour
 
 public enum FunctionType
 {
-    Power, Absolute, Exponential, NaturalExp, Log, NaturalLog, SquareRoot, Sine, Cosine, Tangent
+    Power,
+    Absolute,
+    Exponential,
+    NaturalExp,
+    Log,
+    NaturalLog,
+    SquareRoot,
+    Sine,
+    Cosine,
+    Tangent,
+
+    // Infinite series / Taylor–Maclaurin (partial sums)
+    MaclaurinExpSeries,
+    MaclaurinSinSeries,
+    MaclaurinCosSeries,
+    GeometricSeriesPartial,
+
+    // Multivariable surfaces as 1D slices (fixed y₀ = transC, δ = transD shift)
+    MultivarParaboloidSlice,
+    MultivarSaddleSlice
 }
 
 /* 

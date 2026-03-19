@@ -1,16 +1,21 @@
 using UnityEngine;
 
 /// <summary>
-/// Shared level titles (must match the order built in LevelManager sample levels).
+/// Shared level titles (must match the order built in <see cref="LevelManager"/> sample levels).
 /// </summary>
 public static class GameLevelCatalog
 {
     public static readonly string[] DisplayNames =
     {
+        "First Principles Primer",
         "Slope of Parabola",
         "Waves of Sine",
         "Shadows of Cosine",
-        "Absolute Path"
+        "Absolute Path",
+        "Maclaurin: e^x",
+        "Series: geometric tail",
+        "Saddle slice (multivar)",
+        "Paraboloid slice (multivar)"
     };
 
     public static int LevelCount => DisplayNames.Length;

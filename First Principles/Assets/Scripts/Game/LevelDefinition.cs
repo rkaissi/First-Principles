@@ -10,8 +10,10 @@ public class LevelDefinition : ScriptableObject
 {
     [Header("Identity")]
     public string levelName = "Stage";
-    [TextArea(2, 6)]
+    [TextArea(4, 12)]
     public string storyText = "Follow the curve. Watch the derivative.";
+    [Tooltip("Extra seconds the story stays readable after fading in (0 = use LevelManager default).")]
+    public float storyPauseSeconds = 0f;
 
     [Header("Graph Parameters (FunctionPlotter)")]
     public FunctionType functionType = FunctionType.Power;
@@ -53,6 +55,16 @@ public class LevelDefinition : ScriptableObject
 
     [Tooltip("X trigger positions (grid units, relative to left edge of the graph) where we pop the derivative.")]
     public List<float> stageTriggerX = new List<float>();
+
+    [Header("Level flow (optional)")]
+    [Tooltip("How many derivative-pop boundaries to use (0 = LevelManager default).")]
+    public int derivativePopTriggerCount = 0;
+
+    [Tooltip("Tint the background grid to match this level’s mood.")]
+    public bool applyGridTheming = false;
+
+    public Color gridCenterLineTheming = new Color(1f, 1f, 1f, 0.39f);
+    public Color gridOutsideLineTheming = new Color(1f, 1f, 1f, 0.14f);
 
     public void EnsureDefaultStagePopData(int stageCount)
     {

@@ -32,6 +32,11 @@ public class LevelManager : MonoBehaviour
     private TextMeshProUGUI controlsHintText;
     private int lastStageHudKey = int.MinValue;
     private Sprite cachedHudPanelSprite;
+    private float storyMiddlePauseSeconds = 1.65f;
+
+    private bool gridThemeBaselineCaptured;
+    private Color savedGridCenterLine;
+    private Color savedGridOutsideLine;
 
     private readonly List<LevelDefinition> levels = new List<LevelDefinition>();
     private int currentLevelIndex;
