@@ -74,7 +74,7 @@ You don’t need complex numbers to enjoy this repo—but if you keep studying *
 | **Drag polar** | \(C_D = C_{D0} + K C_L^2\) | *Aerospace: parabolic drag polar* |
 | **Atmosphere** | \(\rho(h) \propto e^{-h/H}\) (isothermal cartoon) | *Aerospace: isothermal atmosphere ρ(h)* |
 | **Longitudinal modes** | Damped oscillation (phugoid / short-period mood) | *Aerospace: phugoid / damped pitch–heave mood* |
-| **Hypersonic teaching** | \(C_p \propto \sin^2\alpha\) (Newtonian impact) | *Aerospace: Newtonian Cp ∝ sin²α* |
+| **Hypersonic teaching** | \(C_p \propto \sin^{2}\alpha\) (Newtonian impact) | *Aerospace: Newtonian \(C_p \propto \sin^{2}\alpha\)* |
 | **Unsteady shedding** | Strouhal \(f \sim \mathrm{St}\, U/D\) → periodic trace | *Aerospace: Strouhal / vortex shedding tone* |
 | **Entry / heating mood** | Exponential decay envelope for simplified threat histories | *Aerospace: re-entry decay envelope* |
 

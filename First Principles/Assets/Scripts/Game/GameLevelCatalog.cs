@@ -58,6 +58,7 @@ public static class GameLevelCatalog
         "Aerospace: Newtonian Cp ∝ sin²α",
         "Aerospace: Strouhal / vortex shedding tone",
         "Aerospace: re-entry decay envelope (ρV heating mood)",
+        "Competition math: ln, concavity & bound tricks",
         "BOSS: Mandelbrot escape slice (fractal boundary mood)"
     };
 

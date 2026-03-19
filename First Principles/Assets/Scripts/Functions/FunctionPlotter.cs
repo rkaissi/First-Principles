@@ -390,103 +390,107 @@ public class FunctionPlotter : MonoBehaviour
         switch (type)
         {
             case FunctionType.Power:
-                equationText.text = $"f(x) = {a}*(({k}*(x - {d}))^{power} + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\cdot\left({k}(x-{d})\right)^{{{power}}} + {c}\)";
                 break;
             case FunctionType.Absolute:
-                equationText.text = $"f(x) = {a}*(|{k}*(x - {d})| + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\left|{k}(x-{d})\right| + {c}\right)\)";
                 break;
             case FunctionType.Exponential:
-                equationText.text = $"f(x) = {a}*({baseN}^({k}*(x - {d})) + ({c}))";
+                // transA* (baseN^(k(x-d)) + c)
+                equationText.text = $@"\(f(x) = {a}\left({baseN}^{{{k}(x-{d})}} + {c}\right)\)";
                 break;
             case FunctionType.NaturalExp:
-                equationText.text = $"f(x) = {a}*(e^({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(e^{{{k}(x-{d})}} + {c}\right)\)";
                 break;
             case FunctionType.Log:
-                equationText.text = $"f(x) = {a}*(log10({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\log_{10}\!\left({k}(x-{d})\right) + {c}\right)\)";
                 break;
             case FunctionType.NaturalLog:
-                equationText.text = $"f(x) = {a}*(ln({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\ln\left({k}(x-{d})\right) + {c}\right)\)";
                 break;
             case FunctionType.SquareRoot:
-                equationText.text = $"f(x) = {a}*(sqrt({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\sqrt{{{k}(x-{d})}} + {c}\right)\)";
                 break;
             case FunctionType.Sine:
-                equationText.text = $"f(x) = {a}*(sin({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\sin\left({k}(x-{d})\right) + {c}\right)\)";
                 break;
             case FunctionType.Cosine:
-                equationText.text = $"f(x) = {a}*(cos({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\cos\left({k}(x-{d})\right) + {c}\right)\)";
                 break;
             case FunctionType.Tangent:
-                equationText.text = $"f(x) = {a}*(tan({k}*(x - {d})) + ({c}))";
+                equationText.text = $@"\(f(x) = {a}\left(\tan\left({k}(x-{d})\right) + {c}\right)\)";
                 break;
             case FunctionType.MaclaurinExpSeries:
-                equationText.text = $"Maclaurin P_{power}[e^u], u={k}(x-{d}), N={power} terms";
+                equationText.text = $@"\(P_{{{power}}}[e^{{u}}],\; u={k}(x-{d})\)"; 
                 break;
             case FunctionType.MaclaurinSinSeries:
-                equationText.text = $"Maclaurin P_{power}[sin u], u={k}(x-{d})";
+                equationText.text = $@"\(P_{{{power}}}[\sin u],\; u={k}(x-{d})\)";
                 break;
             case FunctionType.MaclaurinCosSeries:
-                equationText.text = $"Maclaurin P_{power}[cos u], u={k}(x-{d})";
+                equationText.text = $@"\(P_{{{power}}}[\cos u],\; u={k}(x-{d})\)";
                 break;
             case FunctionType.GeometricSeriesPartial:
-                equationText.text = $"Sum u^k, k=0..{power}, u={k}(x-{d})";
+                equationText.text = $@"\(\sum_{{j=0}}^{{{power}}} u^{{j}},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.MultivarParaboloidSlice:
-                equationText.text = $"z = {a}·( u^2 + y0^2 ), u={k}(x-{d}), y0={c}  — paraboloid";
+                equationText.text = $@"\(z={a}\left(u^{2}+y_{{0}}^{2}\right),\; u={k}(x-{d}),\; y_{{0}}={c}\)";
                 break;
             case FunctionType.MultivarSaddleSlice:
-                equationText.text = $"z = {a}·( u^2 - y0^2 ), u={k}(x-{d}), y0={c}  — saddle";
+                equationText.text = $@"\(z={a}\left(u^{2}-y_{{0}}^{2}\right),\; u={k}(x-{d}),\; y_{{0}}={c}\)";
                 break;
             case FunctionType.DampedOscillator:
-                equationText.text = $"f(x) = {a}·e^(−α|u|)·sin(ωu) + ({c}), u={k}(x-{d})";
+                equationText.text = $@"\(f={a}\, e^{{-\alpha|u|}}\sin(\omega u)+{c},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.HyperbolicCosine:
-                equationText.text = $"f(x) = {a}·(cosh(u) + ({c})), u={k}(x-{d}) — catenary model";
+                equationText.text = $@"\(f={a}\left(\cosh(u)+{c}\right),\; u={k}(x-{d})\)";
                 break;
             case FunctionType.FullWaveRectifiedSine:
-                equationText.text = $"f(x) = {a}·(|sin(u)| + ({c})), u={k}(x-{d})";
+                equationText.text = $@"\(f={a}\left(\left|\sin u\right|+{c}\right),\; u={k}(x-{d})\)";
                 break;
             case FunctionType.Arctangent:
-                equationText.text = $"f(x) = {a}·arctan(u) + ({c}), u={k}(x-{d})";
+                equationText.text = $@"\(f={a}\arctan(u)+{c},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.Logistic:
-                equationText.text = $"Logistic S-curve: L≈{a}, u={k}(x-{d}), steepness∝{baseN}";
+                equationText.text = $@"\(\text{{Logistic}},\; L\approx{a},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.HyperbolicSine:
-                equationText.text = $"f(x) = {a}·sinh(u) + ({c}), u={k}(x-{d})";
+                equationText.text = $@"\(f={a}\sinh(u)+{c},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.ExponentialDecay:
-                equationText.text = $"f(x) = {a}·e^(−{k}|u|) + ({c}), u={k}(x-{d})";
+                equationText.text = $@"\(f={a}\, e^{{-{k}|u|}}+{c},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.PolarCardioid:
-                equationText.text = $"Polar: r ∝ (1+cos θ); θ↔ u={k}(x-{d})";
+                equationText.text = $@"\(r \propto 1+\cos\theta,\; \theta\leftrightarrow u={k}(x-{d})\)";
                 break;
             case FunctionType.PolarRose:
-                equationText.text = $"Polar: r ∝ cos({power}·θ); θ↔ u={k}(x-{d})";
+                equationText.text = $@"\(r \propto \cos({power}\theta),\; \theta\leftrightarrow u={k}(x-{d})\)";
                 break;
             case FunctionType.CircleUpper:
-                equationText.text = $"Upper arc: u² + (y−{c})² = {a}², u={k}(x−{d}), R=|{a}|";
+                equationText.text = $@"\(u^{2}+(y-{c})^{2}={a}^{2}\ \text{{(upper)}},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.AeroLiftVsAlpha:
-                equationText.text = $"Aero: C_L(α) linear+stall model, slope≈{a}, u={k}(x-{d})";
+                equationText.text = $@"\(C_L(\alpha)\ \text{{stall model}},\; \text{{slope}}\approx {a},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.AeroIsothermalDensity:
-                equationText.text = $"Aero: ρ/ρ₀ ∝ e^(−h/H), u={k}(x-{d}), H⁻¹∝{baseN}";
+                equationText.text = $@"\(\rho/\rho_0 \propto e^{{-h/H}},\; u={k}(x-{d}),\; H^{{-1}}\propto {baseN}\)";
                 break;
             case FunctionType.AeroNewtonianSinSquared:
-                equationText.text = $"Aero: Cp ∝ sin²α, u={k}(x-{d}), scale {a}";
+                equationText.text = $@"\(C_p \propto \sin^{{2}}\alpha,\; u={k}(x-{d})\)";
                 break;
             case FunctionType.MandelbrotEscapeImSlice:
                 equationText.text =
-                    $"<b>Mandelbrot slice</b> · h ∝ escape-time · c = ({a}) + i·u, u={k}(x−{d}) · symmetry |Im| · maxIter={power}";
+                    $@"<b>\(\text{{Mandelbrot slice}}\)</b> \(h\propto\text{{escape-time}},\; c=({a})+\mathrm{{i}}u,\; u={k}(x-{d}),\; N={power}\)";
                 break;
             default:
-                equationText.text = "f(x)";
+                equationText.text = @"\(f(x)\)";
                 break;
         }
 
         if (!string.IsNullOrEmpty(equationExtraSuffix))
             equationText.text += $"\n<size=85%><color=#a8b2d1>{equationExtraSuffix}</color></size>";
+
+        if (equationText != null)
+            equationText.text = TmpLatex.Process(equationText.text);
     }
 }
 

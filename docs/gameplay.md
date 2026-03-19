@@ -25,7 +25,7 @@ Titles are built at runtime from **`GameLevelCatalog.DisplayNames`** (order matc
 | Engineering | Damped oscillation, catenary (cosh), full-wave rectified sine `|sin(x)|` |
 | AP BC + polar | Arctan, logistic, Maclaurin cos, ln & √x, tan window, e^{kx}, cubic sketching, b^x; polar cardioid & rose; **circle** (upper semicircle / implicit form) |
 | Physics C | Exponential decay (τ / RC), projectile parabola, angular momentum / L = Iω (SHM framing) |
-| **Aerospace** | Lift C_L(α) + stall, drag polar, isothermal ρ(h), phugoid/damped mode, Newtonian sin²α, Strouhal sine, re-entry decay envelope |
+| **Aerospace** | Lift \(C_L(\alpha)\) + stall, drag polar, isothermal \(\rho(h)\), phugoid/damped mode, Newtonian \(\sin^{2}\alpha\), Strouhal sine, re-entry decay envelope |
 
 Open **Math tips & snippets** on the level-select screen for **short article text** plus **separate** blocks for **TMUA**, **MAT**, **AP Calculus BC**, and **AP Physics C**. Longer notes: **`docs/math-concepts.md`**, **`docs/engineering-math.md`**, **`docs/tmua-calculus.md`**, **`docs/mat-calculus.md`**, **`docs/ap-calculus-bc.md`**, **`docs/ap-physics-c.md`**.
 

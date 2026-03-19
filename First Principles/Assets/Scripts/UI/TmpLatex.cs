@@ -211,6 +211,8 @@ public static class TmpLatex
         s = ReplaceTrig(s, @"\tanh", "tanh");
         s = ReplaceTrig(s, @"\sin", "sin");
         s = ReplaceTrig(s, @"\cos", "cos");
+        s = ReplaceTrig(s, @"\arctan", "arctan");
+        s = ReplaceTrig(s, @"\atan", "arctan");
         s = ReplaceTrig(s, @"\tan", "tan");
         s = ReplaceTrig(s, @"\cot", "cot");
         s = ReplaceTrig(s, @"\sec", "sec");

@@ -1541,6 +1541,28 @@ public class LevelManager : MonoBehaviour
 
         levels.Add(MakeLevel(
             GameLevelCatalog.DisplayNames[41],
+            FunctionType.NaturalLog,
+            curveColor: new Color(0.42f, 0.88f, 0.96f, 1f),
+            derivativeColor: new Color(0.98f, 0.62f, 0.32f, 1f),
+            transA: 0.58f,
+            transK: 0.26f,
+            transC: -1.92f,
+            transD: -1.85f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Competition mathematics</b> — contests like <color=#7dd3fc>AMC / AIME</color> and proof‑style olympiads reward <i>structure</i>: symmetry, bounding, and knowing when a function is <b>concave or convex</b>.\n\n" +
+                "The natural log is <color=#fdba74>concave on (0,∞)</color> — **chords lie below the graph**, tangents lie above on one side — a factory of **linear bounds** (tangents & secants) used in inequalities and “prove bound” problems.\n\n" +
+                "<size=92%><color=#a8b2d1>Your feet follow \\(\\ln\\) on a shifted domain; the derivative plot mirrors \\(1/x\\) behavior — the same reciprocal intuition behind many integral estimates. Not affiliated with MAA or any contest body.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.14f, 0.38f, 0.46f, 0.38f),
+            gridOutside: new Color(0.1f, 0.26f, 0.32f, 0.11f),
+            storyPauseSecondsOverride: 2.85f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[42],
             FunctionType.MandelbrotEscapeImSlice,
             curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
             derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),

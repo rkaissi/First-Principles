@@ -2,6 +2,8 @@
 
 This folder is the **Jekyll** source for **GitHub Pages**.
 
+**Developed by [John Wonmo Seong](https://github.com/wonmor) (ORCH AEROSPACE) and [Rayan Kaissi](https://github.com/rkaissi/) (GAME GENESIS).** See repo root [`CREDITS.md`](../CREDITS.md) and [`LICENSE`](../LICENSE).
+
 ## Enable Pages
 
 1. GitHub → **Settings** → **Pages**
@@ -20,6 +22,8 @@ bundle exec jekyll serve
 ```
 
 Open `http://127.0.0.1:4000/First-Principles/` (adjust for your `baseurl`).
+
+**Math:** Markdown pages may use LaTeX in `\(...\)` / `\[...\]`; see [`setup.md#latex-math-on-the-doc-site`](setup.md#latex-math-on-the-doc-site).
 
 ## Contents
 

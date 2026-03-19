@@ -79,3 +79,12 @@ bundle exec jekyll serve
 ```
 
 Browse to `http://localhost:4000/First-Principles/` (include `baseurl` path if configured).
+
+## LaTeX math on the doc site
+
+Pages load **MathJax 3** via [`_includes/custom-head.html`](_includes/custom-head.html). In Markdown, use standard delimiters, for example:
+
+- Inline: `\( f'(x) \)` → \( f'(x) \)
+- Display: `\[ \int_a^b f(x)\,dx \]` or `$$ \sum_{k=0}^{n} a_k $$`
+
+The **Unity game** does not run MathJax; it uses `TmpLatex` to turn the same `\(\cdots\)` delimiters into **TextMesh Pro** rich text (subset: fractions, sub/sup, Greek, common operators). Keep in-game strings in that format when you want pretty equations.
