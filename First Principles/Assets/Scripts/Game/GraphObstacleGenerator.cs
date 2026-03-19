@@ -214,7 +214,7 @@ public class GraphObstacleGenerator : MonoBehaviour
         }
 
         // Fallback: any sprite-backed Image.
-        var allImages = FindObjectsOfType<Image>();
+        var allImages = FindObjectsByType<Image>(FindObjectsSortMode.None);
         foreach (var img in allImages)
         {
             if (img != null && img.sprite != null)

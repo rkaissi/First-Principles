@@ -24,7 +24,7 @@ public class LabelManager : MonoBehaviour
 
     private void Awake()
     {
-        gridRenderer = FindObjectOfType<GridRendererUI>();
+        gridRenderer = FindFirstObjectByType<GridRendererUI>();
     }
 
     private void Start()

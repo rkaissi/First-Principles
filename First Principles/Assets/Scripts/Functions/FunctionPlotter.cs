@@ -83,14 +83,17 @@ public class FunctionPlotter : MonoBehaviour
 
     public void RefreshGrid()
     {
-        FindObjectOfType<GridRendererUI>().enabled = false;
-        FindObjectOfType<GridRendererUI>().enabled = true;
+        var grid = FindFirstObjectByType<GridRendererUI>();
+        if (grid == null)
+            return;
+        grid.enabled = false;
+        grid.enabled = true;
     }
 
     private void PlotFunction(FunctionType type)
     {
-        lineRenderer = FindObjectOfType<LineRendererUI>();
-        derivRenderer = FindObjectOfType<DerivRendererUI>();
+        lineRenderer = FindFirstObjectByType<LineRendererUI>();
+        derivRenderer = FindFirstObjectByType<DerivRendererUI>();
 
         if (lineRenderer != null)
         {

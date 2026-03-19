@@ -42,7 +42,7 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         // Keep things single-scene: if another instance somehow appears, destroy it.
-        if (FindObjectsOfType<LevelManager>().Length > 1)
+        if (FindObjectsByType<LevelManager>(FindObjectsSortMode.None).Length > 1)
         {
             Destroy(gameObject);
             return;
@@ -59,10 +59,10 @@ public class LevelManager : MonoBehaviour
 
     private void SetupReferences()
     {
-        functionPlotter = FindObjectOfType<FunctionPlotter>();
-        curveRenderer = FindObjectOfType<LineRendererUI>();
-        derivRenderer = FindObjectOfType<DerivRendererUI>();
-        gridRenderer = FindObjectOfType<GridRendererUI>();
+        functionPlotter = FindFirstObjectByType<FunctionPlotter>();
+        curveRenderer = FindFirstObjectByType<LineRendererUI>();
+        derivRenderer = FindFirstObjectByType<DerivRendererUI>();
+        gridRenderer = FindFirstObjectByType<GridRendererUI>();
 
         if (functionPlotter == null || curveRenderer == null || derivRenderer == null || gridRenderer == null)
         {
@@ -140,12 +140,15 @@ public class LevelManager : MonoBehaviour
         if (storyText != null)
             return;
 
-        var canvas = FindObjectOfType<Canvas>();
+        var canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             Debug.LogWarning("LevelManager: Could not find Canvas. Story text will not be created.");
             return;
         }
+
+        // Grab font/material from an existing on-screen TMP before we add StoryText (avoids FindFirstObjectByType picking the new empty label).
+        var fontSource = FindFirstObjectByType<TextMeshProUGUI>();
 
         var storyGo = new GameObject("StoryText");
         storyGo.transform.SetParent(canvas.transform, false);
@@ -154,11 +157,14 @@ public class LevelManager : MonoBehaviour
         tmp.text = "";
         tmp.fontSize = 32;
         tmp.alignment = TextAlignmentOptions.Center;
+        tmp.richText = true;
 
-        // Reuse existing TMP font if possible.
-        var anyTmp = FindObjectOfType<TextMeshProUGUI>();
-        if (anyTmp != null)
-            tmp.font = anyTmp.font;
+        if (fontSource != null)
+        {
+            tmp.font = fontSource.font;
+            if (fontSource.fontSharedMaterial != null)
+                tmp.fontSharedMaterial = fontSource.fontSharedMaterial;
+        }
 
         var rt = tmp.rectTransform;
         rt.anchorMin = new Vector2(0.5f, 1f);
@@ -184,7 +190,7 @@ public class LevelManager : MonoBehaviour
         }
 
         // Fallback: first Image with a sprite.
-        var allImages = FindObjectsOfType<Image>();
+        var allImages = FindObjectsByType<Image>(FindObjectsSortMode.None);
         foreach (var img in allImages)
         {
             if (img != null && img.sprite != null)
@@ -359,7 +365,7 @@ public class LevelManager : MonoBehaviour
         // Story.
         if (storyText != null)
         {
-            storyText.text = def.storyText;
+            storyText.text = $"<b>{def.levelName}</b>\n{def.storyText}";
             if (storyFadeRoutine != null)
                 StopCoroutine(storyFadeRoutine);
             storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());

@@ -14,7 +14,7 @@ public class LevelSelectController : MonoBehaviour
 
     private void Start()
     {
-        var canvas = FindObjectOfType<Canvas>();
+        var canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             Debug.LogError("LevelSelectController: No Canvas in scene.");
@@ -78,7 +78,7 @@ public class LevelSelectController : MonoBehaviour
 
     private static void CopyFontFromAny(TextMeshProUGUI target)
     {
-        var any = FindObjectOfType<TextMeshProUGUI>();
+        var any = FindFirstObjectByType<TextMeshProUGUI>();
         if (any != null && any != target && any.font != null)
             target.font = any.font;
     }

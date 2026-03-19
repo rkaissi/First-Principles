@@ -104,7 +104,7 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(true);
 
 		// Coroutine allows developers to run different tasks simultaneously (for multitasking)
-		StartCoroutine(GameObject.FindObjectOfType<SceneFader>().FadeAndLoadScene(SceneFader.FadeDirection.In, "Game"));
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Game"));
     }
 
 	public void LoadLevelSelect()
@@ -113,7 +113,7 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage = fadeOutUIImage2;
 		fadeOutUIImage.gameObject.SetActive(true);
 
-		StartCoroutine(GameObject.FindObjectOfType<SceneFader>().FadeAndLoadScene(SceneFader.FadeDirection.In, "LevelSelect"));
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
 	}
 
 	public void LoadMenu()
@@ -122,7 +122,7 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage = fadeOutUIImage1;
 		fadeOutUIImage.gameObject.SetActive(true);
 
-		StartCoroutine(GameObject.FindObjectOfType<SceneFader>().FadeAndLoadScene(SceneFader.FadeDirection.In, "Menu"));
+		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Menu"));
     }
 
 	public void QuitGame()
