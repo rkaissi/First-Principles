@@ -42,6 +42,9 @@ public class FunctionPlotter : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI equationText;
 
+    /// <summary>Optional second line under the main equation (e.g. Riemann / integral note).</summary>
+    private string equationExtraSuffix = "";
+
     private LineRendererUI lineRenderer;
     private DerivRendererUI derivRenderer;
 
@@ -88,6 +91,19 @@ public class FunctionPlotter : MonoBehaviour
             return;
         grid.enabled = false;
         grid.enabled = true;
+    }
+
+    /// <summary>
+    /// f(x) in plotter coordinates (before adding grid origin), using current transforms.
+    /// </summary>
+    public float SampleCurvePlotterY(float xPlotter)
+    {
+        return EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter);
+    }
+
+    public void SetEquationExtraSuffix(string suffix)
+    {
+        equationExtraSuffix = suffix ?? "";
     }
 
     private void PlotFunction(FunctionType type)
@@ -317,6 +333,9 @@ public class FunctionPlotter : MonoBehaviour
                 equationText.text = "f(x)";
                 break;
         }
+
+        if (!string.IsNullOrEmpty(equationExtraSuffix))
+            equationText.text += $"\n<size=85%><color=#a8b2d1>{equationExtraSuffix}</color></size>";
     }
 }
 

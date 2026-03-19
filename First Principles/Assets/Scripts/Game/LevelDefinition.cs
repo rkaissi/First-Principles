@@ -66,6 +66,22 @@ public class LevelDefinition : ScriptableObject
     public Color gridCenterLineTheming = new Color(1f, 1f, 1f, 0.39f);
     public Color gridOutsideLineTheming = new Color(1f, 1f, 1f, 0.14f);
 
+    [Header("Riemann sums & area under the curve")]
+    [Tooltip("Left / right / midpoint sample for rectangles and optional stair platforms.")]
+    public RiemannRule riemannRule = RiemannRule.None;
+
+    [Tooltip("Number of subintervals n (rectangles). Larger n → closer to ∫ f dx.")]
+    [Min(1)]
+    public int riemannRectCount = 16;
+
+    [Tooltip("Fill rectangles from the x-axis to f(x*) in the graph plane.")]
+    public bool showRiemannVisualization = false;
+
+    [Tooltip("Platforms are flat per subinterval at the Riemann sample height (step terrain under the curve).")]
+    public bool useRiemannStairPlatforms = false;
+
+    public Color riemannFillColor = new Color(0.25f, 0.55f, 0.95f, 0.32f);
+
     public void EnsureDefaultStagePopData(int stageCount)
     {
         if (stageCount < 1)

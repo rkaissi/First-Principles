@@ -53,7 +53,7 @@ public class GraphObstacleGenerator : MonoBehaviour
         obstacleSprite = TryGetSquareSprite();
     }
 
-    public GraphWorld GenerateWorld(LevelDefinition def, List<Vector2> curvePoints, List<Vector2> derivPoints)
+    public GraphWorld GenerateWorld(LevelDefinition def, List<Vector2> curvePoints, List<Vector2> derivPoints, FunctionPlotter functionPlotter = null)
     {
         if (obstaclesRoot == null)
         {
@@ -80,6 +80,13 @@ public class GraphObstacleGenerator : MonoBehaviour
 
         float originY = gridSize.y / 2f;
         float width = gridSize.x;
+        var gridOrigin = new Vector2Int(gridSize.x / 2, gridSize.y / 2);
+
+        bool useRiemannStairs = def.useRiemannStairPlatforms
+            && def.riemannRule != RiemannRule.None
+            && def.riemannRectCount > 0
+            && functionPlotter != null
+            && (def.xEnd - def.xStart) > 1e-6f;
 
         // Finish zone at the far right.
         float finishWidth = 1f;
@@ -93,9 +100,42 @@ public class GraphObstacleGenerator : MonoBehaviour
         for (int col = 0; col < gridSize.x; col++)
         {
             float xSample = col + 0.5f;
+            float xPlotCol = xSample - gridOrigin.x;
+            float xPlotForF = xPlotCol;
+            float xDerivSample = xSample;
 
-            bool hasCurve = TrySampleNearestY(curvePoints, xSample, out float yCurve);
-            bool hasDeriv = TrySampleNearestY(derivPoints, xSample, out float yDeriv);
+            if (useRiemannStairs)
+            {
+                int n = Mathf.Max(1, def.riemannRectCount);
+                float dx = (def.xEnd - def.xStart) / n;
+                float t = (xPlotCol - def.xStart) / dx;
+                int idx = Mathf.Clamp(Mathf.FloorToInt(t), 0, n - 1);
+                float xL = def.xStart + idx * dx;
+                float xR = def.xStart + (idx + 1) * dx;
+                xPlotForF = def.riemannRule switch
+                {
+                    RiemannRule.Left => xL,
+                    RiemannRule.Right => xR,
+                    RiemannRule.Midpoint => 0.5f * (xL + xR),
+                    _ => xPlotCol
+                };
+                xDerivSample = xPlotForF + gridOrigin.x;
+            }
+
+            bool hasCurve;
+            float yCurve;
+            if (useRiemannStairs)
+            {
+                float yPlot = functionPlotter.SampleCurvePlotterY(xPlotForF);
+                hasCurve = IsFiniteFloat(yPlot);
+                yCurve = yPlot + gridOrigin.y;
+            }
+            else
+            {
+                hasCurve = TrySampleNearestY(curvePoints, xSample, out yCurve);
+            }
+
+            bool hasDeriv = TrySampleNearestY(derivPoints, xDerivSample, out float yDeriv);
 
             float dyValue = hasDeriv ? (yDeriv - originY) : float.NegativeInfinity;
             bool safeByDerivative = hasDeriv && dyValue > def.derivativeSafeThreshold;
@@ -148,6 +188,8 @@ public class GraphObstacleGenerator : MonoBehaviour
         world.spawnYTopGrid = spawnYTop;
         return world;
     }
+
+    private static bool IsFiniteFloat(float v) => !float.IsNaN(v) && !float.IsInfinity(v);
 
     private void CreateRectVisual(string name, GridRect rect, Color color)
     {
