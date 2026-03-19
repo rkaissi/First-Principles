@@ -57,7 +57,8 @@ public static class GameLevelCatalog
         "Aerospace: phugoid / damped pitch–heave mood",
         "Aerospace: Newtonian Cp ∝ sin²α",
         "Aerospace: Strouhal / vortex shedding tone",
-        "Aerospace: re-entry decay envelope (ρV heating mood)"
+        "Aerospace: re-entry decay envelope (ρV heating mood)",
+        "BOSS: Mandelbrot escape slice (fractal boundary mood)"
     };
 
     public static int LevelCount => DisplayNames.Length;

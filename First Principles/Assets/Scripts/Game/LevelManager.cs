@@ -1538,6 +1538,31 @@ public class LevelManager : MonoBehaviour
             gridOutside: new Color(0.3f, 0.22f, 0.12f, 0.1f),
             storyPauseSecondsOverride: 2.65f
         ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[41],
+            FunctionType.MandelbrotEscapeImSlice,
+            curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
+            derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),
+            transA: -0.743643887f,
+            transK: 0.092f,
+            transC: -2.18f,
+            transD: 0f,
+            power: 28,
+            baseN: 22,
+            story:
+                "<b>Final stage — Mandelbrot set</b> — each column fixes <color=#86efac>Re(c)</color> and sweeps an imaginary slice; graph height tracks <color=#a7f3d0>escape iterations</color> (how long z²+c stays bounded before |z| blows up).\n\n" +
+                "The boundary you know from posters is wildly intricate; here you get a **fast teaching slice** (low max-iter, wide steps) — still true Mandelbrot math.\n\n" +
+                "<size=92%><color=#a8b2d1>The iteration uses <b>|Im(c)|</b> so each sample matches its mirror across the real axis (escape time equals that of the complex conjugate). Low max-iter + wide graph step keep CPU tiny.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.12f, 0.32f, 0.48f, 0.4f),
+            gridOutside: new Color(0.08f, 0.18f, 0.28f, 0.12f),
+            storyPauseSecondsOverride: 2.9f,
+            graphStep: 0.38f,
+            levelXStart: -16f,
+            levelXEnd: 16f
+        ));
     }
 
     /// <summary>
@@ -1566,14 +1591,17 @@ public class LevelManager : MonoBehaviour
         int riemannRectCount = 18,
         bool showRiemannVisualization = false,
         bool useRiemannStairPlatforms = false,
-        Color? riemannFillColor = null)
+        Color? riemannFillColor = null,
+        float graphStep = 0f,
+        float? levelXStart = null,
+        float? levelXEnd = null)
     {
         var def = ScriptableObject.CreateInstance<LevelDefinition>();
         def.levelName = name;
         def.functionType = functionType;
-        def.xStart = functionPlotter != null ? functionPlotter.xStart : -20f;
-        def.xEnd = functionPlotter != null ? functionPlotter.xEnd : 20f;
-        def.step = functionPlotter != null ? functionPlotter.step : 0.1f;
+        def.xStart = levelXStart ?? (functionPlotter != null ? functionPlotter.xStart : -20f);
+        def.xEnd = levelXEnd ?? (functionPlotter != null ? functionPlotter.xEnd : 20f);
+        def.step = graphStep > 1e-5f ? graphStep : (functionPlotter != null ? functionPlotter.step : 0.1f);
 
         def.transA = transA;
         def.transK = transK;
@@ -1732,7 +1760,7 @@ public class LevelManager : MonoBehaviour
         // Story.
         if (storyText != null)
         {
-            storyText.text = $"<b>{def.levelName}</b>\n{def.storyText}";
+            storyText.text = TmpLatex.Process($"<b>{def.levelName}</b>\n{def.storyText}");
             if (storyFadeRoutine != null)
                 StopCoroutine(storyFadeRoutine);
             storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());

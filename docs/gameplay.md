@@ -15,7 +15,7 @@ Level parameters (colors, function type, transformation coefficients, story text
 
 ### Sample level lineup (`GameLevelCatalog`)
 
-Titles are built at runtime from **`GameLevelCatalog.DisplayNames`** (order matches **`LevelManager`** sample levels). Expect **30+** named stages spanning primer → integrals → engineering → **AP Calculus BC** motifs → **polar** plots → **Physics C** hooks, including:
+Titles are built at runtime from **`GameLevelCatalog.DisplayNames`** (order matches **`LevelManager`** sample levels). Expect **40+** named stages spanning primer → integrals → engineering → **AP Calculus BC** motifs → **polar** plots → **Physics C** hooks → **aerospace** teaching curves → a **final Mandelbrot escape-slice boss**, including:
 
 | Block | Examples |
 |--------|-----------|

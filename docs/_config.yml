@@ -9,6 +9,10 @@ markdown: kramdown
 highlighter: rouge
 permalink: pretty
 
+# Kramdown options (LaTeX \(…\) / \[…\] is passed through for MathJax in _includes/custom-head.html)
+kramdown:
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+
 theme: minima
 plugins:
   - jekyll-feed

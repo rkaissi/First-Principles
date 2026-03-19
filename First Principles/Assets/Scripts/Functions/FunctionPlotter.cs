@@ -225,8 +225,39 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.AeroIsothermalDensity => AeroIsothermalDensityY(u, transA, transC, baseN),
             FunctionType.AeroNewtonianSinSquared => AeroNewtonianSinSquaredY(u, transA, transC),
 
+            // Mandelbrot: escape-time vs Im(c) with Re(c)=transA; use |Im| inside iteration (same count as c̄) — cheap symmetry about the real axis.
+            FunctionType.MandelbrotEscapeImSlice => MandelbrotEscapeImSliceY(u, transA, transC, power, baseN),
+
             _ => 0f
         };
+    }
+
+    /// <summary>
+    /// 1D slice through the Mandelbrot diag: c = cr + i·u, y ≈ normalized escape iterations (cheap preview, not deep zoom).
+    /// Uses <paramref name="ciAbs"/> = |u| when computing z²+c since n(c) = n(c̄). Keep <paramref name="maxIter"/> modest (e.g. 24–32) for CPU.
+    /// </summary>
+    private static float MandelbrotEscapeImSliceY(float u, float cr, float yOffset, int maxIter, int heightScaleFromBaseN)
+    {
+        maxIter = Mathf.Clamp(maxIter, 10, 34);
+        float amp = 0.14f * Mathf.Max(1, heightScaleFromBaseN);
+        int it = MandelbrotEscapeIterations(cr, Mathf.Abs(u), maxIter);
+        float norm = it / (float)maxIter;
+        return yOffset + amp * norm;
+    }
+
+    private static int MandelbrotEscapeIterations(float cr, float ci, int maxIter)
+    {
+        float zr = 0f, zi = 0f;
+        for (int n = 0; n < maxIter; n++)
+        {
+            float zr2 = zr * zr - zi * zi + cr;
+            float zi2 = 2f * zr * zi + ci;
+            zr = zr2;
+            zi = zi2;
+            if (zr * zr + zi * zi > 4f)
+                return n;
+        }
+        return maxIter;
     }
 
     /// <summary>Crude CL(α): linear to ±α_stall then exponential decay (stall).</summary>
@@ -445,6 +476,10 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.AeroNewtonianSinSquared:
                 equationText.text = $"Aero: Cp ∝ sin²α, u={k}(x-{d}), scale {a}";
                 break;
+            case FunctionType.MandelbrotEscapeImSlice:
+                equationText.text =
+                    $"<b>Mandelbrot slice</b> · h ∝ escape-time · c = ({a}) + i·u, u={k}(x−{d}) · symmetry |Im| · maxIter={power}";
+                break;
             default:
                 equationText.text = "f(x)";
                 break;
@@ -497,7 +532,10 @@ public enum FunctionType
     // Aerospace / aerodynamics (toy models for instruction — not a CFD solver)
     AeroLiftVsAlpha,
     AeroIsothermalDensity,
-    AeroNewtonianSinSquared
+    AeroNewtonianSinSquared,
+
+    /// <summary>Escape iteration count vs Im(c) with fixed Re(c) = transA (boss slice); uses |Im| in iteration for conjugate symmetry.</summary>
+    MandelbrotEscapeImSlice
 }
 
 /* 

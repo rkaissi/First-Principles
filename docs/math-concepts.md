@@ -127,6 +127,18 @@ Engineering math is still “calculus + algebra + models,” but the **goal** is
 
 ---
 
+## BOSS: Mandelbrot escape slice (final stage)
+
+The **Mandelbrot set** is the set of complex numbers **c** for which **z → z² + c** (starting from **z = 0**) stays bounded. The famous boundary is infinitely detailed; deep zooms are heavy.
+
+In **First Principles** the boss stage plots a **cheap 1D slice**: fix **Re(c)** and let **Im(c)** vary along the graph’s horizontal parameter. Height encodes how many iterations occur before **|z| > 2** (escape) or the iteration cap — a **normalized escape-time** picture.
+
+**Efficiency trick:** the map is symmetric under **c ↦ c̄** (reflect across the real axis): escape times match for **c** and its conjugate. The implementation iterates using **|Im(c)|**, which is valid for that count and avoids redundant branch work when paired samples mirror each other.
+
+This is a **teaching** view (moderate iteration cap, wide sample step), not a deep-zoom renderer.
+
+---
+
 ## In-game vs docs
 
 | Where | What |
