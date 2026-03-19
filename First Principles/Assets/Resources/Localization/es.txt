@@ -1,0 +1,77 @@
+# Español
+ui.choose_stage=Elige una fase del gráfico
+ui.math_tips=Consejos y fórmulas
+ui.back_menu=Volver al menú
+ui.faxas_graphing=Graficación estilo Faxas
+ui.language=Idioma
+ui.tap_change_language=Toca para cambiar
+ui.close=Cerrar
+ui.math_concepts=Conceptos matemáticos
+ui.jump=Saltar
+ui.move=Mover
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(teclado: flechas / Espacio)</color></size>
+hud.stage=FASE
+controls.mobile=<color=#7a8399>Mover</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saltar</color>  <b><color=#ffd978>tocar</color></b>  <size=90%><color=#5c6577>(teclado: flechas / Espacio)</color></size>
+controls.desktop=<color=#7a8399>Mover</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saltar</color>  <b><color=#ffd978>Espacio</color></b>
+controls.calculator=<color=#7a8399>Estilo Faxas</color>  <b>Escribir f(u)</b>  ·  <b>Trans</b>  ·  <b>Escala</b>  ·  <b>Pellizco</b>  ·  <b>Atrás</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) para x>0 · min(x,3)...
+graph.status_enter=Intro / tocar fuera para graficar
+graph.status_graphed=<color=#8fd9b3>Graficado</color>
+graph.line1=<b>Graficación estilo Faxas Instruments</b>
+graph.line2=<size=88%><color=#c4d0e8>Escribe <b>f(u)</b> abajo (la variable <b>x</b> en el cuadro = u interior). Luego:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · doble toque <b>+</b> · mantén <b>−</b> · <b>Escala</b> acercar / mantén alejar · <b>pellizco</b> con dos dedos</size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>
+graph.param_a=A (escala vertical)
+graph.param_k=k (escala horizontal)
+graph.param_c=C (desplazamiento vertical)
+graph.param_d=D (desplazamiento horizontal)
+graph.calculator_intro=<b>Graficación estilo Faxas Instruments</b>\n<size=88%>Escribe casi cualquier <b>f(u)</b> (variable <b>x</b> en tu fórmula); <b>Trans</b> ajusta A, k, C, D; <b>Escala</b> y <b>pellizco</b> hacen zoom en la ventana. Sin afiliación a ninguna marca.</size>
+footer.proprietary=© 2022-2026 · Propietario · Todos los derechos reservados · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=Orgullosos graduados de <b>Garth Webb Secondary School</b>, Oakville.
+footer.support=Cuatro años de desarrollo — si valoras este trabajo, apoya el proyecto. Gracias.
+footer.unity=Hecho con <b>Unity</b>. Unity es una marca registrada de Unity Technologies.
+level.0=Introducción: primeros principios
+level.1=Pendiente de la parábola
+level.2=Ondas del seno
+level.3=Sombras del coseno
+level.4=Camino en valor absoluto
+level.5=Maclaurin: e^x
+level.6=Maclaurin: sin(x)
+level.7=Serie: cola geométrica
+level.8=Rebanada silla (multivar.)
+level.9=Rebanada paraboloide (multivar.)
+level.10=Área bajo la curva
+level.11=Riemann: extremos izquierdos
+level.12=Riemann: extremos derechos
+level.13=Riemann: punto medio
+level.14=Ingeniería: oscilación amortiguada
+level.15=Ingeniería: catenaria (cosh)
+level.16=Ingeniería: CA rectificada (|sin|)
+level.17=BC: arctan y trig. inversa
+level.18=BC: crecimiento logístico (dP/dt = kP(1−P/L))
+level.19=Polar: cardioide r ∝ 1+cos θ
+level.20=Polar: rosa r ∝ cos(nθ)
+level.21=BC: sinh x e hiperbólicas
+level.22=Física C: decaimiento exponencial (τ, RC)
+level.23=Física C: momento angular y L = Iω
+level.24=Física C: altura del proyectil y(t)
+level.25=BC: Maclaurin cos(x)
+level.26=BC: ln x y ∫ dx/x
+level.27=BC: √x y dominio / punta
+level.28=BC: tan x entre asíntotas
+level.29=BC: e^{kx} y y′ = ky
+level.30=BC: fase y MAS (energía)
+level.31=BC: cúbica e inflexión (boceto)
+level.32=BC: b^x y d/dx b^x
+level.33=Círculo: (x−h)² + (y−k)² = R²
+level.34=Aero: sustentación C_L(α) lineal + pérdida
+level.35=Aero: polar parabólica C⁠_D(C_L)
+level.36=Aero: atmósfera isoterma ρ(h)
+level.37=Aero: fugoide / cabeceo–heave amortiguado
+level.38=Aero: newtoniano Cp ∝ sin²α
+level.39=Aero: Strouhal / tono de vórtices
+level.40=Aero: envolvente de reentrada (calor ρV)
+level.41=Competición: ln, concavidad y cotas
+level.42=JEFE: corte de escape Mandelbrot (fractal)

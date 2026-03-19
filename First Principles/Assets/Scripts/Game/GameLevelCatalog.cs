@@ -63,6 +63,15 @@ public static class GameLevelCatalog
     };
 
     public static int LevelCount => DisplayNames.Length;
+
+    /// <summary>Localized title for level <paramref name="index"/>; falls back to <see cref="DisplayNames"/>.</summary>
+    public static string GetLocalizedDisplayName(int index)
+    {
+        if (index < 0 || index >= DisplayNames.Length)
+            return "";
+        string key = $"level.{index}";
+        return LocalizationManager.Get(key, DisplayNames[index]);
+    }
 }
 
 /// <summary>

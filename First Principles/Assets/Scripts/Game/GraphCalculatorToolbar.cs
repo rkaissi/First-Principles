@@ -21,6 +21,18 @@ public class GraphCalculatorToolbar : MonoBehaviour
     private int paramIndex;
     private float transLastShortTime = -1f;
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += OnLocChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= OnLocChanged;
+    }
+
+    private void OnLocChanged() => RefreshHint();
+
     public void Configure(FunctionPlotter functionPlotter, Button transBtn, Button scaleBtn, TextMeshProUGUI parameterHint)
     {
         plot = functionPlotter;
@@ -125,20 +137,31 @@ public class GraphCalculatorToolbar : MonoBehaviour
 
         string[] names =
         {
-            "A (vertical scale)",
-            "k (horizontal scale)",
-            "C (vertical shift)",
-            "D (horizontal shift)"
+            LocalizationManager.Get("graph.param_a", "A (vertical scale)"),
+            LocalizationManager.Get("graph.param_k", "k (horizontal scale)"),
+            LocalizationManager.Get("graph.param_c", "C (vertical shift)"),
+            LocalizationManager.Get("graph.param_d", "D (horizontal shift)")
         };
+        string line1 = LocalizationManager.Get("graph.line1", "<b>Faxas Instruments-style graphing</b>");
+        string line2 = LocalizationManager.Get("graph.line2",
+            "<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>");
+        string line3Fmt = LocalizationManager.Get("graph.line3",
+            "<size=92%><b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> zoom in / hold zoom out · two-finger <b>pinch</b></size>");
+        string line3 = string.Format(line3Fmt, names[paramIndex]);
+        string line4Fmt = LocalizationManager.Get("graph.line4",
+            "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>");
+        string line4 = string.Format(line4Fmt,
+            plot.transA.ToString("0.##"),
+            plot.transK.ToString("0.##"),
+            plot.transC.ToString("0.##"),
+            plot.transD.ToString("0.##"),
+            plot.xStart.ToString("0.##"),
+            plot.xEnd.ToString("0.##"));
+
         hint.richText = true;
         hint.alignment = TextAlignmentOptions.Center;
-        hint.text =
-            $"<b>Faxas Instruments-style graphing</b>\n" +
-            $"<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>\n" +
-            $"<size=92%><b>Trans</b> → {names[paramIndex]} · double-tap <b>+</b> · hold <b>−</b> · " +
-            $"<b>Scale</b> zoom in / hold zoom out · two-finger <b>pinch</b></size>\n" +
-            $"<size=88%><color=#a8b2d1>A={plot.transA:0.##} &nbsp;k={plot.transK:0.##} &nbsp;C={plot.transC:0.##} &nbsp;D={plot.transD:0.##} &nbsp;&nbsp;" +
-            $"x∈[{plot.xStart:0.##},{plot.xEnd:0.##}]</color></size>";
+        hint.text = line1 + "\n" + line2 + "\n" + line3 + "\n" + line4;
+        LocalizationManager.ApplyTextDirection(hint);
     }
 }
 

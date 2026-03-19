@@ -2,7 +2,7 @@
 
 This folder is the **Jekyll** source for **GitHub Pages**.
 
-**Developed by [John Wonmo Seong](https://github.com/wonmor) ([ORCH AEROSPACE — orchaerospace.com](https://orchaerospace.com)) and [Rayan Kaissi](https://github.com/rkaissi/) (GAME GENESIS).** See [`orch-avionic-efb.md`](orch-avionic-efb.md) for the Orch Avionic 1 EFB promo page. Repo root [`CREDITS.md`](../CREDITS.md) and [`LICENSE`](../LICENSE).
+**Developed by [John Wonmo Seong](https://github.com/wonmor) ([ORCH AEROSPACE — orchaerospace.com](https://orchaerospace.com)) and [Rayan Kaissi](https://github.com/rkaissi/) ([GAME GENESIS — itch.io](https://game-genesis.itch.io)).** See [`orch-avionic-efb.md`](orch-avionic-efb.md) for the Orch Avionic 1 EFB promo page. Repo root [`CREDITS.md`](../CREDITS.md) and [`LICENSE`](../LICENSE).
 
 ## Enable Pages
 

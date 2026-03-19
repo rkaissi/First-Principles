@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,10 @@ using UnityEngine.UI;
 public static class GraphCalculatorEquationPanel
 {
     private const string RootName = "FaxasEquationInputRoot";
+
+    private static TextMeshProUGUI labelTmp;
+    private static TextMeshProUGUI placeholderTmp;
+    private static TextMeshProUGUI statusTmp;
 
     public static void Ensure(RectTransform parent, FunctionPlotter plotter, TextMeshProUGUI typographyReference, float bottomY, float panelHeight)
     {
@@ -42,7 +47,7 @@ public static class GraphCalculatorEquationPanel
         lrt.anchoredPosition = new Vector2(tablet ? 16f : 12f, -6f);
         lrt.sizeDelta = new Vector2(220f, 28f);
         var label = labelGo.AddComponent<TextMeshProUGUI>();
-        label.text = "f(u) =";
+        label.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
         label.fontSize = tablet ? 22 : 20;
         label.alignment = TextAlignmentOptions.MidlineLeft;
         label.color = new Color(0.85f, 0.88f, 0.95f, 0.9f);
@@ -90,7 +95,7 @@ public static class GraphCalculatorEquationPanel
         phRt.offsetMin = Vector2.zero;
         phRt.offsetMax = Vector2.zero;
         var ph = phGo.AddComponent<TextMeshProUGUI>();
-        ph.text = "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...";
+        ph.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
         ph.fontSize = tablet ? 22 : 19;
         ph.color = new Color(1f, 1f, 1f, 0.32f);
         ph.fontStyle = FontStyles.Italic;
@@ -118,8 +123,17 @@ public static class GraphCalculatorEquationPanel
         status.alignment = TextAlignmentOptions.Midline;
         status.color = new Color(0.75f, 0.92f, 0.8f, 0.95f);
         status.richText = true;
-        status.text = "Enter / tap away to graph";
+        status.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
         CopyFont(status, typographyReference);
+
+        labelTmp = label;
+        placeholderTmp = ph;
+        statusTmp = status;
+        LocalizationManager.ApplyTextDirection(labelTmp);
+        LocalizationManager.ApplyTextDirection(placeholderTmp);
+        LocalizationManager.ApplyTextDirection(statusTmp);
+        LocalizationManager.LanguageChanged -= RefreshEquationPanelStaticCopy;
+        LocalizationManager.LanguageChanged += RefreshEquationPanelStaticCopy;
 
         void Apply(string s)
         {
@@ -133,12 +147,31 @@ public static class GraphCalculatorEquationPanel
                 return;
             }
 
-            status.text = "<color=#8fd9b3>Graphed</color>";
+            status.text = LocalizationManager.Get("graph.status_graphed", "<color=#8fd9b3>Graphed</color>");
             plotter.SetCustomExpression(t);
         }
 
         input.onSubmit.AddListener(Apply);
         input.onEndEdit.AddListener(Apply);
+    }
+
+    private static void RefreshEquationPanelStaticCopy()
+    {
+        if (labelTmp != null)
+        {
+            labelTmp.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
+            LocalizationManager.ApplyTextDirection(labelTmp);
+        }
+        if (placeholderTmp != null)
+        {
+            placeholderTmp.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
+            LocalizationManager.ApplyTextDirection(placeholderTmp);
+        }
+        if (statusTmp != null && statusTmp.text.IndexOf("#ff9a9a", StringComparison.Ordinal) < 0)
+        {
+            statusTmp.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
+            LocalizationManager.ApplyTextDirection(statusTmp);
+        }
     }
 
     private static string TmpEscape(string s)

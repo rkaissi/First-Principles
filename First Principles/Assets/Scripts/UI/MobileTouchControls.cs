@@ -12,6 +12,8 @@ public class MobileTouchControls : MonoBehaviour
 {
     private static MobileTouchControls _instance;
 
+    private TextMeshProUGUI jumpLabelTmp;
+
     public static void EnsureForGameCanvas(Transform canvasTransform)
     {
         if (canvasTransform == null || !ShouldShow())
@@ -51,6 +53,24 @@ public class MobileTouchControls : MonoBehaviour
 
     private static bool ShouldShow() => DeviceLayout.PreferOnScreenGameControls;
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += RefreshJumpLabel;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= RefreshJumpLabel;
+    }
+
+    private void RefreshJumpLabel()
+    {
+        if (jumpLabelTmp == null)
+            return;
+        jumpLabelTmp.text = LocalizationManager.Get("ui.jump", "Jump");
+        LocalizationManager.ApplyTextDirection(jumpLabelTmp);
+    }
+
     private void OnDestroy()
     {
         if (_instance == this)
@@ -85,7 +105,7 @@ public class MobileTouchControls : MonoBehaviour
 
         CreateHoldButton(rowRt, "Left", -1f, tablet);
         CreateHoldButton(rowRt, "Right", 1f, tablet);
-        CreateJumpButton(rowRt, tablet);
+        CreateJumpButtonInstance(rowRt, tablet);
 
         if (tablet)
             AddLayoutSpacer(rowRt, flexibleWidth: 1f);
@@ -137,7 +157,7 @@ public class MobileTouchControls : MonoBehaviour
         CopyTmpFont(tmp);
     }
 
-    private static void CreateJumpButton(Transform parent, bool tablet)
+    private void CreateJumpButtonInstance(Transform parent, bool tablet)
     {
         var go = new GameObject("Btn_Jump", typeof(RectTransform));
         var rt = go.GetComponent<RectTransform>();
@@ -162,13 +182,14 @@ public class MobileTouchControls : MonoBehaviour
         trt.anchorMax = Vector2.one;
         trt.offsetMin = Vector2.zero;
         trt.offsetMax = Vector2.zero;
-        var tmp = tr.AddComponent<TextMeshProUGUI>();
-        tmp.text = "Jump";
-        tmp.fontSize = tablet ? 34f : 30f;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(0.98f, 1f, 1f, 1f);
-        CopyTmpFont(tmp);
+        jumpLabelTmp = tr.AddComponent<TextMeshProUGUI>();
+        jumpLabelTmp.text = LocalizationManager.Get("ui.jump", "Jump");
+        jumpLabelTmp.fontSize = tablet ? 34f : 30f;
+        jumpLabelTmp.fontStyle = FontStyles.Bold;
+        jumpLabelTmp.alignment = TextAlignmentOptions.Center;
+        jumpLabelTmp.color = new Color(0.98f, 1f, 1f, 1f);
+        CopyTmpFont(jumpLabelTmp);
+        LocalizationManager.ApplyTextDirection(jumpLabelTmp);
 
         var ev = go.AddComponent<MobileJumpTouch>();
     }

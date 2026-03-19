@@ -11,7 +11,7 @@ title: Home
 
 ## Developers
 
-**Developed by [John Wonmo Seong](https://github.com/wonmor) ([**ORCH AEROSPACE**](https://orchaerospace.com) · [GitHub](https://github.com/wonmor)) and [Rayan Kaissi](https://github.com/rkaissi/) ([GAME GENESIS](https://github.com/rkaissi/)).**
+**Developed by [John Wonmo Seong](https://github.com/wonmor) ([**ORCH AEROSPACE**](https://orchaerospace.com) · [GitHub](https://github.com/wonmor)) and [Rayan Kaissi](https://github.com/rkaissi/) ([**GAME GENESIS**](https://game-genesis.itch.io)).**
 
 **Proprietary** — [`LICENSE`](../LICENSE). Store-style attribution and third-party notes: [`CREDITS.md`](../CREDITS.md).
 
@@ -59,6 +59,7 @@ Always open the **`First Principles`** folder (the one that contains `Assets` an
 ## External links
 
 - [ORCH Aerospace — orchaerospace.com](https://orchaerospace.com)
+- [Game Genesis — itch.io](https://game-genesis.itch.io)
 - [YouTube — demo](https://www.youtube.com/watch?v=yo540yl4Xhs)
 - [Wiki — official documentation (legacy)](https://github.com/GameGenesis/First-Principles/wiki/First-Principles-Official-Documentation)
 - [Repository](https://github.com/GameGenesis/First-Principles)

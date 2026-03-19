@@ -1,0 +1,77 @@
+# 简体中文
+ui.choose_stage=选择图象关卡
+ui.math_tips=数学提示摘录
+ui.back_menu=返回菜单
+ui.faxas_graphing=Faxas 风格绘图
+ui.language=语言
+ui.tap_change_language=点击切换
+ui.close=关闭
+ui.math_concepts=数学概念
+ui.jump=跳跃
+ui.move=移动
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>（键盘：方向键 / 空格）</color></size>
+hud.stage=阶段
+controls.mobile=<color=#7a8399>移动</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>跳跃</color>  <b><color=#ffd978>点按</color></b>  <size=90%><color=#5c6577>（键盘：方向键 / 空格）</color></size>
+controls.desktop=<color=#7a8399>移动</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>跳跃</color>  <b><color=#ffd978>空格</color></b>
+controls.calculator=<color=#7a8399>Faxas 风格</color>  <b>输入 f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>双指缩放</b>  ·  <b>返回</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x)（x>0）· min(x,3)...
+graph.status_enter=回车 / 点击外部绘制图象
+graph.status_graphed=<color=#8fd9b3>已绘制</color>
+graph.line1=<b>Faxas Instruments 风格绘图</b>
+graph.line2=<size=88%><color=#c4d0e8>在下方输入 <b>f(u)</b>（框内变量 <b>x</b> 为内层 u）。然后：</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · 双击 <b>+</b> · 长按 <b>−</b> · <b>Scale</b> 点按放大 / 长按缩小 · 双指 <b>捏合</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>
+graph.param_a=A（纵向缩放）
+graph.param_k=k（横向缩放）
+graph.param_c=C（纵向平移）
+graph.param_d=D（横向平移）
+graph.calculator_intro=<b>Faxas Instruments 风格绘图</b>\n<size=88%>可输入几乎任意 <b>f(u)</b>（式中变量 <b>x</b>）；<b>Trans</b> 调整 A、k、C、D；<b>Scale</b> 与 <b>捏合</b> 缩放窗口。与实体品牌无关。</size>
+footer.proprietary=© 2022-2026 · 专有软件 · 保留所有权利 · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=毕业于 <b>Garth Webb Secondary School</b>（奥克维尔），引以为豪。
+footer.support=历时四年的开发——若您觉得有价值，请支持本项目。谢谢。
+footer.unity=使用 <b>Unity</b> 制作。Unity 为 Unity Technologies 的商标。
+level.0=第一性原理入门
+level.1=抛物线斜率
+level.2=正弦波动
+level.3=余弦掠影
+level.4=绝对值路径
+level.5=麦克劳林：e^x
+level.6=麦克劳林：sin(x)
+level.7=级数：几何尾部
+level.8=鞍点切片（多元）
+level.9=抛物面切片（多元）
+level.10=曲线下面积
+level.11=黎曼：左端点
+level.12=黎曼：右端点
+level.13=黎曼：中点法则
+level.14=工程：阻尼振动
+level.15=工程：悬链线（cosh）
+level.16=工程：整流交流（|sin|）
+level.17=BC：反正切与反三角
+level.18=BC：逻辑斯蒂增长（dP/dt = kP(1−P/L)）
+level.19=极坐标：心形线 r ∝ 1+cos θ
+level.20=极坐标：玫瑰线 r ∝ cos(nθ)
+level.21=BC：sinh x 与双曲函数
+level.22=物理C：指数衰减（τ, RC）
+level.23=物理C：角动量与 L = Iω
+level.24=物理C：抛体高度 y(t)
+level.25=BC：麦克劳林 cos(x)
+level.26=BC：ln x 与 ∫ dx/x
+level.27=BC：√x 与定义域/尖点
+level.28=BC：渐近线之间的 tan x
+level.29=BC：e^{kx} 与 y′ = ky
+level.30=BC：相位与简谐振动（能量）
+level.31=BC：三次与拐点（作图）
+level.32=BC：b^x 与 d/dx b^x
+level.33=圆：(x−h)² + (y−k)² = R²
+level.34=航空：升力 C_L(α) 线性+失速
+level.35=航空：抛物型阻力极曲线 C_D(C_L)
+level.36=航空：等温大气 ρ(h)
+level.37=航空：起伏运动 / 阻尼俯仰-沉浮
+level.38=航空：牛顿流 Cp ∝ sin²α
+level.39=航空：斯特劳哈尔 / 涡脱落音
+level.40=航空：再入衰减包络（ρV 加热）
+level.41=竞赛数学：ln、凹性与界
+level.42=BOSS：曼德博逃逸截面（分形）

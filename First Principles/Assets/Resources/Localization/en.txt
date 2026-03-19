@@ -1,0 +1,79 @@
+# English (default) — First Principles UI strings
+# Stories: optional keys story.N override embedded English when present in other locale files.
+
+ui.choose_stage=Choose a graph stage
+ui.math_tips=Math tips & snippets
+ui.back_menu=Back to Menu
+ui.faxas_graphing=Faxas-style graphing
+ui.language=Language
+ui.tap_change_language=Tap to change
+ui.close=Close
+ui.math_concepts=Math concepts
+ui.jump=Jump
+ui.move=Move
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>
+hud.stage=STAGE
+controls.mobile=<color=#7a8399>Move</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>tap</color></b>  <size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>
+controls.desktop=<color=#7a8399>Move</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>Space</color></b>
+controls.calculator=<color=#7a8399>Faxas-style</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) for x>0 · min(x,3)...
+graph.status_enter=Enter / tap away to graph
+graph.status_graphed=<color=#8fd9b3>Graphed</color>
+graph.line1=<b>Faxas Instruments-style graphing</b>
+graph.line2=<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> zoom in / hold zoom out · two-finger <b>pinch</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>
+graph.param_a=A (vertical scale)
+graph.param_k=k (horizontal scale)
+graph.param_c=C (vertical shift)
+graph.param_d=D (horizontal shift)
+graph.calculator_intro=<b>Faxas Instruments-style graphing</b>\n<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window. Not affiliated with any hardware brand.</size>
+footer.proprietary=© 2022-2026 · Proprietary · All rights reserved · First Principles
+footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
+footer.school=Proud graduates of <b>Garth Webb Secondary School</b>, Oakville.
+footer.support=Four years of development — if you value this work, please support the project. Thank you.
+footer.unity=Made with <b>Unity</b>. Unity is a trademark of Unity Technologies.
+level.0=First Principles Primer
+level.1=Slope of Parabola
+level.2=Waves of Sine
+level.3=Shadows of Cosine
+level.4=Absolute Path
+level.5=Maclaurin: e^x
+level.6=Maclaurin: sin(x)
+level.7=Series: geometric tail
+level.8=Saddle slice (multivar)
+level.9=Paraboloid slice (multivar)
+level.10=Area under the curve
+level.11=Riemann: left endpoints
+level.12=Riemann: right endpoints
+level.13=Riemann: midpoint rule
+level.14=Engineering: damped oscillation
+level.15=Engineering: catenary (cosh)
+level.16=Engineering: rectified AC (|sin|)
+level.17=BC: arctan & inverse trig
+level.18=BC: logistic growth (dP/dt = kP(1−P/L))
+level.19=Polar: cardioid r ∝ 1+cos θ
+level.20=Polar: rose r ∝ cos(nθ)
+level.21=BC: sinh x & hyperbolic functions
+level.22=Physics C: exponential decay (τ, RC)
+level.23=Physics C: angular momentum & L = Iω
+level.24=Physics C: projectile height y(t)
+level.25=BC: Maclaurin cos(x)
+level.26=BC: ln x & ∫ dx/x
+level.27=BC: √x & domain / cusp craft
+level.28=BC: tan x between asymptotes
+level.29=BC: e^{kx} & y′ = ky
+level.30=BC: phase & SHM (energy swaps)
+level.31=BC: cubic & inflection (sketching)
+level.32=BC: b^x & d/dx b^x
+level.33=Circle: (x−h)² + (y−k)² = R²
+level.34=Aerospace: lift C_L(α) linear + stall
+level.35=Aerospace: parabolic drag polar C_D(C_L)
+level.36=Aerospace: isothermal atmosphere ρ(h)
+level.37=Aerospace: phugoid / damped pitch–heave mood
+level.38=Aerospace: Newtonian Cp ∝ sin²α
+level.39=Aerospace: Strouhal / vortex shedding tone
+level.40=Aerospace: re-entry decay envelope (ρV heating mood)
+level.41=Competition math: ln, concavity & bound tricks
+level.42=BOSS: Mandelbrot escape slice (fractal boundary mood)

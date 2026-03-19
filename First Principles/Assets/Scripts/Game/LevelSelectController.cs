@@ -20,6 +20,73 @@ public class LevelSelectController : MonoBehaviour
     [SerializeField] private Color backgroundColor = new Color(0.09f, 0.10f, 0.14f, 0.97f);
     [SerializeField] private Color buttonColor = new Color(0.20f, 0.23f, 0.30f, 0.95f);
 
+    private TextMeshProUGUI titleTmp;
+    private TextMeshProUGUI mathTipsTmp;
+    private TextMeshProUGUI backTmp;
+    private TextMeshProUGUI faxasEntryTmp;
+    private TextMeshProUGUI footerTmp;
+    private TextMeshProUGUI levelSelectLangTmp;
+    private readonly System.Collections.Generic.List<TextMeshProUGUI> levelRowLabels = new System.Collections.Generic.List<TextMeshProUGUI>();
+
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += RefreshLocalizedStrings;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= RefreshLocalizedStrings;
+    }
+
+    private void RefreshLocalizedStrings()
+    {
+        if (titleTmp != null)
+        {
+            titleTmp.text = LocalizationManager.Get("ui.choose_stage", "Choose a graph stage");
+            LocalizationManager.ApplyTextDirection(titleTmp);
+        }
+        if (mathTipsTmp != null)
+        {
+            mathTipsTmp.text = LocalizationManager.Get("ui.math_tips", "Math tips & snippets");
+            LocalizationManager.ApplyTextDirection(mathTipsTmp);
+        }
+        if (backTmp != null)
+        {
+            backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
+            LocalizationManager.ApplyTextDirection(backTmp);
+        }
+        if (faxasEntryTmp != null)
+        {
+            faxasEntryTmp.text = LocalizationManager.Get("ui.faxas_graphing", "Faxas Instruments-style graphing (free plot)");
+            LocalizationManager.ApplyTextDirection(faxasEntryTmp);
+        }
+        if (footerTmp != null)
+        {
+            footerTmp.text = SceneCreditsFooter.BuildCompactRichText();
+            LocalizationManager.ApplyTextDirection(footerTmp);
+        }
+
+        for (int i = 0; i < levelRowLabels.Count; i++)
+        {
+            var tmp = levelRowLabels[i];
+            if (tmp == null)
+                continue;
+            tmp.text = GameLevelCatalog.GetLocalizedDisplayName(i);
+            LocalizationManager.ApplyTextDirection(tmp);
+        }
+
+        RefreshLevelSelectLanguageLabel();
+    }
+
+    private void RefreshLevelSelectLanguageLabel()
+    {
+        if (levelSelectLangTmp == null)
+            return;
+        levelSelectLangTmp.text =
+            $"{LocalizationManager.Get("ui.language", "Language")}: {LocalizationManager.GetLanguagePickerLabel(LocalizationManager.CurrentLanguage)}";
+        LocalizationManager.ApplyTextDirection(levelSelectLangTmp);
+    }
+
     private void Start()
     {
         var canvas = FindAnyObjectByType<Canvas>();
@@ -52,14 +119,16 @@ public class LevelSelectController : MonoBehaviour
         titleRt.sizeDelta = new Vector2(tablet ? 1020f : 960f, tablet ? 96f : 88f);
         titleRt.anchoredPosition = Vector2.zero;
 
-        var titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
-        titleTmp.text = "Choose a graph stage";
+        titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
+        titleTmp.text = LocalizationManager.Get("ui.choose_stage", "Choose a graph stage");
         titleTmp.fontSize = tablet ? 46 : 40;
         titleTmp.alignment = TextAlignmentOptions.Center;
         titleTmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(titleTmp);
+        LocalizationManager.ApplyTextDirection(titleTmp);
 
         CreateMathArticlesButton(panel.transform, canvas.transform);
+        CreateLevelSelectLanguagePicker(panel.transform);
 
         // Scrollable list (many levels + readable on small screens).
         var scrollGo = new GameObject("LevelScroll");
@@ -113,12 +182,13 @@ public class LevelSelectController : MonoBehaviour
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        CreateLevelButton(contentRt, "Faxas Instruments-style graphing (free plot)", LaunchGraphCalculator);
+        faxasEntryTmp = CreateLevelButton(contentRt, LocalizationManager.Get("ui.faxas_graphing", "Faxas Instruments-style graphing (free plot)"), LaunchGraphCalculator);
 
         for (int i = 0; i < GameLevelCatalog.LevelCount; i++)
         {
             int idx = i;
-            CreateLevelButton(contentRt, GameLevelCatalog.DisplayNames[i], () => StartGameAt(idx));
+            var rowTmp = CreateLevelButton(contentRt, GameLevelCatalog.GetLocalizedDisplayName(i), () => StartGameAt(idx));
+            levelRowLabels.Add(rowTmp);
         }
 
         CreateSceneCreditsFooter(panel.transform);
@@ -137,15 +207,16 @@ public class LevelSelectController : MonoBehaviour
         rt.sizeDelta = new Vector2(tablet ? 980f : 920f, tablet ? 76f : 72f);
         rt.anchoredPosition = new Vector2(0f, tablet ? 118f : 108f);
 
-        var tmp = go.AddComponent<TextMeshProUGUI>();
-        tmp.text = SceneCreditsFooter.BuildCompactRichText();
-        tmp.richText = true;
-        tmp.enableWordWrapping = true;
-        tmp.fontSize = tablet ? 17 : 15;
-        tmp.alignment = TextAlignmentOptions.Bottom;
-        tmp.color = new Color(0.9f, 0.91f, 0.94f, 0.95f);
-        tmp.raycastTarget = false;
-        CopyFontFromAny(tmp);
+        footerTmp = go.AddComponent<TextMeshProUGUI>();
+        footerTmp.text = SceneCreditsFooter.BuildCompactRichText();
+        footerTmp.richText = true;
+        footerTmp.enableWordWrapping = true;
+        footerTmp.fontSize = tablet ? 17 : 15;
+        footerTmp.alignment = TextAlignmentOptions.Bottom;
+        footerTmp.color = new Color(0.9f, 0.91f, 0.94f, 0.95f);
+        footerTmp.raycastTarget = false;
+        CopyFontFromAny(footerTmp);
+        LocalizationManager.ApplyTextDirection(footerTmp);
     }
 
     private void CreateMathArticlesButton(Transform panelRoot, Transform canvasTransform)
@@ -179,14 +250,58 @@ public class LevelSelectController : MonoBehaviour
         trt.offsetMin = new Vector2(12f, 6f);
         trt.offsetMax = new Vector2(-12f, -6f);
 
-        var tmp = textGo.AddComponent<TextMeshProUGUI>();
-        tmp.text = "Math tips & snippets";
-        tmp.fontSize = tablet ? 28 : 24;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(0.9f, 0.96f, 1f, 1f);
-        CopyFontFromAny(tmp);
+        mathTipsTmp = textGo.AddComponent<TextMeshProUGUI>();
+        mathTipsTmp.text = LocalizationManager.Get("ui.math_tips", "Math tips & snippets");
+        mathTipsTmp.fontSize = tablet ? 28 : 24;
+        mathTipsTmp.alignment = TextAlignmentOptions.Center;
+        mathTipsTmp.color = new Color(0.9f, 0.96f, 1f, 1f);
+        CopyFontFromAny(mathTipsTmp);
+        LocalizationManager.ApplyTextDirection(mathTipsTmp);
 
         btn.onClick.AddListener(() => MathArticlesOverlay.Open(canvasTransform));
+    }
+
+    private void CreateLevelSelectLanguagePicker(Transform panelRoot)
+    {
+        if (GameObject.Find("LevelSelectLanguagePicker") != null)
+            return;
+
+        bool tablet = DeviceLayout.IsTabletLike();
+        var go = new GameObject("LevelSelectLanguagePicker");
+        var rt = go.AddComponent<RectTransform>();
+        rt.SetParent(panelRoot, false);
+        rt.anchorMin = new Vector2(0f, 1f);
+        rt.anchorMax = new Vector2(0f, 1f);
+        rt.pivot = new Vector2(0f, 1f);
+        rt.anchoredPosition = new Vector2(tablet ? 14f : 10f, tablet ? -8f : -6f);
+        rt.sizeDelta = new Vector2(tablet ? 300f : 260f, tablet ? 44f : 40f);
+
+        var img = go.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(img);
+        img.color = new Color(0.16f, 0.2f, 0.28f, 0.92f);
+
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        RuntimeUiPolish.ApplyButtonTransitions(btn, img.color,
+            Color.Lerp(img.color, Color.white, 0.15f),
+            Color.Lerp(img.color, Color.black, 0.2f));
+        btn.onClick.AddListener(LocalizationManager.CycleNext);
+
+        var textGo = new GameObject("Text");
+        var trt = textGo.AddComponent<RectTransform>();
+        trt.SetParent(go.transform, false);
+        trt.anchorMin = Vector2.zero;
+        trt.anchorMax = Vector2.one;
+        trt.offsetMin = new Vector2(8f, 4f);
+        trt.offsetMax = new Vector2(-8f, -4f);
+
+        levelSelectLangTmp = textGo.AddComponent<TextMeshProUGUI>();
+        levelSelectLangTmp.fontSize = tablet ? 20 : 18;
+        levelSelectLangTmp.alignment = TextAlignmentOptions.Center;
+        levelSelectLangTmp.color = new Color(0.93f, 0.96f, 1f, 1f);
+        levelSelectLangTmp.enableWordWrapping = true;
+        CopyFontFromAny(levelSelectLangTmp);
+        RefreshLevelSelectLanguageLabel();
     }
 
     private static void CopyFontFromAny(TextMeshProUGUI target)
@@ -204,7 +319,8 @@ public class LevelSelectController : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    private void CreateLevelButton(Transform parent, string label, UnityAction onClick)
+    /// <returns>Label <see cref="TextMeshProUGUI"/> for live language updates.</returns>
+    private TextMeshProUGUI CreateLevelButton(Transform parent, string label, UnityAction onClick)
     {
         var go = new GameObject("LevelButton");
         var rt = go.AddComponent<RectTransform>();
@@ -240,8 +356,10 @@ public class LevelSelectController : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(tmp);
+        LocalizationManager.ApplyTextDirection(tmp);
 
         btn.onClick.AddListener(onClick);
+        return tmp;
     }
 
     private void CreateBackButton(Transform parent)
@@ -275,12 +393,13 @@ public class LevelSelectController : MonoBehaviour
         trt.offsetMin = Vector2.zero;
         trt.offsetMax = Vector2.zero;
 
-        var tmp = textGo.AddComponent<TextMeshProUGUI>();
-        tmp.text = "Back to Menu";
-        tmp.fontSize = tablet ? 26 : 22;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = RuntimeUiPolish.TitleIvory;
-        CopyFontFromAny(tmp);
+        backTmp = textGo.AddComponent<TextMeshProUGUI>();
+        backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
+        backTmp.fontSize = tablet ? 26 : 22;
+        backTmp.alignment = TextAlignmentOptions.Center;
+        backTmp.color = RuntimeUiPolish.TitleIvory;
+        CopyFontFromAny(backTmp);
+        LocalizationManager.ApplyTextDirection(backTmp);
 
         btn.onClick.AddListener(() => SceneManager.LoadScene("Menu"));
     }

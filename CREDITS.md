@@ -4,7 +4,7 @@ Use this file for **in-app parity**, **App Store Connect** (description / promot
 
 ## Developers
 
-**GAME GENESIS** ([Rayan Kaissi](https://github.com/rkaissi/)) × **ORCH AEROSPACE** ([John Wonmo Seong](https://github.com/wonmor))
+**GAME GENESIS** ([itch.io](https://game-genesis.itch.io) · [Rayan Kaissi](https://github.com/rkaissi/)) × **ORCH AEROSPACE** ([orchaerospace.com](https://orchaerospace.com) · [John Wonmo Seong](https://github.com/wonmor))
 
 **Proud graduates of Garth Webb Secondary School, Oakville.**
 
@@ -27,6 +27,7 @@ Use this file for **in-app parity**, **App Store Connect** (description / promot
 |-----------|----------------|
 | **Unity Engine** | © Unity Technologies. Use of Unity is subject to [Unity’s terms and policies](https://unity.com/legal). “Unity” is a trademark of Unity Technologies. |
 | **TextMesh Pro** | Included with Unity; bundled resources may include fonts under OFL or other licenses—see asset folders (e.g. `Assets/TextMesh Pro/`) for license files. |
+| **Outfit (font)** | Copyright © The Outfit Project Authors. Licensed under the **SIL Open Font License 1.1** — see `First Principles/Assets/Fonts/Outfit-OFL.txt`. Bundled variable font `Outfit-VariableFont_wght.ttf`; used project-wide via TextMesh Pro after running **First Principles → Fonts → Apply Outfit for all TextMesh Pro** in the editor. |
 
 For other assets under `Assets/`, check any `LICENSE`, `*.txt`, or `Third Party Notices` files next to those assets.
 

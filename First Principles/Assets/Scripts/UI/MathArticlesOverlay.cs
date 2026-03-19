@@ -10,6 +10,8 @@ public static class MathArticlesOverlay
 {
     private const string OverlayName = "MathArticlesOverlayRoot";
 
+    private static TextMeshProUGUI closeButtonTmp;
+
     /// <param name="canvasTransform">Usually the scene Canvas; overlay becomes its last sibling.</param>
     public static void Open(Transform canvasTransform)
     {
@@ -79,12 +81,15 @@ public static class MathArticlesOverlay
         closeTxtRt.anchorMax = Vector2.one;
         closeTxtRt.offsetMin = Vector2.zero;
         closeTxtRt.offsetMax = Vector2.zero;
-        var closeTmp = closeTxtGo.AddComponent<TextMeshProUGUI>();
-        closeTmp.text = "Close";
-        closeTmp.fontSize = tablet ? 26 : 22;
-        closeTmp.alignment = TextAlignmentOptions.Center;
-        closeTmp.color = Color.white;
-        CopyFont(closeTmp);
+        closeButtonTmp = closeTxtGo.AddComponent<TextMeshProUGUI>();
+        closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
+        closeButtonTmp.fontSize = tablet ? 26 : 22;
+        closeButtonTmp.alignment = TextAlignmentOptions.Center;
+        closeButtonTmp.color = Color.white;
+        CopyFont(closeButtonTmp);
+        LocalizationManager.ApplyTextDirection(closeButtonTmp);
+        LocalizationManager.LanguageChanged -= RefreshCloseLabel;
+        LocalizationManager.LanguageChanged += RefreshCloseLabel;
 
         var scrollGo = new GameObject("Scroll");
         var scrollRt = scrollGo.AddComponent<RectTransform>();
@@ -152,6 +157,14 @@ public static class MathArticlesOverlay
         le.minWidth = 1f;
 
         root.SetAsLastSibling();
+    }
+
+    private static void RefreshCloseLabel()
+    {
+        if (closeButtonTmp == null)
+            return;
+        closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
+        LocalizationManager.ApplyTextDirection(closeButtonTmp);
     }
 
     private static void ApplySafeAreaToPanel(RectTransform panelRt, float outerMargin)

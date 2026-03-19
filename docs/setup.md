@@ -39,6 +39,21 @@ In **Unity Hub** → **Add** → choose:
 
 You should see `Assets`, `Packages`, and `ProjectSettings` at the root of the added project.
 
+## Typography (Outfit)
+
+UI copy uses the **Outfit** font (Google Fonts, SIL OFL 1.1 — `Assets/Fonts/Outfit-OFL.txt`) through **TextMesh Pro**.
+
+1. Open the project in the Unity **Editor** (other Unity instances must **not** have the same project open).
+2. Menu: **First Principles → Fonts → Apply Outfit for all TextMesh Pro**.
+
+This generates `Assets/Fonts/Outfit SDF.asset` if needed, sets it as **TMP Settings → Default Font Asset**, adds **Liberation Sans** as a fallback for rare glyphs, and assigns Outfit on all **TextMeshPro** / **TextMeshProUGUI** under `Assets/Scenes` and `Assets` prefabs.
+
+CLI (optional, project closed in the Editor):
+
+```bash
+Unity -batchmode -quit -projectPath "/path/to/First Principles" -executeMethod OutfitFontProjectSetup.GenerateAndApplyAllBatch
+```
+
 **Common mistake:** adding only `First-Principles` (parent) will not load the Unity project correctly.
 
 ## First open / packages

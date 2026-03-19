@@ -85,6 +85,104 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += OnLocalizationChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= OnLocalizationChanged;
+    }
+
+    private void OnLocalizationChanged()
+    {
+        RefreshControlsHintLocalized();
+        RefreshMathConceptsLabelLocalized();
+        RefreshSceneFooterLocalized();
+        RefreshStageHudLocalizedForce();
+
+        if (graphCalculatorMode)
+            RefreshStoryBannerForCurrentMode(null);
+        else if (levels.Count > 0 && currentLevelIndex >= 0 && currentLevelIndex < levels.Count)
+            RefreshStoryBannerForCurrentMode(levels[currentLevelIndex]);
+    }
+
+    private void RefreshControlsHintLocalized()
+    {
+        if (controlsHintText == null)
+            return;
+
+        if (graphCalculatorMode)
+        {
+            controlsHintText.text = LocalizationManager.Get("controls.calculator",
+                "<color=#7a8399>Faxas-style</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
+        }
+        else if (DeviceLayout.PreferOnScreenGameControls)
+        {
+            controlsHintText.text = LocalizationManager.Get("controls.mobile",
+                "<color=#7a8399>Move</color>  <b><color=#ffd978>\u25C0 \u25B6</color></b>  <color=#5c6577>\u00b7</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>tap</color></b>  <size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>");
+        }
+        else
+        {
+            controlsHintText.text = LocalizationManager.Get("controls.desktop",
+                "<color=#7a8399>Move</color>  <b><color=#ffd978>\u2190</color></b>  <b><color=#ffd978>\u2192</color></b>  <color=#5c6577>\u00b7</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>Space</color></b>");
+        }
+
+        LocalizationManager.ApplyTextDirection(controlsHintText);
+    }
+
+    private void RefreshMathConceptsLabelLocalized()
+    {
+        var go = GameObject.Find("MathConceptsButton");
+        if (go == null)
+            return;
+        var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
+        if (tmp == null)
+            return;
+        tmp.text = LocalizationManager.Get("ui.math_concepts", "Math concepts");
+        LocalizationManager.ApplyTextDirection(tmp);
+    }
+
+    private void RefreshSceneFooterLocalized()
+    {
+        var go = GameObject.Find("SceneCreditsFooter");
+        if (go == null)
+            return;
+        var tmp = go.GetComponent<TextMeshProUGUI>();
+        if (tmp == null)
+            return;
+        tmp.text = SceneCreditsFooter.BuildCompactRichText();
+        LocalizationManager.ApplyTextDirection(tmp);
+    }
+
+    private void RefreshStageHudLocalizedForce()
+    {
+        lastStageHudKey = int.MinValue;
+        RefreshStageHud();
+    }
+
+    private void RefreshStoryBannerForCurrentMode(LevelDefinition def)
+    {
+        if (storyText == null)
+            return;
+
+        if (graphCalculatorMode || def == null)
+        {
+            storyText.text = TmpLatex.Process(LocalizationManager.Get("graph.calculator_intro",
+                "<b>Faxas Instruments-style graphing</b>\n" +
+                "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window. Not affiliated with any hardware brand.</size>"));
+            storyText.isRightToLeftText = false;
+            return;
+        }
+
+        string title = LocalizationManager.GetWithFallback($"level.{currentLevelIndex}", def.levelName);
+        string story = LocalizationManager.GetWithFallback($"story.{currentLevelIndex}", def.storyText);
+        storyText.text = TmpLatex.Process($"<b>{title}</b>\n{story}");
+        // Long level copy is often mixed Latin/math; keep LTR unless you add full `story.N` translations in RTL locales.
+        storyText.isRightToLeftText = false;
+    }
+
     private void Start()
     {
         graphCalculatorMode = GraphCalculatorSession.ConsumeEnterRequest();
@@ -189,9 +287,7 @@ public class LevelManager : MonoBehaviour
         if (storyText != null)
         {
             storyText.gameObject.SetActive(true);
-            storyText.text = TmpLatex.Process(
-                "<b>Faxas Instruments-style graphing</b>\n" +
-                "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window. Not affiliated with any hardware brand.</size>");
+            RefreshStoryBannerForCurrentMode(null);
             storyText.color = new Color(1f, 1f, 1f, 0.94f);
         }
 
@@ -278,11 +374,7 @@ public class LevelManager : MonoBehaviour
         var pinch = gameObject.AddComponent<GraphPinchZoom>();
         pinch.Setup(functionPlotter);
 
-        if (controlsHintText != null)
-        {
-            controlsHintText.text =
-                "<color=#7a8399>Faxas-style</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>";
-        }
+        RefreshControlsHintLocalized();
     }
 
     private static void LayoutCalculatorToolButtons(GameObject transGo, GameObject scaleGo, float anchoredBottomY)
@@ -529,16 +621,10 @@ public class LevelManager : MonoBehaviour
             tmp.color = new Color(0.82f, 0.85f, 0.92f, 0.92f);
             tmp.characterSpacing = 0.25f;
             ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.5f);
-            tmp.text = DeviceLayout.PreferOnScreenGameControls
-                ? "<color=#7a8399>Move</color>  <b><color=#ffd978>\u25C0 \u25B6</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>tap</color></b>  <size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>"
-                : "<color=#7a8399>Move</color>  " +
-                  "<b><color=#ffd978>\u2190</color></b>  <b><color=#ffd978>\u2192</color></b>  " +
-                  "<color=#5c6577>·</color>  " +
-                  "<color=#7a8399>Jump</color>  " +
-                  "<b><color=#ffd978>Space</color></b>";
-
             controlsHintText = tmp;
         }
+
+        RefreshControlsHintLocalized();
 
         CreateSceneCreditsFooterStrip(canvas, equationStyle);
     }
@@ -584,12 +670,13 @@ public class LevelManager : MonoBehaviour
         trt.offsetMax = new Vector2(-8f, -4f);
 
         var tmp = textGo.AddComponent<TextMeshProUGUI>();
-        tmp.text = "Math concepts";
+        tmp.text = LocalizationManager.Get("ui.math_concepts", "Math concepts");
         tmp.fontSize = tablet ? 24 : 21;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = new Color(0.92f, 0.97f, 1f, 1f);
         tmp.raycastTarget = false;
         ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.48f);
+        LocalizationManager.ApplyTextDirection(tmp);
     }
 
     private void CreateSceneCreditsFooterStrip(Canvas canvas, TextMeshProUGUI equationStyle)
@@ -619,6 +706,7 @@ public class LevelManager : MonoBehaviour
         ftmp.color = new Color(0.88f, 0.89f, 0.92f, 0.9f);
         ftmp.raycastTarget = false;
         ApplyPrimaryUiTypography(ftmp, equationStyle, outlineWidth: 0.1f, outlineAlpha: 0.45f);
+        LocalizationManager.ApplyTextDirection(ftmp);
     }
 
     /// <summary>The big equation label in <c>Game</c> — used as the typography reference for all gameplay HUD copy.</summary>
@@ -659,8 +747,9 @@ public class LevelManager : MonoBehaviour
 
     private static string FormatStageHudLine(int stage, int total)
     {
+        string stageWord = LocalizationManager.Get("hud.stage", "STAGE");
         return
-            "<color=#9aa3b8><size=78%>STAGE</size></color>\n" +
+            $"<color=#9aa3b8><size=78%>{stageWord}</size></color>\n" +
             $"<b><color=#f2f4ff>{stage}</color></b><color=#5c6578> / </color><b><color=#e8ebf7>{total}</color></b>";
     }
 
@@ -676,6 +765,7 @@ public class LevelManager : MonoBehaviour
             return;
         lastStageHudKey = key;
         stageHudText.text = FormatStageHudLine(stage, total);
+        LocalizationManager.ApplyTextDirection(stageHudText);
     }
 
     /// <summary>Square / UI sprite for flat panels (falls back to a tiny white sprite so Image always draws).</summary>
@@ -1974,7 +2064,7 @@ public class LevelManager : MonoBehaviour
         // Story.
         if (storyText != null)
         {
-            storyText.text = TmpLatex.Process($"<b>{def.levelName}</b>\n{def.storyText}");
+            RefreshStoryBannerForCurrentMode(def);
             if (storyFadeRoutine != null)
                 StopCoroutine(storyFadeRoutine);
             storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());
