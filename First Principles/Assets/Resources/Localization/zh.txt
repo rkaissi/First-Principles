@@ -2,7 +2,7 @@
 ui.choose_stage=选择图象关卡
 ui.math_tips=数学提示摘录
 ui.back_menu=返回菜单
-ui.graphic_calculator_mode=图形计算器
+ui.graphing_calculator_mode=图形计算器
 ui.loading=加载中…
 ui.language=语言
 ui.tap_change_language=点击切换

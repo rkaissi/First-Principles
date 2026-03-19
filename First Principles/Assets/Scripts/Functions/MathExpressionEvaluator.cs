@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Small math parser for typed <c>f(x)</c> in graphic calculator mode (no <c>eval()</c>, no code execution).
+/// Small math parser for typed <c>f(x)</c> in graphing calculator mode (no <c>eval()</c>, no code execution).
 /// Supports <c>+ − * / ^</c>, parentheses, unary <c>−</c>, <c>sin cos tan asin acos atan sqrt abs</c>,
 /// <c>log</c> (base 10), <c>ln</c>, <c>exp</c>, <c>min max</c> (two args), constants <c>pi</c> <c>e</c>, implicit multiply (e.g. <c>2x</c>, <c>2(</c>, <c>)x</c>).
 /// </summary>

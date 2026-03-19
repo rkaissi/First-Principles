@@ -2,7 +2,7 @@
 ui.choose_stage=グラフのステージを選ぶ
 ui.math_tips=数学のヒント
 ui.back_menu=メニューへ戻る
-ui.graphic_calculator_mode=グラフ電卓
+ui.graphing_calculator_mode=グラフ電卓
 ui.loading=読み込み中…
 ui.language=言語
 ui.tap_change_language=タップで切替

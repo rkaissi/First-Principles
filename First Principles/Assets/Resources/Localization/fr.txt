@@ -2,7 +2,7 @@
 ui.choose_stage=Choisissez un niveau graphique
 ui.math_tips=Astuces & formules
 ui.back_menu=Retour au menu
-ui.graphic_calculator_mode=Calculatrice graphique
+ui.graphing_calculator_mode=Calculatrice graphique
 ui.loading=Chargement…
 ui.language=Langue
 ui.tap_change_language=Appuyez pour changer

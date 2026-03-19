@@ -129,6 +129,10 @@ public static class LocalizationManager
         if (string.IsNullOrEmpty(key))
             return fallback ?? "";
 
+        // Legacy key (renamed for English terminology: “graphing” vs “graphic”).
+        if (string.Equals(key, "ui.graphic_calculator_mode", StringComparison.Ordinal))
+            key = "ui.graphing_calculator_mode";
+
         if (Table.TryGetValue(key, out string v) && !string.IsNullOrEmpty(v))
             return v;
 
@@ -140,6 +144,9 @@ public static class LocalizationManager
     {
         if (string.IsNullOrEmpty(key))
             return fallbackEnglish ?? "";
+
+        if (string.Equals(key, "ui.graphic_calculator_mode", StringComparison.Ordinal))
+            key = "ui.graphing_calculator_mode";
 
         if (Table.TryGetValue(key, out string v) && !string.IsNullOrEmpty(v))
             return v;

@@ -113,7 +113,7 @@ public class FunctionPlotter : MonoBehaviour
         equationExtraSuffix = suffix ?? "";
     }
 
-    /// <summary>Switches to typed expression mode (graphic calculator).</summary>
+    /// <summary>Switches to typed expression mode (graphing calculator).</summary>
     public void SetCustomExpression(string expression)
     {
         customExpression = string.IsNullOrWhiteSpace(expression) ? "0" : expression.Trim();
@@ -149,13 +149,19 @@ public class FunctionPlotter : MonoBehaviour
                 derivRenderer.points = dPoints;
             }
         }
-
         else if (differentiate == false)
         {
             dPoints.Clear();
 
             // Refresh ONLY the derivative graph & hide on the UI
             RefreshDeriv();
+        }
+
+        // Boss: show classic Mandelbrot set in c-plane behind the grid (1D slice curve on top).
+        if (lineRenderer != null)
+        {
+            var gridRt = lineRenderer.transform.parent as RectTransform;
+            MandelbrotFractalBackdrop.Sync(gridRt, this);
         }
     }
 
@@ -254,31 +260,16 @@ public class FunctionPlotter : MonoBehaviour
     }
 
     /// <summary>
-    /// 1D slice through the Mandelbrot diag: c = cr + i·u, y ≈ normalized escape iterations (cheap preview, not deep zoom).
-    /// Uses <paramref name="ciAbs"/> = |u| when computing z²+c since n(c) = n(c̄). Keep <paramref name="maxIter"/> modest (e.g. 24–32) for CPU.
+    /// 1D slice: c = c_r + i·u with u = transK·(x−D); height ∝ <b>smooth</b> escape-time (fractional iteration count).
+    /// Uses |u| in the iteration because escape-time is even in Im(c) (conjugate symmetry). See <see cref="MandelbrotFractalBackdrop"/> for the 2D set.
     /// </summary>
     private static float MandelbrotEscapeImSliceY(float u, float cr, float yOffset, int maxIter, int heightScaleFromBaseN)
     {
-        maxIter = Mathf.Clamp(maxIter, 10, 34);
-        float amp = 0.14f * Mathf.Max(1, heightScaleFromBaseN);
-        int it = MandelbrotEscapeIterations(cr, Mathf.Abs(u), maxIter);
-        float norm = it / (float)maxIter;
+        maxIter = Mathf.Clamp(maxIter, 16, 160);
+        float amp = 0.17f * Mathf.Max(1, heightScaleFromBaseN);
+        float smooth = MandelbrotEscapeMath.SmoothIterations(cr, Mathf.Abs(u), maxIter);
+        float norm = smooth / maxIter;
         return yOffset + amp * norm;
-    }
-
-    private static int MandelbrotEscapeIterations(float cr, float ci, int maxIter)
-    {
-        float zr = 0f, zi = 0f;
-        for (int n = 0; n < maxIter; n++)
-        {
-            float zr2 = zr * zr - zi * zi + cr;
-            float zi2 = 2f * zr * zi + ci;
-            zr = zr2;
-            zi = zi2;
-            if (zr * zr + zi * zi > 4f)
-                return n;
-        }
-        return maxIter;
     }
 
     /// <summary>Crude CL(α): linear to ±α_stall then exponential decay (stall).</summary>
@@ -580,7 +571,7 @@ public enum FunctionType
     /// <summary>Escape iteration count vs Im(c) with fixed Re(c) = transA (boss slice); uses |Im| in iteration for conjugate symmetry.</summary>
     MandelbrotEscapeImSlice,
 
-    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (graphic calculator).</summary>
+    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (graphing calculator).</summary>
     CustomExpression
 }
 

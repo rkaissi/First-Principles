@@ -2,7 +2,7 @@
 ui.choose_stage=Graph-Phase wählen
 ui.math_tips=Mathe-Tipps & Kurzinfos
 ui.back_menu=Zum Menü
-ui.graphic_calculator_mode=Grafikrechner
+ui.graphing_calculator_mode=Grafikrechner
 ui.loading=Laden…
 ui.language=Sprache
 ui.tap_change_language=Tippen zum Wechseln

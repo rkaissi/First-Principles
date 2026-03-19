@@ -1,0 +1,7 @@
+Noto Sans, Noto Sans SC, Noto Sans KR, and Noto Sans JP fonts bundled under Resources/Fonts
+are copyrighted by Google and licensed under the SIL Open Font License 1.1.
+
+Full license text: https://openfontlicense.org/open-font-license-official-text/
+Project home: https://github.com/googlefonts/noto-fonts
+
+Google Fonts distribution: https://fonts.google.com/

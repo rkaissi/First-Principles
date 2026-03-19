@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// Graphic calculator mode: <b>Trans</b> edits transformation parameters; <b>Scale</b> zooms the window in/out.
+/// Graphing calculator mode: <b>Trans</b> edits transformation parameters; <b>Scale</b> zooms the window in/out.
 /// Trans: short tap cycles A → k → C → D; double-tap nudges +; hold (~½s) nudges −.
 /// Scale: short tap zoom in; hold zoom out. Pair with <see cref="GraphPinchZoom"/> for pinch.
 /// </summary>
@@ -142,7 +142,7 @@ public class GraphCalculatorToolbar : MonoBehaviour
             LocalizationManager.Get("graph.param_c", "C (vertical shift)"),
             LocalizationManager.Get("graph.param_d", "D (horizontal shift)")
         };
-        string line1 = LocalizationManager.Get("graph.line1", "<b>Graphic calculator mode</b>");
+        string line1 = LocalizationManager.Get("graph.line1", "<b>Graphing calculator mode</b>");
         string line2 = LocalizationManager.Get("graph.line2",
             "<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>");
         string line3Fmt = LocalizationManager.Get("graph.line3",

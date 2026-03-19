@@ -11,7 +11,7 @@ The project pairs a **Cartesian graph UI** (functions + numeric derivatives) wit
 
 **Player build version** (Unity **Project Settings → Player**): **1.0** (`bundleVersion`).
 
-**Localization:** UI strings and level titles in **English, Arabic, French, Chinese (Simplified), Korean, Japanese, German, and Spanish** (`Assets/Resources/Localization/*.txt`). Menu & level select include a language chip; choice is saved in `PlayerPrefs`. Long level stories default to English unless you add optional `story.N` keys per locale. For Arabic/CJK rendering in TMP, add font fallbacks (see `Assets/Resources/Localization/README.md`).
+**Localization:** UI strings and level titles in **English, Arabic, French, Chinese (Simplified), Korean, Japanese, German, and Spanish** (`Assets/Resources/Localization/*.txt`). Menu & level select include a language chip; choice is saved in `PlayerPrefs`. Long level stories default to English unless you add optional `story.N` keys per locale. **TMP multilingual glyphs:** `TmpGlobalFallbackBootstrap` loads **Noto Sans** + **Noto Sans SC / KR / JP** from `Assets/Resources/Fonts/` (OFL; ~22 MB source TTFs, dynamic SDF atlases at runtime). See `Assets/Resources/Fonts/LICENSE-Noto-OFL.txt`.
 
 **Input:** The **[Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@latest)** package is enabled (`com.unity.inputsystem` in `Packages/manifest.json`; **Player → Active Input Handling → Input System Package**). At runtime, `UiInputModuleBootstrap` replaces legacy `StandaloneInputModule` with `InputSystemUIInputModule` on each `EventSystem` so menus work without `UnityEngine.Input`. See [`docs/troubleshooting.md`](docs/troubleshooting.md) (Input System + uGUI section).
 

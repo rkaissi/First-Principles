@@ -2,9 +2,7 @@
 
 - **Files**: `en.txt`, `ar.txt`, `fr.txt`, `zh.txt`, `ko.txt`, `ja.txt`, `de.txt`, `es.txt` (UTF-8).
 - **Keys**: Copy from `en.txt`. Optional `story.0` … `story.42` override long level narratives; if omitted, the built-in English body from `LevelManager` is used.
-- **Fonts (TMP)**: The default / Outfit asset may not include Arabic or CJK glyphs. To avoid tofu:
-  1. Import **Noto Sans** (Arabic, SC, JP, KR) or **Source Han** as TMP font assets.
-  2. Add them to **Fallback Font Assets** on your primary TMP font, or swap the default font per language in code.
+- **Fonts (TMP)**: `TmpGlobalFallbackBootstrap` registers dynamic Noto fallbacks at startup (see `Assets/Resources/Fonts/`). If you remove those TTFs, add your own TMP fallbacks on the primary font or per-locale in code.
 
 ## Player preference
 

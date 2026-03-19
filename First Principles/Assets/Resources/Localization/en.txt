@@ -4,7 +4,7 @@
 ui.choose_stage=Choose a graph stage
 ui.math_tips=Math tips & snippets
 ui.back_menu=Back to Menu
-ui.graphic_calculator_mode=Graphic calculator
+ui.graphing_calculator_mode=Graphing calculator
 ui.loading=Loading…
 ui.language=Language
 ui.tap_change_language=Tap to change
@@ -16,12 +16,12 @@ ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(keyboard: arrows / Space)</col
 hud.stage=STAGE
 controls.mobile=<color=#7a8399>Move</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>tap</color></b>  <size=90%><color=#5c6577>(keyboard: arrows / Space)</color></size>
 controls.desktop=<color=#7a8399>Move</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Jump</color>  <b><color=#ffd978>Space</color></b>
-controls.calculator=<color=#7a8399>Graphic calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>
+controls.calculator=<color=#7a8399>Graphing calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) for x>0 · min(x,3)...
 graph.status_enter=Enter / tap away to graph
 graph.status_graphed=<color=#8fd9b3>Graphed</color>
-graph.line1=<b>Graphic calculator mode</b>
+graph.line1=<b>Graphing calculator mode</b>
 graph.line2=<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> zoom in / hold zoom out · two-finger <b>pinch</b></size>
 graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x in [{4},{5}]</color></size>
@@ -29,7 +29,7 @@ graph.param_a=A (vertical scale)
 graph.param_k=k (horizontal scale)
 graph.param_c=C (vertical shift)
 graph.param_d=D (horizontal shift)
-graph.calculator_intro=<b>Graphic calculator mode</b>\n<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>
+graph.calculator_intro=<b>Graphing calculator mode</b>\n<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>
 menu.home_footer=<b>First Principles</b> <color=#555555>(version 1.0)</color>\n\n<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
 level.0=First Principles Primer
 level.1=Slope of Parabola

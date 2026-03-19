@@ -2,7 +2,7 @@
 ui.choose_stage=그래프 스테이지 선택
 ui.math_tips=수학 팁 모음
 ui.back_menu=메뉴로
-ui.graphic_calculator_mode=그래픽 계산기
+ui.graphing_calculator_mode=그래프 계산기
 ui.loading=불러오는 중…
 ui.language=언어
 ui.tap_change_language=탭하여 변경
@@ -19,7 +19,7 @@ graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) (x>0) · min(x,3)...
 graph.status_enter=Enter / 바깥 탭으로 그래프
 graph.status_graphed=<color=#8fd9b3>그래프 완료</color>
-graph.line1=<b>그래픽 계산기 모드</b>
+graph.line1=<b>그래프 계산기 모드</b>
 graph.line2=<size=88%><color=#c4d0e8>아래에 <b>f(u)</b> 입력(상자 안 변수 <b>x</b> = 내부 u). 그다음:</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · 더블탭 <b>+</b> · 길게 <b>−</b> · <b>Scale</b> 탭 확대 / 길게 축소 · 두 손가락 <b>핀치</b></size>
 graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
@@ -27,7 +27,7 @@ graph.param_a=A (세로 스케일)
 graph.param_k=k (가로 스케일)
 graph.param_c=C (세로 이동)
 graph.param_d=D (가로 이동)
-graph.calculator_intro=<b>그래픽 계산기 모드</b>\n<size=88%>거의 모든 <b>f(u)</b> 입력(식의 변수 <b>x</b>); <b>Trans</b>로 A,k,C,D 조절; <b>Scale</b>·<b>핀치</b>로 창 확대.</size>
+graph.calculator_intro=<b>그래프 계산기 모드</b>\n<size=88%>거의 모든 <b>f(u)</b> 입력(식의 변수 <b>x</b>); <b>Trans</b>로 A,k,C,D 조절; <b>Scale</b>·<b>핀치</b>로 창 확대.</size>
 menu.home_footer=<b>First Principles</b> <color=#555555>(version 1.0)</color>\n\n<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
 level.0=첫 원리 입문
 level.1=포물선의 기울기

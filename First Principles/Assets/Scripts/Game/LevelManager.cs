@@ -72,7 +72,7 @@ public class LevelManager : MonoBehaviour
     private bool isRestarting;
     private Coroutine storyFadeRoutine;
 
-    /// <summary>Graphic calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
+    /// <summary>Graphing calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
     private bool graphCalculatorMode;
 
     private void Awake()
@@ -116,7 +116,7 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode)
         {
             controlsHintText.text = LocalizationManager.Get("controls.calculator",
-                "<color=#7a8399>Graphic calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
+                "<color=#7a8399>Graphing calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
         }
         else if (DeviceLayout.PreferOnScreenGameControls)
         {
@@ -170,7 +170,7 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode || def == null)
         {
             storyText.text = TmpLatex.Process(LocalizationManager.Get("graph.calculator_intro",
-                "<b>Graphic calculator mode</b>\n" +
+                "<b>Graphing calculator mode</b>\n" +
                 "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>"));
             storyText.isRightToLeftText = false;
             return;
@@ -247,7 +247,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Graphic calculator is entered from the main menu only — back returns to <b>Menu</b>.
+    /// Graphing calculator is entered from the main menu only — back returns to <b>Menu</b>.
     /// Levels use back to <b>LevelSelect</b> (scene default is replaced here for clarity).
     /// </summary>
     private void ConfigureGameBackButtonDestination()
@@ -278,7 +278,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Free graphing workspace (graphic calculator mode).
+    /// Free graphing workspace (graphing calculator mode).
     /// Legacy <c>TransButton</c> / <c>ScaleButton</c> are shown; pinch zoom applies on the graph window.
     /// </summary>
     private void EnterGraphCalculatorMode()
@@ -1888,21 +1888,21 @@ public class LevelManager : MonoBehaviour
             curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
             derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),
             transA: -0.743643887f,
-            transK: 0.092f,
+            transK: 0.088f,
             transC: -2.18f,
             transD: 0f,
-            power: 28,
-            baseN: 22,
+            power: 80,
+            baseN: 26,
             story:
-                "<b>Final stage — Mandelbrot set</b> — each column fixes <color=#86efac>Re(c)</color> and sweeps an imaginary slice; graph height tracks <color=#a7f3d0>escape iterations</color> (how long z²+c stays bounded before |z| blows up).\n\n" +
-                "The boundary you know from posters is wildly intricate; here you get a **fast teaching slice** (low max-iter, wide steps) — still true Mandelbrot math.\n\n" +
-                "<size=92%><color=#a8b2d1>The iteration uses <b>|Im(c)|</b> so each sample matches its mirror across the real axis (escape time equals that of the complex conjugate). Low max-iter + wide graph step keep CPU tiny.</color></size>",
+                "<b>Final stage — Mandelbrot set</b> — the <color=#a8b2d1>backdrop</color> is the classic <b>c-plane</b> (Re horizontal, Im vertical) colored by <color=#a7f3d0>smooth escape time</color>; the bright line marks your fixed <color=#86efac>Re(c)</color>. The green curve is the same slice as before: height vs <color=#86efac>Im(c)</color>.\n\n" +
+                "The cardioid and bulbs are the boundary where Julia sets disconnect; zooming that coastline reveals endless filaments (true deep zoom needs a different engine, but the map is real Mandelbrot math).\n\n" +
+                "<size=92%><color=#a8b2d1>Slice iteration uses <b>|Im(c)|</b> (conjugate symmetry). Curve uses fractional escape counts so steps look less “flat” than raw integers.</color></size>",
             derivativePopTriggerCountOverride: 4,
             applyGridTheming: true,
             gridCenter: new Color(0.12f, 0.32f, 0.48f, 0.4f),
             gridOutside: new Color(0.08f, 0.18f, 0.28f, 0.12f),
             storyPauseSecondsOverride: 2.9f,
-            graphStep: 0.38f,
+            graphStep: 0.14f,
             levelXStart: -16f,
             levelXEnd: 16f
         ));

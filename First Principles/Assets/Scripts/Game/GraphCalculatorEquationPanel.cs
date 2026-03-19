@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Runtime <see cref="TMP_InputField"/> for graphic calculator mode: user types <c>f(u)</c> (variable <c>x</c> in the formula = inner <c>u</c> after Trans).
+/// Runtime <see cref="TMP_InputField"/> for graphing calculator mode: user types <c>f(u)</c> (variable <c>x</c> in the formula = inner <c>u</c> after Trans).
 /// </summary>
 public static class GraphCalculatorEquationPanel
 {

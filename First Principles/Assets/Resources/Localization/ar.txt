@@ -2,7 +2,7 @@
 ui.choose_stage=اختر مرحلة الرسم
 ui.math_tips=نصائح وقصاصات رياضية
 ui.back_menu=العودة للقائمة
-ui.graphic_calculator_mode=آلة حاسبة رسومية
+ui.graphing_calculator_mode=آلة حاسبة رسومية
 ui.loading=جارٍ التحميل…
 ui.language=اللغة
 ui.tap_change_language=اضغط للتبديل

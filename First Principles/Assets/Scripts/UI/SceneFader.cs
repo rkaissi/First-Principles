@@ -169,7 +169,7 @@ public class SceneFader : MonoBehaviour
     {
         if (graphicCalculatorMenuButtonText != null)
         {
-            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator");
+            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
             LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         }
 
@@ -192,7 +192,7 @@ public class SceneFader : MonoBehaviour
         }
     }
 
-    /// <summary>Runtime entry for graphic calculator mode (no extra scene objects required).</summary>
+    /// <summary>Runtime entry for graphing calculator mode (no extra scene objects required).</summary>
     private void TrySpawnGraphicCalculatorMenuButton()
     {
         if (!string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
@@ -248,7 +248,7 @@ public class SceneFader : MonoBehaviour
 
         graphicCalculatorMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
         bool tablet = DeviceLayout.IsTabletLike();
-        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator");
+        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
         graphicCalculatorMenuButtonText.fontSize = tablet ? 30 : 26;
         graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
         graphicCalculatorMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
@@ -351,7 +351,7 @@ public class SceneFader : MonoBehaviour
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
 	}
 
-	/// <summary>Graphic calculator mode (same <c>Game</c> scene, platformer off).</summary>
+	/// <summary>Graphing calculator mode (same <c>Game</c> scene, platformer off).</summary>
 	public void LoadGraphCalculator()
 	{
 		GraphCalculatorSession.RequestEnterFromMenu();
