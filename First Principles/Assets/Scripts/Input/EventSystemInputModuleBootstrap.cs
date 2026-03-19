@@ -2,24 +2,35 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Replaces legacy <see cref="StandaloneInputModule"/> with <see cref="InputSystemUIInputModule"/>
-/// so uGUI works when <b>Active Input Handling</b> is <b>Input System Package</b>.
-/// Runs at <see cref="RuntimeInitializeLoadType.AfterSceneLoad"/> (after scene Awakes) but before the first
-/// <c>Update</c>, so <see cref="StandaloneInputModule"/> never ticks and never touches <see cref="UnityEngine.Input"/>.
+/// when <b>Active Input Handling</b> is <b>Input System Package</b> only.
 /// </summary>
+/// <remarks>
+/// Uses <see cref="SceneManager.sceneLoaded"/> so the swap runs <b>after</b> <c>Awake</c>/<c>OnEnable</c>
+/// on all objects in the new scene, but <b>before</b> the first <c>Update</c>. That avoids both
+/// <see cref="StandaloneInputModule"/> touching <see cref="UnityEngine.Input"/> and ordering issues
+/// where swapping in <see cref="RuntimeInitializeLoadType.AfterSceneLoad"/> was too early for some Unity versions.
+/// </remarks>
 public static class EventSystemInputModuleBootstrap
 {
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void OnAfterSceneLoad()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void RegisterSceneHook()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ApplySwap();
     }
 
     private static void ApplySwap()
     {
-        var eventSystems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Exclude);
+        var eventSystems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include);
         foreach (var es in eventSystems)
         {
             if (es == null)
@@ -28,32 +39,19 @@ public static class EventSystemInputModuleBootstrap
             var go = es.gameObject;
             var standalone = go.GetComponent<StandaloneInputModule>();
             var inputModule = go.GetComponent<InputSystemUIInputModule>();
-            var swappedFromLegacy = false;
 
             if (standalone != null)
             {
-                // Remove immediately so we never have two BaseInputModules (Destroy() would defer and break UI input).
                 Object.DestroyImmediate(standalone);
-                swappedFromLegacy = true;
                 inputModule = go.GetComponent<InputSystemUIInputModule>();
-                if (inputModule == null)
-                    inputModule = go.AddComponent<InputSystemUIInputModule>();
             }
 
-            if (inputModule != null)
-                EnsureUiActions(inputModule, forceAssign: swappedFromLegacy);
+            if (inputModule == null)
+                inputModule = go.AddComponent<InputSystemUIInputModule>();
 
+            inputModule.AssignDefaultActions();
             es.UpdateModules();
         }
-    }
-
-    private static void EnsureUiActions(InputSystemUIInputModule module, bool forceAssign)
-    {
-        if (module == null)
-            return;
-
-        if (forceAssign || module.actionsAsset == null || module.point == null || module.leftClick == null)
-            module.AssignDefaultActions();
     }
 }
 #endif

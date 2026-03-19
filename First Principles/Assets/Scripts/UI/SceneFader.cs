@@ -46,6 +46,8 @@ public class SceneFader : MonoBehaviour
         {
 			fadeOutUIImage = fadeOutUIImage1;
 			fadeOutUIImage.gameObject.SetActive(true);
+			fadeOutUIImage.enabled = true;
+			fadeOutUIImage.raycastTarget = true;
 			fadeOutUIImage2.gameObject.SetActive(false);
 
 			ZoomIn();
@@ -57,6 +59,8 @@ public class SceneFader : MonoBehaviour
 		{
 			fadeOutUIImage = fadeOutUIImage2;
 			fadeOutUIImage.gameObject.SetActive(true);
+			fadeOutUIImage.enabled = true;
+			fadeOutUIImage.raycastTarget = true;
 			fadeOutUIImage1.gameObject.SetActive(false);
 
 			// FindObjectOfType<AudioManager>().PlayMusic("ClassicalMusic");
@@ -65,6 +69,8 @@ public class SceneFader : MonoBehaviour
 		{
 			fadeOutUIImage = fadeOutUIImage2;
 			fadeOutUIImage.gameObject.SetActive(true);
+			fadeOutUIImage.enabled = true;
+			fadeOutUIImage.raycastTarget = true;
 			fadeOutUIImage1.gameObject.SetActive(false);
 		}
 
@@ -90,10 +96,13 @@ public class SceneFader : MonoBehaviour
 				yield return null;
 			}
 			fadeOutUIImage.enabled = false;
+			// Full-screen fade must not eat clicks when invisible (alpha 0 + raycast off).
+			fadeOutUIImage.raycastTarget = false;
 		}
 		else
 		{
 			fadeOutUIImage.enabled = true;
+			fadeOutUIImage.raycastTarget = true;
 			while (alpha <= fadeEndValue)
 			{
 				SetColorImage(ref alpha, fadeDirection);
@@ -117,7 +126,7 @@ public class SceneFader : MonoBehaviour
 	}
     #endregion
 
-    private void ZoomIn() => Debug.Log("Zoomed In");
+    private void ZoomIn() { }
 
     private IEnumerator SpawnMenuExtrasNextFrame()
     {
@@ -283,6 +292,8 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(false);
 		fadeOutUIImage = fadeOutUIImage2;
 		fadeOutUIImage.gameObject.SetActive(true);
+		fadeOutUIImage.enabled = true;
+		fadeOutUIImage.raycastTarget = true;
 
 		// Coroutine allows developers to run different tasks simultaneously (for multitasking)
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Game"));
@@ -293,6 +304,8 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(false);
 		fadeOutUIImage = fadeOutUIImage2;
 		fadeOutUIImage.gameObject.SetActive(true);
+		fadeOutUIImage.enabled = true;
+		fadeOutUIImage.raycastTarget = true;
 
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
 	}
@@ -304,6 +317,8 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(false);
 		fadeOutUIImage = fadeOutUIImage2;
 		fadeOutUIImage.gameObject.SetActive(true);
+		fadeOutUIImage.enabled = true;
+		fadeOutUIImage.raycastTarget = true;
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Game"));
 	}
 
@@ -312,6 +327,8 @@ public class SceneFader : MonoBehaviour
 		fadeOutUIImage.gameObject.SetActive(false);
 		fadeOutUIImage = fadeOutUIImage1;
 		fadeOutUIImage.gameObject.SetActive(true);
+		fadeOutUIImage.enabled = true;
+		fadeOutUIImage.raycastTarget = true;
 
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "Menu"));
     }
