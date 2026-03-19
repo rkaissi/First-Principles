@@ -1,5 +1,5 @@
 /// <summary>
-/// When set from Menu or Level select, the next <c>Game</c> scene load opens <i>Faxas-style</i> free graphing
+/// When set from Menu or Level select, the next <c>Game</c> scene load opens <i>graphic calculator</i> mode
 /// (transforms + zoom + pinch) instead of the derivative platformer.
 /// </summary>
 public static class GraphCalculatorSession

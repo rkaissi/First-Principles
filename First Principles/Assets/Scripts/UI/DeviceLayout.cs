@@ -78,10 +78,10 @@ public static class DeviceLayout
     public static float TouchHintVerticalOffset => IsTabletLike() ? 212f : 188f;
 
     public static Vector2 LevelSelectScrollAnchorMin =>
-        IsTabletLike() ? new Vector2(0.12f, 0.11f) : new Vector2(0.04f, 0.12f);
+        IsTabletLike() ? new Vector2(0.1f, 0.08f) : new Vector2(0.04f, 0.08f);
 
     public static Vector2 LevelSelectScrollAnchorMax =>
-        IsTabletLike() ? new Vector2(0.88f, 0.73f) : new Vector2(0.96f, 0.74f);
+        IsTabletLike() ? new Vector2(0.9f, 0.78f) : new Vector2(0.96f, 0.8f);
 
     public static float LevelSelectScrollSensitivity => IsTabletLike() ? 44f : 28f;
 

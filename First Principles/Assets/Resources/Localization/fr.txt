@@ -2,7 +2,8 @@
 ui.choose_stage=Choisissez un niveau graphique
 ui.math_tips=Astuces & formules
 ui.back_menu=Retour au menu
-ui.faxas_graphing=Traceur style Faxas
+ui.graphic_calculator_mode=Mode calculatrice graphique
+ui.loading=Chargement…
 ui.language=Langue
 ui.tap_change_language=Appuyez pour changer
 ui.close=Fermer
@@ -13,20 +14,20 @@ ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(clavier : flèches / Espace)</
 hud.stage=NIVEAU
 controls.mobile=<color=#7a8399>Déplacer</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saut</color>  <b><color=#ffd978>tapoter</color></b>  <size=90%><color=#5c6577>(clavier : flèches / Espace)</color></size>
 controls.desktop=<color=#7a8399>Déplacer</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saut</color>  <b><color=#ffd978>Espace</color></b>
-controls.calculator=<color=#7a8399>style Faxas</color>  <b>Saisir f(u)</b>  ·  <b>Trans</b>  ·  <b>Échelle</b>  ·  <b>Pincer</b>  ·  <b>Retour</b>
+controls.calculator=<color=#7a8399>Calculatrice graphique</color>  <b>Saisir f(u)</b>  ·  <b>Trans</b>  ·  <b>Échelle</b>  ·  <b>Pincer</b>  ·  <b>Retour</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) si x>0 · min(x,3)...
 graph.status_enter=Entrée / toucher ailleurs pour tracer
 graph.status_graphed=<color=#8fd9b3>Tracé</color>
-graph.line1=<b>Traceur style Faxas Instruments</b>
+graph.line1=<b>Mode calculatrice graphique</b>
 graph.line2=<size=88%><color=#c4d0e8>Saisissez <b>f(u)</b> ci-dessous (la variable <b>x</b> dans la zone = u interne). Ensuite :</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · double appui <b>+</b> · maintenir <b>−</b> · <b>Échelle</b> zoom avant / maintenir zoom arrière · <b>pincer</b> deux doigts</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
 graph.param_a=A (échelle verticale)
 graph.param_k=k (échelle horizontale)
 graph.param_c=C (translation verticale)
 graph.param_d=D (translation horizontale)
-graph.calculator_intro=<b>Traceur style Faxas Instruments</b>\n<size=88%>Saisissez presque n’importe quelle <b>f(u)</b> (variable <b>x</b> dans la formule) ; <b>Trans</b> règle A, k, C, D ; <b>Échelle</b> et <b>pincement</b> zooment la fenêtre. Sans lien avec une marque d’appareil.</size>
+graph.calculator_intro=<b>Mode calculatrice graphique</b>\n<size=88%>Saisissez presque n’importe quelle <b>f(u)</b> (variable <b>x</b> dans la formule) ; <b>Trans</b> règle A, k, C, D ; <b>Échelle</b> et <b>pincement</b> zooment la fenêtre.</size>
 footer.proprietary=© 2022-2026 · Propriétaire · Tous droits réservés · First Principles
 footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
 footer.school=Diplômés fiers du <b>Garth Webb Secondary School</b>, Oakville.

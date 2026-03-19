@@ -113,7 +113,7 @@ public class FunctionPlotter : MonoBehaviour
         equationExtraSuffix = suffix ?? "";
     }
 
-    /// <summary>Switches to typed expression mode (Faxas graphing).</summary>
+    /// <summary>Switches to typed expression mode (graphic calculator).</summary>
     public void SetCustomExpression(string expression)
     {
         customExpression = string.IsNullOrWhiteSpace(expression) ? "0" : expression.Trim();
@@ -580,7 +580,7 @@ public enum FunctionType
     /// <summary>Escape iteration count vs Im(c) with fixed Re(c) = transA (boss slice); uses |Im| in iteration for conjugate symmetry.</summary>
     MandelbrotEscapeImSlice,
 
-    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (Faxas graphing).</summary>
+    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (graphic calculator).</summary>
     CustomExpression
 }
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -23,8 +24,7 @@ public class LevelSelectController : MonoBehaviour
     private TextMeshProUGUI titleTmp;
     private TextMeshProUGUI mathTipsTmp;
     private TextMeshProUGUI backTmp;
-    private TextMeshProUGUI faxasEntryTmp;
-    private TextMeshProUGUI footerTmp;
+    private TextMeshProUGUI graphicCalculatorEntryTmp;
     private TextMeshProUGUI levelSelectLangTmp;
     private readonly System.Collections.Generic.List<TextMeshProUGUI> levelRowLabels = new System.Collections.Generic.List<TextMeshProUGUI>();
 
@@ -55,15 +55,10 @@ public class LevelSelectController : MonoBehaviour
             backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
             LocalizationManager.ApplyTextDirection(backTmp);
         }
-        if (faxasEntryTmp != null)
+        if (graphicCalculatorEntryTmp != null)
         {
-            faxasEntryTmp.text = LocalizationManager.Get("ui.faxas_graphing", "Faxas Instruments-style graphing (free plot)");
-            LocalizationManager.ApplyTextDirection(faxasEntryTmp);
-        }
-        if (footerTmp != null)
-        {
-            footerTmp.text = SceneCreditsFooter.BuildCompactRichText();
-            LocalizationManager.ApplyTextDirection(footerTmp);
+            graphicCalculatorEntryTmp.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+            LocalizationManager.ApplyTextDirection(graphicCalculatorEntryTmp);
         }
 
         for (int i = 0; i < levelRowLabels.Count; i++)
@@ -116,12 +111,12 @@ public class LevelSelectController : MonoBehaviour
         titleRt.anchorMin = new Vector2(0.5f, tablet ? 0.91f : 0.9f);
         titleRt.anchorMax = new Vector2(0.5f, tablet ? 0.91f : 0.9f);
         titleRt.pivot = new Vector2(0.5f, 0.5f);
-        titleRt.sizeDelta = new Vector2(tablet ? 1020f : 960f, tablet ? 96f : 88f);
+        titleRt.sizeDelta = new Vector2(tablet ? 1080f : 1000f, tablet ? 108f : 96f);
         titleRt.anchoredPosition = Vector2.zero;
 
         titleTmp = titleGo.AddComponent<TextMeshProUGUI>();
         titleTmp.text = LocalizationManager.Get("ui.choose_stage", "Choose a graph stage");
-        titleTmp.fontSize = tablet ? 46 : 40;
+        titleTmp.fontSize = tablet ? 52 : 46;
         titleTmp.alignment = TextAlignmentOptions.Center;
         titleTmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(titleTmp);
@@ -171,8 +166,8 @@ public class LevelSelectController : MonoBehaviour
 
         var vlg = contentGo.AddComponent<VerticalLayoutGroup>();
         vlg.childAlignment = TextAnchor.UpperCenter;
-        vlg.spacing = tablet ? 16f : 14f;
-        vlg.padding = new RectOffset(tablet ? 14 : 10, tablet ? 14 : 10, tablet ? 12 : 10, tablet ? 12 : 10);
+        vlg.spacing = tablet ? 20f : 18f;
+        vlg.padding = new RectOffset(tablet ? 16 : 12, tablet ? 16 : 12, tablet ? 14 : 12, tablet ? 14 : 12);
         vlg.childControlHeight = true;
         vlg.childControlWidth = true;
         vlg.childForceExpandHeight = false;
@@ -182,7 +177,7 @@ public class LevelSelectController : MonoBehaviour
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        faxasEntryTmp = CreateLevelButton(contentRt, LocalizationManager.Get("ui.faxas_graphing", "Faxas Instruments-style graphing (free plot)"), LaunchGraphCalculator);
+        graphicCalculatorEntryTmp = CreateLevelButton(contentRt, LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode"), LaunchGraphCalculator);
 
         for (int i = 0; i < GameLevelCatalog.LevelCount; i++)
         {
@@ -191,32 +186,12 @@ public class LevelSelectController : MonoBehaviour
             levelRowLabels.Add(rowTmp);
         }
 
-        CreateSceneCreditsFooter(panel.transform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRt);
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRt);
+        scroll.verticalNormalizedPosition = 1f;
+
         CreateBackButton(panel.transform);
-    }
-
-    private void CreateSceneCreditsFooter(Transform panelRoot)
-    {
-        var go = new GameObject("SceneCreditsFooter");
-        var rt = go.AddComponent<RectTransform>();
-        rt.SetParent(panelRoot, false);
-        bool tablet = DeviceLayout.IsTabletLike();
-        rt.anchorMin = new Vector2(0.5f, 0f);
-        rt.anchorMax = new Vector2(0.5f, 0f);
-        rt.pivot = new Vector2(0.5f, 0f);
-        rt.sizeDelta = new Vector2(tablet ? 980f : 920f, tablet ? 76f : 72f);
-        rt.anchoredPosition = new Vector2(0f, tablet ? 118f : 108f);
-
-        footerTmp = go.AddComponent<TextMeshProUGUI>();
-        footerTmp.text = SceneCreditsFooter.BuildCompactRichText();
-        footerTmp.richText = true;
-        footerTmp.textWrappingMode = TextWrappingModes.Normal;
-        footerTmp.fontSize = tablet ? 17 : 15;
-        footerTmp.alignment = TextAlignmentOptions.Bottom;
-        footerTmp.color = new Color(0.9f, 0.91f, 0.94f, 0.95f);
-        footerTmp.raycastTarget = false;
-        CopyFontFromAny(footerTmp);
-        LocalizationManager.ApplyTextDirection(footerTmp);
     }
 
     private void CreateMathArticlesButton(Transform panelRoot, Transform canvasTransform)
@@ -228,7 +203,7 @@ public class LevelSelectController : MonoBehaviour
         rt.anchorMin = new Vector2(0.5f, tablet ? 0.81f : 0.8f);
         rt.anchorMax = new Vector2(0.5f, tablet ? 0.81f : 0.8f);
         rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.sizeDelta = new Vector2(tablet ? 580f : 520f, tablet ? 62f : 56f);
+        rt.sizeDelta = new Vector2(tablet ? 620f : 560f, tablet ? 68f : 62f);
         rt.anchoredPosition = Vector2.zero;
 
         var img = go.AddComponent<Image>();
@@ -252,7 +227,7 @@ public class LevelSelectController : MonoBehaviour
 
         mathTipsTmp = textGo.AddComponent<TextMeshProUGUI>();
         mathTipsTmp.text = LocalizationManager.Get("ui.math_tips", "Math tips & snippets");
-        mathTipsTmp.fontSize = tablet ? 28 : 24;
+        mathTipsTmp.fontSize = tablet ? 32 : 28;
         mathTipsTmp.alignment = TextAlignmentOptions.Center;
         mathTipsTmp.color = new Color(0.9f, 0.96f, 1f, 1f);
         CopyFontFromAny(mathTipsTmp);
@@ -313,12 +288,6 @@ public class LevelSelectController : MonoBehaviour
             target.font = TMP_Settings.defaultFontAsset;
     }
 
-    private static void LaunchGraphCalculator()
-    {
-        GraphCalculatorSession.RequestEnterFromMenu();
-        SceneManager.LoadScene("Game");
-    }
-
     /// <returns>Label <see cref="TextMeshProUGUI"/> for live language updates.</returns>
     private TextMeshProUGUI CreateLevelButton(Transform parent, string label, UnityAction onClick)
     {
@@ -328,8 +297,8 @@ public class LevelSelectController : MonoBehaviour
 
         bool tablet = DeviceLayout.IsTabletLike();
         var le = go.AddComponent<LayoutElement>();
-        le.preferredHeight = tablet ? 80f : 72f;
-        le.minHeight = tablet ? 80f : 72f;
+        le.preferredHeight = tablet ? 92f : 84f;
+        le.minHeight = tablet ? 92f : 84f;
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -352,7 +321,7 @@ public class LevelSelectController : MonoBehaviour
 
         var tmp = textGo.AddComponent<TextMeshProUGUI>();
         tmp.text = label;
-        tmp.fontSize = tablet ? 28 : 26;
+        tmp.fontSize = tablet ? 32 : 30;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(tmp);
@@ -371,7 +340,7 @@ public class LevelSelectController : MonoBehaviour
         rt.anchorMin = new Vector2(0.5f, tablet ? 0.048f : 0.055f);
         rt.anchorMax = new Vector2(0.5f, tablet ? 0.048f : 0.055f);
         rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.sizeDelta = new Vector2(tablet ? 280f : 240f, tablet ? 58f : 52f);
+        rt.sizeDelta = new Vector2(tablet ? 300f : 260f, tablet ? 64f : 58f);
         rt.anchoredPosition = Vector2.zero;
 
         var img = go.AddComponent<Image>();
@@ -395,18 +364,71 @@ public class LevelSelectController : MonoBehaviour
 
         backTmp = textGo.AddComponent<TextMeshProUGUI>();
         backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
-        backTmp.fontSize = tablet ? 26 : 22;
+        backTmp.fontSize = tablet ? 30 : 26;
         backTmp.alignment = TextAlignmentOptions.Center;
         backTmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(backTmp);
         LocalizationManager.ApplyTextDirection(backTmp);
 
-        btn.onClick.AddListener(() => SceneManager.LoadScene("Menu"));
+        btn.onClick.AddListener(() => StartCoroutine(LoadSceneRoutine("Menu")));
     }
 
-    private static void StartGameAt(int index)
+    private void StartGameAt(int index)
     {
         LevelSelection.SetSelectedLevel(index);
-        SceneManager.LoadScene("Game");
+        StartCoroutine(LoadSceneRoutine("Game"));
+    }
+
+    private static void LaunchGraphCalculator()
+    {
+        GraphCalculatorSession.RequestEnterFromMenu();
+        var ctrl = FindAnyObjectByType<LevelSelectController>();
+        if (ctrl != null)
+            ctrl.StartCoroutine(ctrl.LoadSceneRoutine("Game"));
+        else
+            SceneManager.LoadScene("Game");
+    }
+
+    private IEnumerator LoadSceneRoutine(string sceneName)
+    {
+        var canvas = FindAnyObjectByType<Canvas>();
+        var parentRt = canvas != null
+            ? MobileUiRoots.GetSafeContentParent(canvas.transform) as RectTransform ?? canvas.transform as RectTransform
+            : null;
+
+        GameObject veil = null;
+        if (parentRt != null)
+        {
+            veil = new GameObject("SceneLoadingVeil");
+            var vrt = veil.AddComponent<RectTransform>();
+            vrt.SetParent(parentRt, false);
+            vrt.SetAsLastSibling();
+            vrt.anchorMin = Vector2.zero;
+            vrt.anchorMax = Vector2.one;
+            vrt.offsetMin = Vector2.zero;
+            vrt.offsetMax = Vector2.zero;
+
+            var dim = veil.AddComponent<Image>();
+            dim.color = new Color(0.05f, 0.06f, 0.09f, 0.88f);
+            dim.raycastTarget = true;
+
+            var labelGo = new GameObject("LoadingText");
+            var lrt = labelGo.AddComponent<RectTransform>();
+            lrt.SetParent(veil.transform, false);
+            lrt.anchorMin = new Vector2(0.5f, 0.5f);
+            lrt.anchorMax = new Vector2(0.5f, 0.5f);
+            lrt.sizeDelta = new Vector2(720f, 120f);
+            var tmp = labelGo.AddComponent<TextMeshProUGUI>();
+            tmp.text = LocalizationManager.Get("ui.loading", "Loading…");
+            tmp.fontSize = 40;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = new Color(0.94f, 0.96f, 1f, 0.96f);
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            tmp.raycastTarget = false;
+            CopyFontFromAny(tmp);
+            LocalizationManager.ApplyTextDirection(tmp);
+        }
+
+        yield return AsyncSceneLoader.LoadCoroutine(sceneName);
     }
 }

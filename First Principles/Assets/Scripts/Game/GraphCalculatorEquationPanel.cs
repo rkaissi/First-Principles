@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Runtime <see cref="TMP_InputField"/> for Faxas graphing: user types <c>f(u)</c> (variable <c>x</c> in the formula = inner <c>u</c> after Trans).
+/// Runtime <see cref="TMP_InputField"/> for graphic calculator mode: user types <c>f(u)</c> (variable <c>x</c> in the formula = inner <c>u</c> after Trans).
 /// </summary>
 public static class GraphCalculatorEquationPanel
 {
-    private const string RootName = "FaxasEquationInputRoot";
+    private const string RootName = "GraphicCalculatorEquationRoot";
+    private const string LegacyRootName = "FaxasEquationInputRoot";
 
     private static TextMeshProUGUI labelTmp;
     private static TextMeshProUGUI placeholderTmp;
@@ -20,6 +21,13 @@ public static class GraphCalculatorEquationPanel
             return;
         if (GameObject.Find(RootName) != null)
             return;
+
+        var legacyRoot = GameObject.Find(LegacyRootName);
+        if (legacyRoot != null)
+        {
+            legacyRoot.name = RootName;
+            return;
+        }
 
         bool tablet = DeviceLayout.IsTabletLike();
         float w = tablet ? 980f : 900f;
@@ -48,7 +56,7 @@ public static class GraphCalculatorEquationPanel
         lrt.sizeDelta = new Vector2(220f, 28f);
         var label = labelGo.AddComponent<TextMeshProUGUI>();
         label.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
-        label.fontSize = tablet ? 22 : 20;
+        label.fontSize = tablet ? 26 : 24;
         label.alignment = TextAlignmentOptions.MidlineLeft;
         label.color = new Color(0.85f, 0.88f, 0.95f, 0.9f);
         CopyFont(label, typographyReference);
@@ -96,7 +104,7 @@ public static class GraphCalculatorEquationPanel
         phRt.offsetMax = Vector2.zero;
         var ph = phGo.AddComponent<TextMeshProUGUI>();
         ph.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
-        ph.fontSize = tablet ? 22 : 19;
+        ph.fontSize = tablet ? 24 : 21;
         ph.color = new Color(1f, 1f, 1f, 0.32f);
         ph.fontStyle = FontStyles.Italic;
         ph.alignment = TextAlignmentOptions.MidlineLeft;

@@ -4,7 +4,7 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 /// <summary>
 /// Two-finger pinch zoom on the math window (<see cref="FunctionPlotter.xStart"/> / <c>xEnd</c>).
-/// Only used in Faxas-style free graphing mode.
+/// Only used in graphic calculator mode.
 /// </summary>
 public class GraphPinchZoom : MonoBehaviour
 {

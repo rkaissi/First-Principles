@@ -55,7 +55,7 @@ Scenes still serialize Unity’s default **`StandaloneInputModule`** on each **`
 
 - **uGUI / menus**: **`InputSystemUIInputModule`** after bootstrap (pointer + navigation from the default UI action map).
 - **Gameplay** (`PlayerControllerUI2D`): `Keyboard` + `Gamepad` via `UnityEngine.InputSystem`.
-- **Faxas pinch zoom** (`GraphPinchZoom`): **Enhanced Touch** (`Touch.activeTouches`).
+- **Graphic calculator pinch zoom** (`GraphPinchZoom`): **Enhanced Touch** (`Touch.activeTouches`).
 
 If you delete the bootstrap or duplicate `EventSystem` setups in new scenes, ensure each active **`EventSystem`** uses **`InputSystemUIInputModule`** (not **`StandaloneInputModule`**) while **Active Input Handling** is **Input System Package**. Alternatively, set handling to **Both** and you can leave **`StandaloneInputModule`** in scenes — at the cost of enabling the old **`UnityEngine.Input`** backend.
 

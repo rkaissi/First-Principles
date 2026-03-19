@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 
 // -----------------------------------------------------------------------------
-// TmpLatex — small LaTeX → TextMeshPro rich text (\(…\), \[…\], $$…$$)
+// TmpLatex — small LaTeX → TextMeshPro rich text (\(…\), \[…\], $$…$$, $…$)
 // -----------------------------------------------------------------------------
 // Fractions use <sup>/<sub> + ⁄; sub/sup; Greek; integrals; \text/\mathrm unwrap.
 // -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@ using System.Text;
 /// </summary>
 public static class TmpLatex
 {
-    /// <summary>Process <c>\( … \)</c>, <c>\[ … \]</c>, and display <c>$$ … $$</c>.</summary>
+    /// <summary>Process <c>\( … \)</c>, <c>\[ … \]</c>, display <c>$$ … $$</c>, and inline <c>$ … $</c> (single dollar).</summary>
     public static string Process(string input)
     {
         if (string.IsNullOrEmpty(input))
@@ -25,9 +25,10 @@ public static class TmpLatex
             if (TryMatch(input, i, "\\[", out int afterOpen) &&
                 TryFindClosingDisplay(input, afterOpen, out int innerStart, out int innerEnd, out int afterClose))
             {
-                sb.Append("\n<size=102%><align=center>");
+                // Avoid TMP &lt;align&gt; — wrong syntax/version mismatches can hide the whole block.
+                sb.Append("\n<size=102%>");
                 sb.Append(ConvertLatexFragment(input.Substring(innerStart, innerEnd - innerStart)));
-                sb.Append("</align></size>\n");
+                sb.Append("</size>\n");
                 i = afterClose;
                 continue;
             }
@@ -35,9 +36,9 @@ public static class TmpLatex
             if (TryMatch(input, i, "$$", out int afterDollar) &&
                 TryFindDoubleDollarClose(input, afterDollar, out int ddA, out int ddB, out int afterDdClose))
             {
-                sb.Append("\n<size=105%><align=center>");
+                sb.Append("\n<size=105%>");
                 sb.Append(ConvertLatexFragment(input.Substring(ddA, ddB - ddA)));
-                sb.Append("</align></size>\n");
+                sb.Append("</size>\n");
                 i = afterDdClose;
                 continue;
             }
@@ -50,11 +51,60 @@ public static class TmpLatex
                 continue;
             }
 
+            if (TryOpeningSingleDollar(input, i, out int afterOpenDollar) &&
+                TryFindSingleDollarClose(input, afterOpenDollar, out int sdA, out int sdB, out int afterSdClose))
+            {
+                sb.Append(ConvertLatexFragment(input.Substring(sdA, sdB - sdA)));
+                i = afterSdClose;
+                continue;
+            }
+
             sb.Append(input[i]);
             i++;
         }
 
         return sb.ToString();
+    }
+
+    private static bool TryOpeningSingleDollar(string s, int i, out int afterOpen)
+    {
+        afterOpen = i;
+        if (i >= s.Length || s[i] != '$')
+            return false;
+        // Not display $$ (handled earlier, but keep safe if order changes).
+        if (i + 1 < s.Length && s[i + 1] == '$')
+            return false;
+        afterOpen = i + 1;
+        return true;
+    }
+
+    /// <summary>Find closing <c>$</c> for inline math; skips <c>$$</c> pairs inside the span.</summary>
+    private static bool TryFindSingleDollarClose(string s, int from, out int innerStart, out int innerEnd, out int afterClose)
+    {
+        innerStart = from;
+        innerEnd = from;
+        afterClose = from;
+        int j = from;
+        while (j < s.Length)
+        {
+            if (s[j] != '$')
+            {
+                j++;
+                continue;
+            }
+
+            if (j + 1 < s.Length && s[j + 1] == '$')
+            {
+                j += 2;
+                continue;
+            }
+
+            innerEnd = j;
+            afterClose = j + 1;
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryMatch(string s, int i, string token, out int after)

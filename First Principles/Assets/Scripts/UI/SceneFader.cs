@@ -23,7 +23,7 @@ public class SceneFader : MonoBehaviour
 
 	private Image fadeOutUIImage;
 
-	private TextMeshProUGUI faxasMenuButtonText;
+	private TextMeshProUGUI graphicCalculatorMenuButtonText;
 	private TextMeshProUGUI menuLanguageButtonLabel;
 
 	public float fadeSpeed = 0.8f;
@@ -116,14 +116,43 @@ public class SceneFader : MonoBehaviour
 	public IEnumerator FadeAndLoadScene(FadeDirection fadeDirection, string sceneToLoad)
 	{
 		yield return Fade(fadeDirection);
-		SceneManager.LoadScene(sceneToLoad);
+		AttachLoadingLabelToFadeOverlay();
+		yield return AsyncSceneLoader.LoadCoroutine(sceneToLoad);
 	}
 
-	private void SetColorImage(ref float alpha, FadeDirection fadeDirection)
-	{
-		fadeOutUIImage.color = new Color(fadeOutUIImage.color.r, fadeOutUIImage.color.g, fadeOutUIImage.color.b, alpha);
-		alpha += Time.deltaTime * (1.0f / fadeSpeed) * ((fadeDirection == FadeDirection.Out) ? -1 : 1);
-	}
+    private void SetColorImage(ref float alpha, FadeDirection fadeDirection)
+    {
+        fadeOutUIImage.color = new Color(fadeOutUIImage.color.r, fadeOutUIImage.color.g, fadeOutUIImage.color.b, alpha);
+        alpha += Time.deltaTime * (1.0f / fadeSpeed) * ((fadeDirection == FadeDirection.Out) ? -1 : 1);
+    }
+
+    /// <summary>Shown while <see cref="AsyncSceneLoader"/> finishes activating the next scene.</summary>
+    private void AttachLoadingLabelToFadeOverlay()
+    {
+        if (fadeOutUIImage == null)
+            return;
+        if (fadeOutUIImage.transform.Find("LoadingLabel") != null)
+            return;
+
+        var go = new GameObject("LoadingLabel");
+        var rt = go.AddComponent<RectTransform>();
+        rt.SetParent(fadeOutUIImage.transform, false);
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = new Vector2(0f, 80f);
+        rt.offsetMax = Vector2.zero;
+
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = LocalizationManager.Get("ui.loading", "Loading…");
+        tmp.fontSize = 36;
+        tmp.alignment = TextAlignmentOptions.Bottom;
+        tmp.color = new Color(0.92f, 0.94f, 0.98f, 0.95f);
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.raycastTarget = false;
+        if (TMP_Settings.defaultFontAsset != null)
+            tmp.font = TMP_Settings.defaultFontAsset;
+        LocalizationManager.ApplyTextDirection(tmp);
+    }
     #endregion
 
     private void ZoomIn() { }
@@ -131,17 +160,17 @@ public class SceneFader : MonoBehaviour
     private IEnumerator SpawnMenuExtrasNextFrame()
     {
         yield return null;
-        TrySpawnFaxasGraphingMenuButton();
+        TrySpawnGraphicCalculatorMenuButton();
         TrySpawnLanguagePicker();
         RefreshMenuLocalizedControls();
     }
 
     private void RefreshMenuLocalizedControls()
     {
-        if (faxasMenuButtonText != null)
+        if (graphicCalculatorMenuButtonText != null)
         {
-            faxasMenuButtonText.text = LocalizationManager.Get("ui.faxas_graphing", "Faxas-style graphing");
-            LocalizationManager.ApplyTextDirection(faxasMenuButtonText);
+            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+            LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         }
 
         if (menuLanguageButtonLabel != null)
@@ -152,12 +181,12 @@ public class SceneFader : MonoBehaviour
         }
     }
 
-    /// <summary>Runtime entry for free graphing mode (no extra scene objects required).</summary>
-    private void TrySpawnFaxasGraphingMenuButton()
+    /// <summary>Runtime entry for graphic calculator mode (no extra scene objects required).</summary>
+    private void TrySpawnGraphicCalculatorMenuButton()
     {
         if (!string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
             return;
-        if (GameObject.Find("FaxasGraphingEntryButton") != null)
+        if (GameObject.Find("GraphicCalculatorEntryButton") != null)
             return;
 
         var play = GameObject.FindGameObjectWithTag("PlayButton");
@@ -168,7 +197,7 @@ public class SceneFader : MonoBehaviour
         if (playRt == null)
             return;
 
-        var go = new GameObject("FaxasGraphingEntryButton");
+        var go = new GameObject("GraphicCalculatorEntryButton");
         var rt = go.AddComponent<RectTransform>();
         rt.SetParent(playRt.parent, false);
         rt.localScale = Vector3.one;
@@ -205,24 +234,24 @@ public class SceneFader : MonoBehaviour
         trt.offsetMin = new Vector2(10f, 6f);
         trt.offsetMax = new Vector2(-10f, -6f);
 
-        faxasMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
+        graphicCalculatorMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
         bool tablet = DeviceLayout.IsTabletLike();
-        faxasMenuButtonText.text = LocalizationManager.Get("ui.faxas_graphing", "Faxas-style graphing");
-        faxasMenuButtonText.fontSize = tablet ? 26 : 22;
-        faxasMenuButtonText.alignment = TextAlignmentOptions.Center;
-        faxasMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
-        faxasMenuButtonText.textWrappingMode = TextWrappingModes.Normal;
-        faxasMenuButtonText.richText = true;
-        LocalizationManager.ApplyTextDirection(faxasMenuButtonText);
+        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+        graphicCalculatorMenuButtonText.fontSize = tablet ? 30 : 26;
+        graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
+        graphicCalculatorMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
+        graphicCalculatorMenuButtonText.textWrappingMode = TextWrappingModes.Normal;
+        graphicCalculatorMenuButtonText.richText = true;
+        LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         var refTmp = play.GetComponentInChildren<TextMeshProUGUI>();
         if (refTmp != null && refTmp.font != null)
         {
-            faxasMenuButtonText.font = refTmp.font;
+            graphicCalculatorMenuButtonText.font = refTmp.font;
             if (refTmp.fontSharedMaterial != null)
-                faxasMenuButtonText.fontSharedMaterial = refTmp.fontSharedMaterial;
+                graphicCalculatorMenuButtonText.fontSharedMaterial = refTmp.fontSharedMaterial;
         }
         else if (TMP_Settings.defaultFontAsset != null)
-            faxasMenuButtonText.font = TMP_Settings.defaultFontAsset;
+            graphicCalculatorMenuButtonText.font = TMP_Settings.defaultFontAsset;
     }
 
     /// <summary>Tappable control to cycle UI language (compact for phones).</summary>
@@ -310,7 +339,7 @@ public class SceneFader : MonoBehaviour
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
 	}
 
-	/// <summary>Faxas Instruments–style free graph (same <c>Game</c> scene, platformer off).</summary>
+	/// <summary>Graphic calculator mode (same <c>Game</c> scene, platformer off).</summary>
 	public void LoadGraphCalculator()
 	{
 		GraphCalculatorSession.RequestEnterFromMenu();

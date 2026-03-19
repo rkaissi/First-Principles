@@ -72,7 +72,7 @@ public class LevelManager : MonoBehaviour
     private bool isRestarting;
     private Coroutine storyFadeRoutine;
 
-    /// <summary>Faxas Instruments–style free plot: transforms, scale zoom, pinch — no platformer.</summary>
+    /// <summary>Graphic calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
     private bool graphCalculatorMode;
 
     private void Awake()
@@ -116,7 +116,7 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode)
         {
             controlsHintText.text = LocalizationManager.Get("controls.calculator",
-                "<color=#7a8399>Faxas-style</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
+                "<color=#7a8399>Graphic calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
         }
         else if (DeviceLayout.PreferOnScreenGameControls)
         {
@@ -170,8 +170,8 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode || def == null)
         {
             storyText.text = TmpLatex.Process(LocalizationManager.Get("graph.calculator_intro",
-                "<b>Faxas Instruments-style graphing</b>\n" +
-                "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window. Not affiliated with any hardware brand.</size>"));
+                "<b>Graphic calculator mode</b>\n" +
+                "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>"));
             storyText.isRightToLeftText = false;
             return;
         }
@@ -246,7 +246,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Free graphing workspace (inspired by classroom graphing calculators from <b>Faxas Instruments</b>—not affiliated).
+    /// Free graphing workspace (graphic calculator mode).
     /// Legacy <c>TransButton</c> / <c>ScaleButton</c> are shown; pinch zoom applies on the graph window.
     /// </summary>
     private void EnterGraphCalculatorMode()
@@ -329,16 +329,20 @@ public class LevelManager : MonoBehaviour
         float bridgeControls = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
         float transRowBottom = bridgeControls + 74f;
 
-        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, FindPrimaryEquationTmp(), transRowBottom + 102f, 94f);
+        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, FindPrimaryEquationTmp(), transRowBottom + 110f, 108f);
 
         var transGo = GameObject.Find("TransButton");
         var scaleGo = GameObject.Find("ScaleButton");
         LayoutCalculatorToolButtons(transGo, scaleGo, transRowBottom);
 
         TextMeshProUGUI paramHint = null;
-        if (hintParent != null && GameObject.Find("FaxasGraphParamHint") == null)
+        var legacyHint = GameObject.Find("FaxasGraphParamHint");
+        if (legacyHint != null)
+            legacyHint.name = "GraphicCalculatorParamHint";
+
+        if (hintParent != null && GameObject.Find("GraphicCalculatorParamHint") == null)
         {
-            var hintGo = new GameObject("FaxasGraphParamHint");
+            var hintGo = new GameObject("GraphicCalculatorParamHint");
             var hrt = hintGo.AddComponent<RectTransform>();
             hrt.SetParent(hintParent, false);
             hrt.anchorMin = new Vector2(0.5f, 0f);
@@ -347,18 +351,18 @@ public class LevelManager : MonoBehaviour
             bool tablet = DeviceLayout.IsTabletLike();
             float up = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset + 312f : 318f;
             hrt.anchoredPosition = new Vector2(0f, up);
-            hrt.sizeDelta = new Vector2(tablet ? 960f : 860f, tablet ? 118f : 108f);
+            hrt.sizeDelta = new Vector2(tablet ? 1000f : 920f, tablet ? 128f : 118f);
 
             paramHint = hintGo.AddComponent<TextMeshProUGUI>();
             paramHint.richText = true;
             paramHint.textWrappingMode = TextWrappingModes.Normal;
-            paramHint.fontSize = tablet ? 22 : 19;
+            paramHint.fontSize = tablet ? 26 : 23;
             paramHint.alignment = TextAlignmentOptions.Top;
             paramHint.color = new Color(0.9f, 0.93f, 0.98f, 0.96f);
             ApplyPrimaryUiTypography(paramHint, FindPrimaryEquationTmp(), outlineWidth: 0.12f, outlineAlpha: 0.45f);
         }
-        else if (GameObject.Find("FaxasGraphParamHint") != null)
-            paramHint = GameObject.Find("FaxasGraphParamHint").GetComponent<TextMeshProUGUI>();
+        else if (GameObject.Find("GraphicCalculatorParamHint") != null)
+            paramHint = GameObject.Find("GraphicCalculatorParamHint").GetComponent<TextMeshProUGUI>();
 
         foreach (var oldT in GetComponents<GraphCalculatorToolbar>())
             Destroy(oldT);
@@ -390,8 +394,8 @@ public class LevelManager : MonoBehaviour
 
         bool tablet = DeviceLayout.IsTabletLike();
         float bottom = anchoredBottomY;
-        float w = tablet ? 210f : 198f;
-        float h = tablet ? 100f : 92f;
+        float w = tablet ? 234f : 218f;
+        float h = tablet ? 108f : 100f;
 
         if (transGo != null)
         {
@@ -480,21 +484,22 @@ public class LevelManager : MonoBehaviour
 
         var tmp = storyGo.AddComponent<TextMeshProUGUI>();
         tmp.text = "";
-        tmp.fontSize = 32;
+        tmp.fontSize = 38;
         tmp.enableAutoSizing = true;
-        tmp.fontSizeMin = 20;
-        tmp.fontSizeMax = 34;
+        tmp.fontSizeMin = 22;
+        tmp.fontSizeMax = 42;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.richText = true;
         tmp.textWrappingMode = TextWrappingModes.Normal;
+        tmp.overflowMode = TextOverflowModes.Overflow;
         ApplyPrimaryUiTypography(tmp, FindPrimaryEquationTmp(), outlineWidth: 0.06f, outlineAlpha: 0.35f);
 
         var rt = tmp.rectTransform;
-        rt.anchorMin = new Vector2(0.06f, 1f);
-        rt.anchorMax = new Vector2(0.94f, 1f);
+        rt.anchorMin = new Vector2(0.04f, 1f);
+        rt.anchorMax = new Vector2(0.96f, 1f);
         rt.pivot = new Vector2(0.5f, 1f);
-        rt.anchoredPosition = new Vector2(0, -72f);
-        rt.sizeDelta = new Vector2(0f, 200f);
+        rt.anchoredPosition = new Vector2(0, -64f);
+        rt.sizeDelta = new Vector2(0f, 280f);
 
         tmp.color = new Color(1f, 1f, 1f, 0f);
 
@@ -584,48 +589,51 @@ public class LevelManager : MonoBehaviour
 
         CreateMathConceptsButtonIfNeeded(canvas, equationStyle);
 
-        if (controlsHintText == null)
+        if (!graphCalculatorMode)
         {
-            bool tabletUi = DeviceLayout.IsTabletLike();
-            var barGo = new GameObject("ControlsHintPanel");
-            var barRt = barGo.AddComponent<RectTransform>();
-            var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
-            barRt.SetParent(safe != null ? safe : canvas.transform, false);
-            barRt.anchorMin = new Vector2(0.5f, 0f);
-            barRt.anchorMax = new Vector2(0.5f, 0f);
-            barRt.pivot = new Vector2(0.5f, 0f);
-            float up = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
-            barRt.anchoredPosition = new Vector2(0f, up);
-            barRt.sizeDelta = new Vector2(tabletUi ? 900f : 760f, tabletUi ? 60f : 56f);
+            if (controlsHintText == null)
+            {
+                bool tabletUi = DeviceLayout.IsTabletLike();
+                var barGo = new GameObject("ControlsHintPanel");
+                var barRt = barGo.AddComponent<RectTransform>();
+                var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+                barRt.SetParent(safe != null ? safe : canvas.transform, false);
+                barRt.anchorMin = new Vector2(0.5f, 0f);
+                barRt.anchorMax = new Vector2(0.5f, 0f);
+                barRt.pivot = new Vector2(0.5f, 0f);
+                float up = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
+                barRt.anchoredPosition = new Vector2(0f, up);
+                barRt.sizeDelta = new Vector2(tabletUi ? 900f : 760f, tabletUi ? 60f : 56f);
 
-            var barBg = barGo.AddComponent<Image>();
-            barBg.sprite = panelSprite;
-            barBg.color = new Color(0.08f, 0.09f, 0.13f, 0.85f);
-            barBg.raycastTarget = false;
-            barBg.type = panelSprite != null && panelSprite.border.sqrMagnitude > 0.001f ? Image.Type.Sliced : Image.Type.Simple;
+                var barBg = barGo.AddComponent<Image>();
+                barBg.sprite = panelSprite;
+                barBg.color = new Color(0.08f, 0.09f, 0.13f, 0.85f);
+                barBg.raycastTarget = false;
+                barBg.type = panelSprite != null && panelSprite.border.sqrMagnitude > 0.001f ? Image.Type.Sliced : Image.Type.Simple;
 
-            var textGo = new GameObject("ControlsHint");
-            var textRt = textGo.AddComponent<RectTransform>();
-            textRt.SetParent(barGo.transform, false);
-            textRt.anchorMin = Vector2.zero;
-            textRt.anchorMax = Vector2.one;
-            textRt.offsetMin = new Vector2(20f, 8f);
-            textRt.offsetMax = new Vector2(-20f, -8f);
+                var textGo = new GameObject("ControlsHint");
+                var textRt = textGo.AddComponent<RectTransform>();
+                textRt.SetParent(barGo.transform, false);
+                textRt.anchorMin = Vector2.zero;
+                textRt.anchorMax = Vector2.one;
+                textRt.offsetMin = new Vector2(20f, 8f);
+                textRt.offsetMax = new Vector2(-20f, -8f);
 
-            var tmp = textGo.AddComponent<TextMeshProUGUI>();
-            tmp.richText = true;
-            tmp.textWrappingMode = TextWrappingModes.Normal;
-            tmp.fontSize = 21;
-            tmp.alignment = TextAlignmentOptions.Midline;
-            tmp.color = new Color(0.82f, 0.85f, 0.92f, 0.92f);
-            tmp.characterSpacing = 0.25f;
-            ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.5f);
-            controlsHintText = tmp;
+                var tmp = textGo.AddComponent<TextMeshProUGUI>();
+                tmp.richText = true;
+                tmp.textWrappingMode = TextWrappingModes.Normal;
+                tmp.fontSize = 24;
+                tmp.alignment = TextAlignmentOptions.Midline;
+                tmp.color = new Color(0.82f, 0.85f, 0.92f, 0.92f);
+                tmp.characterSpacing = 0.25f;
+                ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.5f);
+                controlsHintText = tmp;
+            }
+
+            RefreshControlsHintLocalized();
+
+            CreateSceneCreditsFooterStrip(canvas, equationStyle);
         }
-
-        RefreshControlsHintLocalized();
-
-        CreateSceneCreditsFooterStrip(canvas, equationStyle);
     }
 
     /// <summary>Top-right control: opens <see cref="MathArticlesOverlay"/> (same body as level-select math tips).</summary>
