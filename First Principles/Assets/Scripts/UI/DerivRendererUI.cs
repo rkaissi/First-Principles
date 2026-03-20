@@ -14,6 +14,10 @@ public class DerivRendererUI : Graphic
 
     public float thickness = 10f;
 
+    [Tooltip("0 = line uses normal color; 1 = strong highlight when player grazes f′ (driven by PlayerControllerUI2D).")]
+    [Range(0f, 1f)]
+    public float playerProximityHighlight;
+
     private float width;
     private float height;
     private float unitWidth;
@@ -127,12 +131,14 @@ public class DerivRendererUI : Graphic
     private void DrawVerticesForPoint(Vector2 point, Vector2 point2, VertexHelper vh, float angle)
     {
         UIVertex vertex = UIVertex.simpleVert;
-        vertex.color = color;
+        Color drawCol = Color.Lerp(color, Color.white, Mathf.Clamp01(playerProximityHighlight));
+        vertex.color = drawCol;
 
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(-thickness / 2, 0);
         vertex.position += new Vector3(unitWidth * point.x, unitHeight * point.y);
         vh.AddVert(vertex);
 
+        vertex.color = drawCol;
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(thickness / 2, 0);
         vertex.position += new Vector3(unitWidth * point.x, unitHeight * point.y);
         vh.AddVert(vertex);
@@ -144,6 +150,12 @@ public class DerivRendererUI : Graphic
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(thickness / 2, 0);
         vertex.position += new Vector3(unitWidth * point2.x, unitHeight * point2.y);
         vh.AddVert(vertex);
+    }
+
+    /// <summary>Call after updating <see cref="playerProximityHighlight"/> so the mesh repaints.</summary>
+    public void RefreshHighlightGeometry()
+    {
+        SetVerticesDirty();
     }
 
     // Updates the line grid based on the parent graph

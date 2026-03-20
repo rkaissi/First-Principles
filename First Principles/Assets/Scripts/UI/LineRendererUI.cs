@@ -15,7 +15,7 @@ public class LineRendererUI : Graphic
     /// </summary>
     public static LineRendererUI FindPrimaryCurve()
     {
-        var all = UnityEngine.Object.FindObjectsByType<LineRendererUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var all = UnityEngine.Object.FindObjectsByType<LineRendererUI>(FindObjectsInactive.Include);
         foreach (var lr in all)
         {
             if (lr != null && lr.gameObject != null

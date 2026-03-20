@@ -25,7 +25,7 @@ public static class UiInputModuleBootstrap
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsSortMode.None))
+        foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Exclude))
         {
             var legacy = es.GetComponent<StandaloneInputModule>();
             if (legacy == null)

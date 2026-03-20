@@ -250,6 +250,8 @@ public class LevelManager : MonoBehaviour
         // Wire callbacks.
         playerController.SetDeathCallback(RestartCurrentLevel);
         playerController.SetFinishCallback(AdvanceLevel);
+        if (derivRenderer != null)
+            playerController.BindDerivativeRenderer(derivRenderer);
         ConfigureGameBackButtonDestination();
     }
 
