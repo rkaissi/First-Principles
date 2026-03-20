@@ -24,6 +24,7 @@ public class SceneFader : MonoBehaviour
 	private Image fadeOutUIImage;
 
 	private TextMeshProUGUI graphicCalculatorMenuButtonText;
+	private TextMeshProUGUI tutorialMenuButtonText;
 	private TextMeshProUGUI menuLanguageButtonLabel;
 
 	public float fadeSpeed = 0.8f;
@@ -161,6 +162,7 @@ public class SceneFader : MonoBehaviour
     {
         yield return null;
         TrySpawnGraphicCalculatorMenuButton();
+        TrySpawnTutorialMenuButton();
         TrySpawnLanguagePicker();
         RefreshMenuLocalizedControls();
     }
@@ -171,6 +173,12 @@ public class SceneFader : MonoBehaviour
         {
             graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
             LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
+        }
+
+        if (tutorialMenuButtonText != null)
+        {
+            tutorialMenuButtonText.text = LocalizationManager.Get("menu.tutorial_button", "How to play");
+            LocalizationManager.ApplyTextDirection(tutorialMenuButtonText);
         }
 
         if (menuLanguageButtonLabel != null)
@@ -263,6 +271,87 @@ public class SceneFader : MonoBehaviour
         }
         else if (TMP_Settings.defaultFontAsset != null)
             graphicCalculatorMenuButtonText.font = TMP_Settings.defaultFontAsset;
+    }
+
+    /// <summary>Opens scroll tutorial (derivative air jump, controls, level select).</summary>
+    private void TrySpawnTutorialMenuButton()
+    {
+        if (!string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
+            return;
+        if (GameObject.Find("MenuTutorialEntryButton") != null)
+            return;
+
+        var play = GameObject.FindGameObjectWithTag("PlayButton");
+        if (play == null)
+            return;
+
+        var playRt = play.GetComponent<RectTransform>();
+        if (playRt == null)
+            return;
+
+        var go = new GameObject("MenuTutorialEntryButton");
+        var rt = go.AddComponent<RectTransform>();
+        rt.SetParent(playRt.parent, false);
+        rt.localScale = Vector3.one;
+        rt.anchorMin = playRt.anchorMin;
+        rt.anchorMax = playRt.anchorMax;
+        rt.pivot = playRt.pivot;
+        rt.sizeDelta = playRt.sizeDelta;
+        rt.anchoredPosition = playRt.anchoredPosition + new Vector2(0f, -92f);
+
+        var playImg = play.GetComponent<Image>();
+        var img = go.AddComponent<Image>();
+        if (playImg != null && playImg.sprite != null)
+        {
+            img.sprite = playImg.sprite;
+            img.type = playImg.type;
+        }
+
+        RuntimeUiPolish.UseRoundedSliced(img);
+        img.color = new Color(0.24f, 0.30f, 0.55f, 0.98f);
+
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        RuntimeUiPolish.ApplyButtonTransitions(btn, img.color,
+            Color.Lerp(img.color, Color.white, 0.2f),
+            Color.Lerp(img.color, Color.black, 0.18f));
+        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(2f, -3f), 0.28f);
+        btn.onClick.AddListener(OpenMenuTutorialOverlay);
+
+        var textGo = new GameObject("Text");
+        var trt = textGo.AddComponent<RectTransform>();
+        trt.SetParent(go.transform, false);
+        trt.anchorMin = Vector2.zero;
+        trt.anchorMax = Vector2.one;
+        trt.offsetMin = new Vector2(10f, 6f);
+        trt.offsetMax = new Vector2(-10f, -6f);
+
+        tutorialMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
+        bool tablet = DeviceLayout.IsTabletLike();
+        tutorialMenuButtonText.text = LocalizationManager.Get("menu.tutorial_button", "How to play");
+        tutorialMenuButtonText.fontSize = UiTypography.Scale(tablet ? 30 : 26);
+        tutorialMenuButtonText.alignment = TextAlignmentOptions.Center;
+        tutorialMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
+        tutorialMenuButtonText.textWrappingMode = TextWrappingModes.Normal;
+        tutorialMenuButtonText.richText = true;
+        LocalizationManager.ApplyTextDirection(tutorialMenuButtonText);
+        var refTmp = play.GetComponentInChildren<TextMeshProUGUI>();
+        if (refTmp != null && refTmp.font != null)
+        {
+            tutorialMenuButtonText.font = refTmp.font;
+            if (refTmp.fontSharedMaterial != null)
+                tutorialMenuButtonText.fontSharedMaterial = refTmp.fontSharedMaterial;
+        }
+        else if (TMP_Settings.defaultFontAsset != null)
+            tutorialMenuButtonText.font = TMP_Settings.defaultFontAsset;
+    }
+
+    private static void OpenMenuTutorialOverlay()
+    {
+        var canvas = Object.FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+        MenuTutorialOverlay.Open(canvas.transform);
     }
 
     /// <summary>Tappable control to cycle UI language (compact for phones).</summary>
