@@ -3,11 +3,14 @@ using UnityEngine;
 
 /// <summary>
 /// Persisted platformer avatar symbol (shown on main menu and on the in-game player).
-/// Default is <c>+</c>; stored in <see cref="PlayerPrefs"/>.
+/// Default is <b>∑</b> (sigma); stored in <see cref="PlayerPrefs"/>.
 /// </summary>
 public static class PlayerGlyphSettings
 {
     private const string PrefsKey = "player_glyph_index";
+
+    /// <summary>Index in <see cref="Glyphs"/> when no preference is saved yet (sigma ∑).</summary>
+    public const int DefaultGlyphIndex = 7;
 
     /// <summary>Ordered list of symbols the player can choose (Geometry Dash–style math icons).</summary>
     public static readonly string[] Glyphs = { "+", "×", "x", "=", "−", "÷", "π", "∑" };
@@ -28,7 +31,7 @@ public static class PlayerGlyphSettings
 
     public static int GetSelectedIndex()
     {
-        return Mathf.Clamp(PlayerPrefs.GetInt(PrefsKey, 0), 0, Glyphs.Length - 1);
+        return Mathf.Clamp(PlayerPrefs.GetInt(PrefsKey, DefaultGlyphIndex), 0, Glyphs.Length - 1);
     }
 
     public static string GetSelectedGlyph()
@@ -52,7 +55,7 @@ public static class PlayerGlyphSettings
     public static void SetSelectedIndex(int index)
     {
         index = Mathf.Clamp(index, 0, Glyphs.Length - 1);
-        int prev = PlayerPrefs.GetInt(PrefsKey, 0);
+        int prev = PlayerPrefs.GetInt(PrefsKey, DefaultGlyphIndex);
         PlayerPrefs.SetInt(PrefsKey, index);
         PlayerPrefs.Save();
         if (prev != index)

@@ -54,7 +54,7 @@ menu.tutorial_button=How to play
 menu.tutorial_title=How to play
 menu.tutorial_body=<b>Goal</b>\nMove along the graph, use platforms (green), avoid red hazards, and reach the bright exit on the right.\n\n<b>Controls</b>\n• <b>Move</b> — arrows / WASD, or on-screen buttons.\n• <b>Jump</b> — Space (or mobile jump). You jump from solid platforms.\n\n<b>The two curves</b>\n• <color=#c4b5fd>Main curve</color> — the function you walk on.\n• <color=#fdba74>Derivative f′</color> — slope information; it’s drawn as a second line.\n\n<b>Air jump on the derivative</b>\nWhile you are <b>in the air</b>, if your character overlaps the <b>derivative curve</b>, press <b>Jump again</b> for an extra hop.\n\n<size=94%><color=#a8b2d1>The derivative line brightens when you touch it. You get <b>one</b> bonus jump each time you brush it until you leave the curve or land. On phones you may feel a short vibration when you touch f′; on PC a sound plays when vibration isn’t available.</color></size>\n\n<b>Select level</b>\n<size=94%>On this screen, stages are grouped (Core, Engineering, AP Calculus, Aerospace …). Tap <b>How to play</b> at the bottom to reopen this help. Pick a group, then a level.</size>
 menu.player_icon_title=Player icon
-menu.player_icon_set=Set player icon
+menu.player_icon_set=Player icon
 menu.player_icon_hint=Tap a symbol — it’s your avatar in levels (like Geometry Dash).
 menu.player_icon_done=Done
 menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>

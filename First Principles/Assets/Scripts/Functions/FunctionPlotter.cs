@@ -188,6 +188,21 @@ public class FunctionPlotter : MonoBehaviour
         return _autoMid + tickOffsetFromCenter / s;
     }
 
+    /// <summary>
+    /// Horizontal axis readout at a tick <paramref name="tickOffsetFromCenter"/> grid columns right of center
+    /// (one column = one plotter unit in <c>x</c> or polar <c>θ</c>).
+    /// • Level / preset graphs: tick shows plotter <c>x</c> (or <c>θ</c>).
+    /// • Graphing calculator (<see cref="FunctionType.CustomExpression"/>): tick shows inner <c>u = transK·(x−transD)</c>
+    ///   so numbers match <b>Trans</b> the same way your <c>f(u)</c> does.
+    /// </summary>
+    public float AxisTickOffsetToMathX(float tickOffsetFromCenter)
+    {
+        float xPlot = tickOffsetFromCenter;
+        if (functionType == FunctionType.CustomExpression)
+            return transK * (xPlot - transD);
+        return xPlot;
+    }
+
     /// <summary>Current vertical auto-fit pivot (math axis). For axis label refresh.</summary>
     public float VerticalAxisLabelPivot => _autoMid;
 

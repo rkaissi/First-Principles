@@ -4,8 +4,9 @@ using TMPro;
 
 /// <summary>
 /// Spawns TMP axis labels from <see cref="GridRendererUI"/> extents.
-/// Y-axis numbers track <see cref="FunctionPlotter.AxisTickOffsetToMathY"/> when vertical auto-fit is on
-/// so ticks match the exaggerated / fitted graph scale.
+/// Y-axis numbers track <see cref="FunctionPlotter.AxisTickOffsetToMathY"/> when vertical auto-fit is on.
+/// X-axis numbers track <see cref="FunctionPlotter.AxisTickOffsetToMathX"/> and refresh when the plot window
+/// (zoom / pinch), <b>Trans</b> (<c>k</c>, <c>D</c>), or mode changes — calculator ticks show inner <c>u</c>.
 /// </summary>
 public class LabelManager : MonoBehaviour
 {
@@ -25,10 +26,17 @@ public class LabelManager : MonoBehaviour
     private List<TextMeshProUGUI> yLabels = new List<TextMeshProUGUI>();
     /// <summary>Signed plotter‑y tick offset from axis center (same units as pre–auto‑fit grid labels).</summary>
     private readonly List<float> _yTickOffsetsFromCenter = new List<float>();
+    /// <summary>Signed plotter‑x tick offset from axis center (one column = one plotter‑<c>x</c> / polar <c>θ</c> unit).</summary>
+    private readonly List<float> _xTickOffsetsFromCenter = new List<float>();
 
     private GridRendererUI gridRenderer;
     private float _lastAutoMid = float.NaN;
     private float _lastAutoScale = float.NaN;
+    private float _lastXStart = float.NaN;
+    private float _lastXEnd = float.NaN;
+    private float _lastTransK = float.NaN;
+    private float _lastTransD = float.NaN;
+    private FunctionType _lastFunctionTypeForXAxis = (FunctionType)(-1);
 
     private void Awake()
     {
@@ -43,8 +51,11 @@ public class LabelManager : MonoBehaviour
     private void LateUpdate()
     {
         var plotter = FindAnyObjectByType<FunctionPlotter>();
-        float mid = plotter != null ? plotter.VerticalAxisLabelPivot : 0f;
-        float sc = plotter != null ? plotter.VerticalAxisLabelScale : 1f;
+        if (plotter == null)
+            return;
+
+        float mid = plotter.VerticalAxisLabelPivot;
+        float sc = plotter.VerticalAxisLabelScale;
 
         if (!Mathf.Approximately(mid, _lastAutoMid) || !Mathf.Approximately(sc, _lastAutoScale))
         {
@@ -52,6 +63,26 @@ public class LabelManager : MonoBehaviour
             _lastAutoScale = sc;
             RefreshYAxisLabelText();
         }
+
+        if (HorizontalAxisStateChanged(plotter))
+        {
+            CacheHorizontalAxisState(plotter);
+            RefreshXAxisLabelText();
+        }
+    }
+
+    bool HorizontalAxisStateChanged(FunctionPlotter p)
+    {
+        // Plot window (graphing calculator zoom / pinch / scale) — tick marks are fixed in plotter‑x space;
+        // refreshing keeps strings in sync and picks up any future per-window tick mapping.
+        return !Mathf.Approximately(p.xStart, _lastXStart)
+               || !Mathf.Approximately(p.xEnd, _lastXEnd);
+    }
+
+    void CacheHorizontalAxisState(FunctionPlotter p)
+    {
+        _lastXStart = p.xStart;
+        _lastXEnd = p.xEnd;
     }
 
     public void GenerateLabels()
@@ -73,20 +104,24 @@ public class LabelManager : MonoBehaviour
         int yPositive = ySize / (2 * verticalIncrement) + 1;
         int yNegative = (yPositive * 2) - 1;
 
+        var plotter = FindAnyObjectByType<FunctionPlotter>();
+
         //Horizontal Labels
 
         for (int i = 0; i < xPositive; i++)
         {
+            float xTickOffset = i * horizontalIncrement;
             if (i == 0 && !xAxisOriginLabel)
             {
                 xLabels.Add(null);
+                _xTickOffsetsFromCenter.Add(xTickOffset);
                 xPos.x += xPosOffset * horizontalIncrement;
                 continue;
             }
 
             xLabels.Add(Instantiate(labelPrefab, transform.TransformPoint(xPos), Quaternion.identity, transform).GetComponent<TextMeshProUGUI>());
-            string labelTxt = (i * horizontalIncrement).ToString();
-            xLabels[i].text = labelTxt;
+            _xTickOffsetsFromCenter.Add(xTickOffset);
+            xLabels[xLabels.Count - 1].text = FormatXTick(plotter, xTickOffset);
             xPos.x += xPosOffset * horizontalIncrement;
         }
 
@@ -95,13 +130,12 @@ public class LabelManager : MonoBehaviour
 
         for (int i = xPositive; i < xNegative; i++)
         {
+            float xTickOffset = -(i - (xPositive - 1)) * horizontalIncrement;
             xLabels.Add(Instantiate(labelPrefab, transform.TransformPoint(xPos), Quaternion.identity, transform).GetComponent<TextMeshProUGUI>());
-            string labelTxt = (-(i - (xPositive - 1)) * horizontalIncrement).ToString();//
-            xLabels[i].text = labelTxt;
+            _xTickOffsetsFromCenter.Add(xTickOffset);
+            xLabels[xLabels.Count - 1].text = FormatXTick(plotter, xTickOffset);
             xPos.x -= xPosOffset * horizontalIncrement;
         }
-
-        var plotter = FindAnyObjectByType<FunctionPlotter>();
 
         //Vertical Labels
         for (int i = 0; i < yPositive; i++)
@@ -129,6 +163,38 @@ public class LabelManager : MonoBehaviour
         _lastAutoMid = pAfter != null ? pAfter.VerticalAxisLabelPivot : 0f;
         _lastAutoScale = pAfter != null ? pAfter.VerticalAxisLabelScale : 1f;
         RefreshYAxisLabelText();
+
+        if (pAfter != null)
+            CacheHorizontalAxisState(pAfter);
+        else
+        {
+            _lastXStart = float.NaN;
+            _lastXEnd = float.NaN;
+            _lastTransK = float.NaN;
+            _lastTransD = float.NaN;
+            _lastFunctionTypeForXAxis = (FunctionType)(-1);
+        }
+
+        RefreshXAxisLabelText();
+    }
+
+    void RefreshXAxisLabelText()
+    {
+        var plotter = FindAnyObjectByType<FunctionPlotter>();
+        if (xLabels.Count != _xTickOffsetsFromCenter.Count)
+            return;
+        for (int i = 0; i < xLabels.Count; i++)
+        {
+            if (xLabels[i] == null)
+                continue;
+            xLabels[i].text = FormatXTick(plotter, _xTickOffsetsFromCenter[i]);
+        }
+    }
+
+    static string FormatXTick(FunctionPlotter plotter, float tickOffsetFromCenter)
+    {
+        float v = plotter != null ? plotter.AxisTickOffsetToMathX(tickOffsetFromCenter) : tickOffsetFromCenter;
+        return FormatAxisNumber(v);
     }
 
     void RefreshYAxisLabelText()
@@ -170,6 +236,7 @@ public class LabelManager : MonoBehaviour
     {
         xLabels.Clear();
         yLabels.Clear();
+        _xTickOffsetsFromCenter.Clear();
         _yTickOffsetsFromCenter.Clear();
 
         if (transform.childCount > 0)

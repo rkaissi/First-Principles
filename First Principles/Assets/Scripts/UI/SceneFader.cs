@@ -279,7 +279,7 @@ public class SceneFader : MonoBehaviour
         if (playerIconMenuGlyphTmp != null)
         {
             string g = PlayerGlyphSettings.GetSelectedGlyph();
-            string setLabel = LocalizationManager.Get("menu.player_icon_set", "Set player icon");
+            string setLabel = LocalizationManager.Get("menu.player_icon_set", "Player icon");
             playerIconMenuGlyphTmp.text =
                 $"<size=188%><b><color=#fffef9>{g}</color></b></size>\n<size=82%><b>{setLabel}</b></size>";
             LocalizationManager.ApplyTextDirection(playerIconMenuGlyphTmp);
