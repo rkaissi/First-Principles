@@ -73,16 +73,23 @@ public class LabelManager : MonoBehaviour
 
     bool HorizontalAxisStateChanged(FunctionPlotter p)
     {
-        // Plot window (graphing calculator zoom / pinch / scale) — tick marks are fixed in plotter‑x space;
-        // refreshing keeps strings in sync and picks up any future per-window tick mapping.
-        return !Mathf.Approximately(p.xStart, _lastXStart)
-               || !Mathf.Approximately(p.xEnd, _lastXEnd);
+        // Plot window (zoom / pinch / scale).
+        bool window = !Mathf.Approximately(p.xStart, _lastXStart)
+                      || !Mathf.Approximately(p.xEnd, _lastXEnd);
+        // CustomExpression axis readout is u = k·(x−D); must refresh when Trans or mode changes.
+        bool trans = !Mathf.Approximately(p.transK, _lastTransK)
+                     || !Mathf.Approximately(p.transD, _lastTransD);
+        bool mode = p.functionType != _lastFunctionTypeForXAxis;
+        return window || trans || mode;
     }
 
     void CacheHorizontalAxisState(FunctionPlotter p)
     {
         _lastXStart = p.xStart;
         _lastXEnd = p.xEnd;
+        _lastTransK = p.transK;
+        _lastTransD = p.transD;
+        _lastFunctionTypeForXAxis = p.functionType;
     }
 
     public void GenerateLabels()
@@ -172,7 +179,7 @@ public class LabelManager : MonoBehaviour
             _lastXEnd = float.NaN;
             _lastTransK = float.NaN;
             _lastTransD = float.NaN;
-            _lastFunctionTypeForXAxis = (FunctionType)(-1);
+            _lastFunctionTypeForXAxis = (FunctionType)(-1); // force first LateUpdate to call RefreshXAxisLabelText
         }
 
         RefreshXAxisLabelText();

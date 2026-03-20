@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Menu-only overlay: colored square grid of math symbols (Geometry Dash–style icon picker).
+/// Menu-only overlay: colored square grid of math symbols for the player avatar.
 /// </summary>
 public static class MenuPlayerGlyphPickerOverlay
 {

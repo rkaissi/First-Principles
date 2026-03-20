@@ -158,7 +158,7 @@ public class GraphCalculatorToolbar : MonoBehaviour
             : LocalizationManager.Get("graph.line2",
                 "<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>");
         string line3Fmt = LocalizationManager.Get("graph.line3",
-            "<size=96%><b>Deriv</b> adds f′…f⁽⁴⁾ (numeric) · <b>∫ area</b> Riemann strips once + primitive guess · <b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> / <b>pinch</b></size>");
+            "<size=96%><b>Deriv</b> adds f′ once (numeric) · <b>∫ area</b> Riemann strips once + primitive guess · <b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> / <b>pinch</b></size>");
         string line3 = string.Format(line3Fmt, names[paramIndex]);
         float th0 = plot.transK * (plot.xStart - plot.transD);
         float th1 = plot.transK * (plot.xEnd - plot.transD);

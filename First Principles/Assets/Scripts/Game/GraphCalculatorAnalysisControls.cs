@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Graphing calculator: numeric derivative overlays (up to 4th order), one-shot Riemann strips + primitive hint.
+/// Graphing calculator: one numeric derivative overlay (f′, one tap), one-shot Riemann strips + primitive hint.
 /// Resets when the equation changes (<see cref="NotifyExpressionChanged"/>).
 /// </summary>
 public class GraphCalculatorAnalysisControls : MonoBehaviour
@@ -16,7 +16,8 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
         new Color(0.55f, 0.94f, 0.68f, 1f),
     };
 
-    const int MaxDerivOrder = 4;
+    /// <summary>How many derivative taps allowed per equation (only f′).</summary>
+    const int MaxDerivOrder = 1;
     const int RiemannRectCount = 40;
 
     FunctionPlotter plotter;

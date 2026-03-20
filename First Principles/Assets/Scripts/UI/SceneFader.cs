@@ -258,6 +258,7 @@ public class SceneFader : MonoBehaviour
         bool tablet = DeviceLayout.IsTabletLike();
         graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
         graphicCalculatorMenuButtonText.fontSize = UiTypography.Scale(tablet ? 30 : 26);
+        graphicCalculatorMenuButtonText.fontStyle = FontStyles.Bold;
         graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
         graphicCalculatorMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
         graphicCalculatorMenuButtonText.textWrappingMode = TextWrappingModes.Normal;

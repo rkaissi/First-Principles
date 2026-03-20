@@ -43,7 +43,7 @@ menu.tutorial_title=Come si gioca
 menu.tutorial_body=<b>Obiettivo</b>\nMuoviti lungo il grafico, usa le piattaforme (verdi), evita i pericoli rossi e raggiungi l’uscita luminosa a destra.\n\n<b>Comandi</b>\n• <b>Muoviti</b> — frecce / WASD, o pulsanti sullo schermo.\n• <b>Salta</b> — Spazio (o salto su mobile). Salti dalle piattaforme solide.\n\n<b>Le due curve</b>\n• <color=#c4b5fd>Curva principale</color> — la funzione su cui cammini.\n• <color=#fdba74>Derivata f′</color> — informazione sulla pendenza; disegnata come seconda linea.\n\n<b>Salto in aria sulla derivata</b>\nMentre sei <b>in aria</b>, se il personaggio si sovrappone alla <b>curva della derivata</b>, premi di nuovo <b>Salta</b> per un salto extra.\n\n<size=94%><color=#a8b2d1>La linea della derivata si illumina quando la tocchi. Hai <b>un</b> salto bonus ogni volta che la sfiori finché non lasci la curva o non atterri. Sul telefono potresti sentire una breve vibrazione quando tocchi f′; su PC suona un effetto se la vibrazione non è disponibile.</color></size>\n\n<b>Seleziona livello</b>\n<size=94%>In questa schermata i livelli sono raggruppati (Base, Ingegneria, AP Calculus, Aerospaziale …). Tocca <b>Come si gioca</b> in basso per riaprire questo aiuto. Scegli un gruppo, poi un livello.</size>
 menu.player_icon_title=Icona giocatore
 menu.player_icon_set=Imposta icona giocatore
-menu.player_icon_hint=Tocca un simbolo — è il tuo avatar nei livelli (come in Geometry Dash).
+menu.player_icon_hint=Tocca un simbolo — è il tuo avatar nei livelli.
 menu.player_icon_done=Fatto
 menu.version_line=<b>First Principles</b> <color=#555555>(versione 1.0)</color>
 menu.credits_line=<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>

@@ -4,7 +4,7 @@ menu.tutorial_title=플레이 방법
 menu.tutorial_body=<b>목표</b>\n그래프를 따라 이동하고 초록 플랫폼을 밟으며 빨간 지대는 피해 오른쪽 밝은 출구까지 가세요.\n\n<b>조작</b>\n• <b>이동</b> — 방향키·WASD 또는 화면 버튼.\n• <b>점프</b> — 스페이스(또는 모바일 점프). 단단한 플랫폼에서 뜁니다.\n\n<b>두 곡선</b>\n• <color=#c4b5fd>주 곡선</color> — 함수 그래프 위를 걷습니다.\n• <color=#fdba74>도함수 f′</color> — 기울기 정보, 다른 색 선으로 그려집니다.\n\n<b>도함수 위 에어 점프</b>\n<b>공중에 있는 동안</b> 캐릭터가 <b>도함수 곡선</b>과 겹치면 <b>점프를 한 번 더</b> 눌러 추가로 뜰 수 있습니다.\n\n<size=94%><color=#a8b2d1>도함수에 닿으면 선이 밝아집니다. 곡선에서 벗어나거나 땅에 닿기 전까지 <b>한 번</b>만 보너스 점프가 있습니다. 휴대폰에서는 f′에 닿을 때 짧은 진동이, PC에서는 진동이 없을 때만 효과음이 날 수 있습니다.</color></size>\n\n<b>레벨 선택</b>\n<size=94%>이 화면에서 스테이지는 주제별로 묶여 있습니다(기초, 공학, AP 미적분, 항공우주 …). 화면 하단의 <b>플레이 방법</b>을 누르면 이 안내를 다시 열 수 있습니다. 주제를 고른 뒤 스테이지를 고르세요.</size>
 menu.player_icon_title=플레이어 아이콘
 menu.player_icon_set=아이콘 바꾸기
-menu.player_icon_hint=기호를 누르면 스테이지에서 그 모양으로 보입니다 (지오메트리 대시처럼).
+menu.player_icon_hint=기호를 누르면 스테이지에서 그 모양으로 보입니다.
 menu.player_icon_done=닫기
 ui.choose_stage=레벨 선택
 ui.level_select.back_categories=모든 주제

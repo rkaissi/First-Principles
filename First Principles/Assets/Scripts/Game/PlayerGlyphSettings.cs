@@ -12,7 +12,7 @@ public static class PlayerGlyphSettings
     /// <summary>Index in <see cref="Glyphs"/> when no preference is saved yet (sigma ∑).</summary>
     public const int DefaultGlyphIndex = 7;
 
-    /// <summary>Ordered list of symbols the player can choose (Geometry Dash–style math icons).</summary>
+    /// <summary>Ordered list of symbols the player can choose (math-themed icons).</summary>
     public static readonly string[] Glyphs = { "+", "×", "x", "=", "−", "÷", "π", "∑" };
 
     private static readonly Color[] AccentColors =
