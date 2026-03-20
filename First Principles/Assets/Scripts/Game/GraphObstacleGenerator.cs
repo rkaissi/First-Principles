@@ -139,13 +139,14 @@ public class GraphObstacleGenerator : MonoBehaviour
             for (int col = 0; col < gridSize.x; col++)
             {
                 float xSample = col + 0.5f;
-                float xDerivSample = xSample;
+                float xPlotter = Mathf.Clamp(xSample - gridOrigin.x, def.xStart, def.xEnd);
 
-                bool hasCurve = TrySampleNearestY(curvePoints, xSample, out float yCurve);
-                bool hasDeriv = TrySampleNearestY(derivPoints, xDerivSample, out float yDeriv);
+                bool hasCurve = functionPlotter != null && IsFiniteFloat(functionPlotter.SampleCurveGridY(xPlotter));
+                float yCurve = hasCurve ? functionPlotter.SampleCurveGridY(xPlotter) : float.NaN;
 
-                float dyValue = hasDeriv ? (yDeriv - originY) : float.NegativeInfinity;
-                bool safeByDerivative = hasDeriv && dyValue > def.derivativeSafeThreshold;
+                float dyRaw = functionPlotter != null ? functionPlotter.EvaluateNumericalDerivativeY(xPlotter) : float.NaN;
+                bool hasDeriv = IsFiniteFloat(dyRaw);
+                bool safeByDerivative = hasDeriv && dyRaw > def.derivativeSafeThreshold;
 
                 bool forcedSafeStart = col < def.forcePlatformsAtStartColumns;
                 bool forcedSafeEnd = col >= gridSize.x - def.forcePlatformsAtEndColumns;
@@ -257,8 +258,8 @@ public class GraphObstacleGenerator : MonoBehaviour
             float xL = def.xStart + i * dxPlot;
             float xR = def.xStart + (i + 1) * dxPlot;
             float xS = SampleRiemannSampleX(def.riemannRule, xL, xR);
-            float yPlot = functionPlotter.SampleCurvePlotterY(xS);
-            if (!IsFiniteFloat(yPlot))
+            float yGrid = functionPlotter.SampleCurveGridY(xS);
+            if (!IsFiniteFloat(yGrid))
                 continue;
 
             float colL = xL + gridOrigin.x;
@@ -270,7 +271,7 @@ public class GraphObstacleGenerator : MonoBehaviour
             if (pMax - pMin < 0.18f)
                 continue;
 
-            float platformTop = yPlot + gridOrigin.y;
+            float platformTop = yGrid;
             platformTop = Mathf.Clamp(platformTop, def.platformThicknessGrid, gridSize.y - 0.01f);
             float platformBottom = Mathf.Clamp(platformTop - def.platformThicknessGrid, 0f, platformTop);
 
@@ -333,9 +334,10 @@ public class GraphObstacleGenerator : MonoBehaviour
                 continue;
 
             float xSample = col + 0.5f;
-            bool hasDeriv = TrySampleNearestY(derivPoints, xSample, out float yDeriv);
-            float dyValue = hasDeriv ? (yDeriv - originY) : float.NegativeInfinity;
-            bool safeByDerivative = hasDeriv && dyValue > def.derivativeSafeThreshold;
+            float xPlotter = Mathf.Clamp(xSample - gridOrigin.x, def.xStart, def.xEnd);
+            float dyRaw = functionPlotter != null ? functionPlotter.EvaluateNumericalDerivativeY(xPlotter) : float.NaN;
+            bool hasDeriv = IsFiniteFloat(dyRaw);
+            bool safeByDerivative = hasDeriv && dyRaw > def.derivativeSafeThreshold;
             if (!safeByDerivative)
             {
                 var hazard = new GridRect(col, col + 1f, 0f, def.hazardHeightGrid);

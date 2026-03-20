@@ -43,9 +43,24 @@ public class FunctionPlotter : MonoBehaviour
 
     public bool differentiate = false;
 
+    [Tooltip("Level mode: vertically scale f and f′ so the band fits the grid (flat curves read clearly).")]
+    public bool autoScaleVertical = true;
+
+    [Tooltip("Fraction of half the grid height (from center) used by the fitted band.")]
+    [Range(0.38f, 0.92f)]
+    public float verticalFillFraction = 0.74f;
+
+    public float verticalScaleClampMin = 0.38f;
+    public float verticalScaleClampMax = 7.5f;
+
     // Local points list
     private List<Vector2> points = new List<Vector2>();
     private List<Vector2> dPoints = new List<Vector2>();
+
+    /// <summary>Vertical map: raw plotter y → offset used in grid space before adding grid origin y.</summary>
+    private float _autoMid;
+    private float _autoScale = 1f;
+    private int _cachedGridOriginY;
 
     [SerializeField] TextMeshProUGUI equationText;
 
@@ -113,6 +128,30 @@ public class FunctionPlotter : MonoBehaviour
     {
         return EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter);
     }
+
+    /// <summary>Grid-space y of the curve at plotter x (includes auto vertical fit). Used by platforms &amp; Riemann UI.</summary>
+    public float SampleCurveGridY(float xPlotter)
+    {
+        if (lineRenderer == null)
+            lineRenderer = LineRendererUI.FindPrimaryCurve();
+        if (lineRenderer != null)
+            _cachedGridOriginY = lineRenderer.gridSize.y / 2;
+        float raw = SampleCurvePlotterY(xPlotter);
+        if (!IsFinite(raw))
+            return float.NaN;
+        return MapDisplayY(raw) + _cachedGridOriginY;
+    }
+
+    /// <summary>Numeric f′(x) in <b>raw</b> plotter units (not affected by vertical exaggeration). For gameplay thresholds.</summary>
+    public float EvaluateNumericalDerivativeY(float xPlotter)
+    {
+        float yp = (EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter + hValue)
+                    - EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter - hValue))
+                        / (hValue * 2f);
+        return yp;
+    }
+
+    float MapDisplayY(float rawY) => (rawY - _autoMid) * _autoScale;
 
     public void SetEquationExtraSuffix(string suffix)
     {
@@ -191,7 +230,20 @@ public class FunctionPlotter : MonoBehaviour
             UpdateEquationText(functionType, transA, transK, transC, transD, power, baseN);
 
         Vector2Int gridOrigin = lineRenderer.gridSize / 2;
+        _cachedGridOriginY = gridOrigin.y;
 
+        // --- Pass 1: measure vertical extent (raw y) for auto fit ---
+        float fLo = float.PositiveInfinity, fHi = float.NegativeInfinity;
+
+        for (float i = xStart; i <= xEnd; i += step)
+        {
+            AddFunctionExtentSample(functionType, transA, transK, transC, transD, power, baseN, i, ref fLo, ref fHi);
+        }
+
+        // Fit primarily to f(x) (and drag-polar overlays) so flat teaching curves fill the grid; f′ uses the same map.
+        ComputeVerticalAutoFit(lineRenderer.gridSize.y, fLo, fHi);
+
+        // --- Pass 2: build polylines with display mapping ---
         for (float i = xStart; i <= xEnd; i += step)
         {
             float xValue = i;
@@ -199,17 +251,66 @@ public class FunctionPlotter : MonoBehaviour
             float dyValue = (EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue + hValue) - EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue - hValue)) / (hValue * 2);
 
             if (IsFinite(yValue))
-            {
-                // Add the coordinates to the array
-                this.points.Add(new Vector2(xValue + gridOrigin.x, yValue + gridOrigin.y));
-            }
+                points.Add(new Vector2(xValue + gridOrigin.x, MapDisplayY(yValue) + gridOrigin.y));
 
             if (IsFinite(dyValue))
+                dPoints.Add(new Vector2(xValue + gridOrigin.x, MapDisplayY(dyValue) + gridOrigin.y));
+        }
+    }
+
+    void AddFunctionExtentSample(FunctionType functionType, float transA, float transK, float transC, float transD, int power, int baseN, float xValue,
+        ref float fLo, ref float fHi)
+    {
+        float yValue = EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue);
+        if (IsFinite(yValue))
+        {
+            if (yValue < fLo) fLo = yValue;
+            if (yValue > fHi) fHi = yValue;
+        }
+
+        if (functionType == FunctionType.AeroDragPolarTriple)
+        {
+            float u = transK * (xValue - transD);
+            float yPar = transA * transC;
+            float yInd = transA * Mathf.Pow(u, power);
+            if (IsFinite(yPar))
             {
-                // Get the differentiated coordinates to another array
-                this.dPoints.Add(new Vector2(xValue + gridOrigin.x, dyValue + gridOrigin.y));
+                if (yPar < fLo) fLo = yPar;
+                if (yPar > fHi) fHi = yPar;
+            }
+            if (IsFinite(yInd))
+            {
+                if (yInd < fLo) fLo = yInd;
+                if (yInd > fHi) fHi = yInd;
             }
         }
+    }
+
+    void ComputeVerticalAutoFit(int gridYCells, float fLo, float fHi)
+    {
+        if (!autoScaleVertical || float.IsInfinity(fLo) || float.IsInfinity(fHi) || fLo > fHi)
+        {
+            _autoMid = 0f;
+            _autoScale = 1f;
+            return;
+        }
+
+        float lo = fLo;
+        float hi = fHi;
+
+        bool useZeroPivot = lo <= 0f && hi >= 0f;
+        _autoMid = useZeroPivot ? 0f : (lo + hi) * 0.5f;
+
+        float halfSpan = Mathf.Max(
+            Mathf.Max(Mathf.Abs(lo - _autoMid), Mathf.Abs(hi - _autoMid)),
+            1e-3f);
+        halfSpan *= 1.085f;
+
+        const float marginCells = 0.85f;
+        float targetHalf = verticalFillFraction * (gridYCells * 0.5f - marginCells);
+        targetHalf = Mathf.Max(targetHalf, 0.72f);
+
+        _autoScale = Mathf.Clamp(targetHalf / halfSpan, verticalScaleClampMin, verticalScaleClampMax);
     }
 
     private float EvaluateFunctionY(FunctionType type, float transA, float transK, float transC, float transD, int power, int baseN, float xValue)
@@ -692,9 +793,9 @@ public class FunctionPlotter : MonoBehaviour
             float yInd = transA * Mathf.Pow(u, pow);
 
             if (IsFinite(yPar))
-                overlayParasitic.points.Add(new Vector2(xValue + gridOrigin.x, yPar + gridOrigin.y));
+                overlayParasitic.points.Add(new Vector2(xValue + gridOrigin.x, MapDisplayY(yPar) + gridOrigin.y));
             if (IsFinite(yInd))
-                overlayInduced.points.Add(new Vector2(xValue + gridOrigin.x, yInd + gridOrigin.y));
+                overlayInduced.points.Add(new Vector2(xValue + gridOrigin.x, MapDisplayY(yInd) + gridOrigin.y));
         }
 
         overlayParasitic.enabled = false;

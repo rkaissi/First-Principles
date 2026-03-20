@@ -430,11 +430,16 @@ public class LevelSelectController : MonoBehaviour
 
     private static void CopyFontFromAny(TextMeshProUGUI target)
     {
+        UiTypography.ApplyDefaultFontAsset(target);
+        if (target.font != null)
+            return;
         var any = FindAnyObjectByType<TextMeshProUGUI>();
         if (any != null && any != target && any.font != null)
+        {
             target.font = any.font;
-        if (target.font == null && TMP_Settings.defaultFontAsset != null)
-            target.font = TMP_Settings.defaultFontAsset;
+            if (any.fontSharedMaterial != null)
+                target.fontSharedMaterial = any.fontSharedMaterial;
+        }
     }
 
     /// <returns>Label <see cref="TextMeshProUGUI"/> for live language updates.</returns>

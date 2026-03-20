@@ -26,6 +26,13 @@ public class LevelDefinition : ScriptableObject
     [Header("Graph Parameters (FunctionPlotter)")]
     public FunctionType functionType = FunctionType.Power;
 
+    [Tooltip("Fit f(x) and f′(x) vertically so the curve uses most of the grid (exaggerates flat graphs). Off for graphing calculator mode.")]
+    public bool autoFitGraphVertical = true;
+
+    [Tooltip("Target fraction of half the grid height (from center line) used by the curve band (after padding).")]
+    [Range(0.38f, 0.92f)]
+    public float graphVerticalFillFraction = 0.74f;
+
     public float xStart = -20f;
     public float xEnd = 20f;
     public float step = 0.1f;

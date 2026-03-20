@@ -97,14 +97,13 @@ public class RiemannStripRendererUI : Graphic
             float xL = xStart + i * dx;
             float xR = xStart + (i + 1) * dx;
             float xS = SampleX(def.riemannRule, xL, xR);
-            float yPlot = plotter.SampleCurvePlotterY(xS);
-            if (!IsFinite(yPlot))
+            float gyTop = plotter.SampleCurveGridY(xS);
+            if (!IsFinite(gyTop))
                 continue;
 
             float gxL = xL + origin.x;
             float gxR = xR + origin.x;
             float gyAxis = origin.y;
-            float gyTop = yPlot + origin.y;
             float ymin = Mathf.Min(gyAxis, gyTop);
             float ymax = Mathf.Max(gyAxis, gyTop);
 

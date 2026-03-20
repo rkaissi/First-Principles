@@ -336,6 +336,7 @@ public class LevelManager : MonoBehaviour
             storyText.gameObject.SetActive(true);
             RefreshStoryBannerForCurrentMode(null);
             storyText.color = new Color(1f, 1f, 1f, 0.94f);
+            storyText.fontStyle = FontStyles.Bold;
         }
 
         if (stageHudText != null && stageHudText.transform.parent != null)
@@ -353,6 +354,7 @@ public class LevelManager : MonoBehaviour
         functionPlotter.step = 0.06f;
         functionPlotter.SetEquationExtraSuffix("");
         functionPlotter.SetCustomExpression("x^2");
+        functionPlotter.autoScaleVertical = false;
 
         if (curveRenderer != null)
         {
@@ -376,7 +378,11 @@ public class LevelManager : MonoBehaviour
         float bridgeControls = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
         float transRowBottom = bridgeControls + 74f;
 
-        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, FindPrimaryEquationTmp(), transRowBottom + 110f, 108f);
+        var equationStyleRef = FindPrimaryEquationTmp();
+        if (equationStyleRef != null)
+            equationStyleRef.fontStyle = FontStyles.Bold;
+
+        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, equationStyleRef, transRowBottom + 110f, 108f);
 
         var transGo = GameObject.Find("TransButton");
         var scaleGo = GameObject.Find("ScaleButton");
@@ -408,9 +414,28 @@ public class LevelManager : MonoBehaviour
             paramHint.alignment = TextAlignmentOptions.Top;
             paramHint.color = new Color(0.9f, 0.93f, 0.98f, 0.96f);
             ApplyPrimaryUiTypography(paramHint, FindPrimaryEquationTmp(), outlineWidth: 0.12f, outlineAlpha: 0.45f);
+            paramHint.fontStyle = FontStyles.Bold;
         }
         else if (GameObject.Find("GraphicCalculatorParamHint") != null)
+        {
             paramHint = GameObject.Find("GraphicCalculatorParamHint").GetComponent<TextMeshProUGUI>();
+            if (paramHint != null)
+            {
+                var eqRef = FindPrimaryEquationTmp();
+                if (eqRef != null && eqRef.font != null)
+                {
+                    paramHint.font = eqRef.font;
+                    if (eqRef.fontSharedMaterial != null)
+                        paramHint.fontSharedMaterial = eqRef.fontSharedMaterial;
+                }
+                else
+                    UiTypography.ApplyDefaultFontAsset(paramHint);
+                paramHint.fontStyle = FontStyles.Bold;
+            }
+        }
+
+        ApplyGraphCalculatorControlButtonTypography(transGo);
+        ApplyGraphCalculatorControlButtonTypography(scaleGo);
 
         foreach (var oldT in GetComponents<GraphCalculatorToolbar>())
             Destroy(oldT);
@@ -427,6 +452,26 @@ public class LevelManager : MonoBehaviour
         pinch.Setup(functionPlotter);
 
         RefreshControlsHintLocalized();
+    }
+
+    /// <summary>Trans / Scale labels use the project TMP default font and bold weight in calculator mode.</summary>
+    private static void ApplyGraphCalculatorControlButtonTypography(GameObject buttonRoot)
+    {
+        if (buttonRoot == null)
+            return;
+        var eqRef = FindPrimaryEquationTmp();
+        foreach (var tmp in buttonRoot.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            if (eqRef != null && eqRef.font != null)
+            {
+                tmp.font = eqRef.font;
+                if (eqRef.fontSharedMaterial != null)
+                    tmp.fontSharedMaterial = eqRef.fontSharedMaterial;
+            }
+            else
+                UiTypography.ApplyDefaultFontAsset(tmp);
+            tmp.fontStyle = FontStyles.Bold;
+        }
     }
 
     private static void LayoutCalculatorToolButtons(GameObject transGo, GameObject scaleGo, float anchoredBottomY)
@@ -2086,6 +2131,8 @@ public class LevelManager : MonoBehaviour
         functionPlotter.xStart = def.xStart;
         functionPlotter.xEnd = def.xEnd;
         functionPlotter.step = def.step;
+        functionPlotter.autoScaleVertical = def.autoFitGraphVertical;
+        functionPlotter.verticalFillFraction = def.graphVerticalFillFraction;
 
         functionPlotter.transA = def.transA;
         functionPlotter.transK = def.transK;

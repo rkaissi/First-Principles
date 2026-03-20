@@ -29,8 +29,8 @@ public static class TmpGlobalFallbackBootstrap
             return;
         _installed = true;
 
-        // Order: Latin+extensions, **Arabic** (critical for ar locale — Noto Sans TTF alone often lacks full Arabic coverage in TMP dynamic atlases),
-        // Devanagari (Hindi), Bengali (Bangla), Nastaliq (Urdu), then CJK.
+        // Order: Latin+extensions (Noto, for anything the primary Latin UI font misses), **Arabic**, Devanagari, Bengali,
+        // Nastaliq (Urdu), CJK — **Nanum Gothic before Noto Sans KR** for nicer Korean (나눔고딕, OFL).
         var extras = new List<TMP_FontAsset>();
         TryAddFont("Fonts/NotoSans-Regular", extras);
         TryAddFont("Fonts/NotoSansArabic-Regular", extras);
@@ -38,6 +38,7 @@ public static class TmpGlobalFallbackBootstrap
         TryAddFont("Fonts/NotoSansBengali-Regular", extras);
         TryAddFont("Fonts/NotoNastaliqUrdu-Regular", extras);
         TryAddFont("Fonts/NotoSansSC-Regular", extras);
+        TryAddFont("Fonts/NanumGothic-Regular", extras);
         TryAddFont("Fonts/NotoSansKR-Regular", extras);
         TryAddFont("Fonts/NotoSansJP-Regular", extras);
 

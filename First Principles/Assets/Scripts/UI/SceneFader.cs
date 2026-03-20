@@ -321,7 +321,7 @@ public class SceneFader : MonoBehaviour
         rt.pivot = new Vector2(0.5f, 0.5f);
         // Slightly narrower than Play width; keep enough height so two-line label isn’t cramped (not short vertically).
         float iconWidth = playRt.sizeDelta.x * (tablet ? 1.02f : 1.06f);
-        rt.sizeDelta = new Vector2(iconWidth, tablet ? 98f : 90f);
+        rt.sizeDelta = new Vector2(iconWidth, tablet ? 112f : 102f);
         float stackY = playRt.anchoredPosition.y + aboveOffset + playRt.sizeDelta.y * 0.5f + rt.sizeDelta.y * 0.5f;
         rt.anchoredPosition = new Vector2(0f, stackY);
         rt.SetAsLastSibling();
@@ -351,8 +351,9 @@ public class SceneFader : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(10f, 6f);
-        trt.offsetMax = new Vector2(-10f, -6f);
+        // Extra bottom inset so two-line label has comfortable space below the words.
+        trt.offsetMin = new Vector2(10f, tablet ? 16f : 14f);
+        trt.offsetMax = new Vector2(-10f, -8f);
 
         playerIconMenuGlyphTmp = textGo.AddComponent<TextMeshProUGUI>();
         playerIconMenuGlyphTmp.fontSize = UiTypography.Scale(tablet ? 29 : 26);

@@ -19,13 +19,19 @@ public static class GraphCalculatorEquationPanel
     {
         if (parent == null || plotter == null)
             return;
-        if (GameObject.Find(RootName) != null)
+
+        var existing = GameObject.Find(RootName);
+        if (existing != null)
+        {
+            ApplyEquationPanelFontAndWeight(existing, typographyReference);
             return;
+        }
 
         var legacyRoot = GameObject.Find(LegacyRootName);
         if (legacyRoot != null)
         {
             legacyRoot.name = RootName;
+            ApplyEquationPanelFontAndWeight(legacyRoot, typographyReference);
             return;
         }
 
@@ -60,6 +66,7 @@ public static class GraphCalculatorEquationPanel
         label.alignment = TextAlignmentOptions.MidlineLeft;
         label.color = new Color(0.85f, 0.88f, 0.95f, 0.9f);
         CopyFont(label, typographyReference);
+        label.fontStyle = FontStyles.Bold;
 
         var inputShell = new GameObject("TMP_InputField");
         var irt = inputShell.AddComponent<RectTransform>();
@@ -94,6 +101,7 @@ public static class GraphCalculatorEquationPanel
         textMesh.color = Color.white;
         textMesh.alignment = TextAlignmentOptions.MidlineLeft;
         CopyFont(textMesh, typographyReference);
+        textMesh.fontStyle = FontStyles.Bold;
 
         var phGo = new GameObject("Placeholder");
         var phRt = phGo.AddComponent<RectTransform>();
@@ -106,7 +114,7 @@ public static class GraphCalculatorEquationPanel
         ph.text = LocalizationManager.Get("graph.placeholder", "x^2 + sin(x) · ln(x) for x>0 · min(x,3)...");
         ph.fontSize = UiTypography.Scale(tablet ? 24 : 21);
         ph.color = new Color(1f, 1f, 1f, 0.32f);
-        ph.fontStyle = FontStyles.Italic;
+        ph.fontStyle = FontStyles.Bold | FontStyles.Italic;
         ph.alignment = TextAlignmentOptions.MidlineLeft;
         CopyFont(ph, typographyReference);
 
@@ -133,6 +141,7 @@ public static class GraphCalculatorEquationPanel
         status.richText = true;
         status.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
         CopyFont(status, typographyReference);
+        status.fontStyle = FontStyles.Bold;
 
         labelTmp = label;
         placeholderTmp = ph;
@@ -197,7 +206,31 @@ public static class GraphCalculatorEquationPanel
             if (reference.fontSharedMaterial != null)
                 target.fontSharedMaterial = reference.fontSharedMaterial;
         }
-        else if (TMP_Settings.defaultFontAsset != null)
-            target.font = TMP_Settings.defaultFontAsset;
+        else
+            UiTypography.ApplyDefaultFontAsset(target);
+    }
+
+    /// <summary>
+    /// Re-applies project font + bold weights when the equation panel already exists (scene or prior session).
+    /// </summary>
+    static void ApplyEquationPanelFontAndWeight(GameObject root, TextMeshProUGUI typographyReference)
+    {
+        if (root == null)
+            return;
+
+        labelTmp = root.transform.Find("Label")?.GetComponent<TextMeshProUGUI>();
+        placeholderTmp = root.transform.Find("TMP_InputField/Text Area/Placeholder")?.GetComponent<TextMeshProUGUI>();
+        statusTmp = root.transform.Find("Status")?.GetComponent<TextMeshProUGUI>();
+
+        foreach (var t in root.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            bool placeholder = t == placeholderTmp
+                || t.gameObject.name.IndexOf("Placeholder", StringComparison.OrdinalIgnoreCase) >= 0;
+            CopyFont(t, typographyReference);
+            t.fontStyle = placeholder ? (FontStyles.Bold | FontStyles.Italic) : FontStyles.Bold;
+        }
+
+        LocalizationManager.LanguageChanged -= RefreshEquationPanelStaticCopy;
+        LocalizationManager.LanguageChanged += RefreshEquationPanelStaticCopy;
     }
 }
