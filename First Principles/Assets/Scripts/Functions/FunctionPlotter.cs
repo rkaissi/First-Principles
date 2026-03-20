@@ -472,6 +472,7 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.MultivarSaddleSlice => transA * (u * u - transC * transC),
 
             // Engineering / applied: u = transK*(x - transD); `power` ↔ oscillation index; `baseN` ↔ decay strength.
+            FunctionType.SpringMassUndamped => SpringMassUndampedY(u, transA, transC, power),
             FunctionType.DampedOscillator => DampedOscillatorY(u, transA, transC, power, baseN),
             FunctionType.HyperbolicCosine => transA * ((float)System.Math.Cosh(Mathf.Clamp(u, -8f, 8f)) + transC),
             FunctionType.FullWaveRectifiedSine => transA * (Mathf.Abs(Mathf.Sin(u)) + transC),
@@ -682,6 +683,15 @@ public class FunctionPlotter : MonoBehaviour
         return carryingCapacity / (1f + Mathf.Exp(z)) + c;
     }
 
+    /// <summary>Undamped spring: \(x=A\cos(\omega u)+x_0\); \(u=k(x-D)\) time-like; \(\omega\) from <paramref name="power"/>.</summary>
+    private static float SpringMassUndampedY(float u, float amplitude, float xEq, int power)
+    {
+        float omega = SpringMassUndampedOmega(power);
+        return amplitude * Mathf.Cos(omega * u) + xEq;
+    }
+
+    private static float SpringMassUndampedOmega(int power) => 0.118f * Mathf.Max(1, power);
+
     /// <summary>Underdamped-style envelope A·e^(-α|u|)·sin(ωu) + C (u = scaled time/position).</summary>
     private static float DampedOscillatorY(float u, float a, float c, int power, int baseN)
     {
@@ -822,6 +832,14 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.MultivarSaddleSlice:
                 equationText.text = $@"\(z={a}\left(u^{2}-y_{{0}}^{2}\right),\; u={k}(x-{d}),\; y_{{0}}={c}\)";
                 break;
+            case FunctionType.SpringMassUndamped:
+            {
+                float omegaDisp = SpringMassUndampedOmega(power);
+                equationText.text =
+                    $@"<b>\(\text{{Spring–mass (undamped)}}\)</b> \(x \approx {a}\cos({omegaDisp:0.###}\,u)+{c},\; u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Hooke \(F=-kx\Rightarrow \ddot{{x}}=-\omega^2 x\), \(\omega=\sqrt{{k/m}}\).</color></size>";
+                break;
+            }
             case FunctionType.DampedOscillator:
                 equationText.text = $@"\(f={a}\, e^{{-\alpha|u|}}\sin(\omega u)+{c},\; u={k}(x-{d})\)";
                 break;
@@ -1054,6 +1072,8 @@ public enum FunctionType
     MultivarSaddleSlice,
 
     // Engineering / applied classical shapes
+    /// <summary>Undamped linear spring SHM: \(x=A\cos(\omega u)+x_0\); \texttt{power} sets \(\omega\), \(u=k(x-D)\).</summary>
+    SpringMassUndamped,
     DampedOscillator,
     HyperbolicCosine,
     FullWaveRectifiedSine,

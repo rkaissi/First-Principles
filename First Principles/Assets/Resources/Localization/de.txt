@@ -81,3 +81,4 @@ level.46=Transformationen: Fourier — sinc-Spektrum
 level.47=Transformationen: Laplace — exponentieller Abfall
 level.48=BOSS: Mandelbrot — Finale (Fraktal-Escape-Schnitt)
 level.49=BOSS: Lorenz-Attraktor — Finale (seltsamer Attraktor)
+level.50=Physik C: Feder–Masse SHM (Hooke, ungedämpft)

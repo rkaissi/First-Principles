@@ -80,6 +80,9 @@ public class PlayerControllerUI2D : MonoBehaviour
 
     public Vector2 PlayerCenterGrid => posGrid;
 
+    /// <summary>Root <see cref="RectTransform"/> for the avatar (grid-anchored). For screen-space UI positioning.</summary>
+    public RectTransform PlayerVisualRect => playerRect;
+
     public void BindDerivativeRenderer(DerivRendererUI derivativeRenderer)
     {
         derivativeLineRenderer = derivativeRenderer;

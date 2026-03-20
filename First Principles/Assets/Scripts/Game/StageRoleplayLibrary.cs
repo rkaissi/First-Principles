@@ -110,7 +110,9 @@ public static class StageRoleplayLibrary
         // 48
         "<b>Fractal exile, encore.</b> You return to Mandelbrot’s coastline for the last word—each iterate still votes on escape, and the boundary remembers every branch you dared to name.",
         // 49
-        "<b>Strange butterfly.</b> Lorenz’s wings beat on a thread of time: the curve you ride is sensitive, restless, forever retuning—small shifts in the unseen become storms in the visible trace."
+        "<b>Strange butterfly.</b> Lorenz’s wings beat on a thread of time: the curve you ride is sensitive, restless, forever retuning—small shifts in the unseen become storms in the visible trace.",
+        // 50
+        "<b>Spring cadet.</b> Hooke’s law pulls you home to equilibrium — each crest is stored spring energy, each crossing is the quiet where velocity wins; undamped, the tune never dies, only repeats."
     };
 
     /// <summary>Must match <see cref="GameLevelCatalog.LevelCount"/>.</summary>

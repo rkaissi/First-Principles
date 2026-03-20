@@ -85,7 +85,8 @@ public static class GameLevelCatalog
         "Transforms: Fourier — sinc spectrum (rect ↔ sinc)",
         "Transforms: Laplace — causal exponential decay",
         "BOSS: Mandelbrot — finale (fractal escape slice)",
-        "BOSS: Lorenz butterfly — finale (strange attractor)"
+        "BOSS: Lorenz butterfly — finale (strange attractor)",
+        "Physics C: spring–mass SHM (Hooke's law, undamped)"
     };
 
     public static int LevelCount => DisplayNames.Length;
@@ -103,6 +104,7 @@ public static class GameLevelCatalog
         new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 45),
         new LevelSelectCategory("level_select.cat.transforms", "Transforms", 46, 47),
         new LevelSelectCategory("level_select.cat.final_boss", "Final boss", 48, 49),
+        new LevelSelectCategory("level_select.cat.spring_physics", "Spring & SHM", 50, 50),
     };
 
     /// <summary>First index of the contiguous <b>Aerospace:</b> block (must match <see cref="LevelManager"/> sample levels).</summary>

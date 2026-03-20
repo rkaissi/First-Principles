@@ -75,6 +75,20 @@ public class LevelManager : MonoBehaviour
     /// <summary>After death-restart, skip the full-screen roleplay card for the same stage.</summary>
     private bool skipNextStageIntro;
 
+    /// <summary>After death-restart, skip the spawn spotlight so restarts stay snappy.</summary>
+    private bool skipSpawnSpotlight;
+
+    [Header("Spawn spotlight")]
+    [Tooltip("Total time from level ready until controls unlock from spotlight (fade in + hold + fade out).")]
+    [SerializeField] private float spawnSpotlightTotalSeconds = 3f;
+
+    [Tooltip("Optional; if null, loads Resources/UI_SpotlightDim then Shader.Find.")]
+    [SerializeField] private Shader spawnSpotlightShader;
+
+    private GameObject spawnSpotlightRoot;
+    private Material spawnSpotlightMaterial;
+    private RectTransform spawnSpotlightRect;
+
     private GameObject stageIntroRoot;
     private CanvasGroup stageIntroCanvasGroup;
     private TextMeshProUGUI stageIntroTitle;
@@ -2192,6 +2206,39 @@ public class LevelManager : MonoBehaviour
             levelXStart: lorenzBossX0,
             levelXEnd: lorenzBossX1
         ));
+
+        var springMassColors = new[]
+        {
+            new Color(0.42f, 0.95f, 0.68f, 1f),
+            new Color(1f, 0.52f, 0.42f, 1f),
+            new Color(0.58f, 0.78f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[50],
+            FunctionType.SpringMassUndamped,
+            curveColor: new Color(0.38f, 0.92f, 0.74f, 1f),
+            derivativeColor: new Color(1f, 0.48f, 0.52f, 1f),
+            transA: 1.08f,
+            transK: 0.9f,
+            transC: -2.08f,
+            transD: 0f,
+            power: 14,
+            baseN: 2,
+            story:
+                "<b>Spring–mass without damping</b> — Hooke’s law says the restoring force points toward equilibrium: <color=#86efac><b>F = −k x</b></color> for displacement from rest.\n\n" +
+                "For a block on a frictionless horizontal surface, Newton gives <color=#7dd3fc>m ẍ = −k x</color>, so <color=#fde047>x(t) = A cos(ωt) + x₀</color> with <color=#a5b4fc>ω = √(k/m)</color> — simple harmonic motion.\n\n" +
+                "<size=92%><color=#a8b2d1>Horizontal axis here is a time-like <i>t</i> (via <b>u = k(x−D)</b>); height is position. Compare with <b>Engineering: damped oscillation</b> — same spring intuition with friction draining energy.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.14f, 0.36f, 0.32f, 0.38f),
+            gridOutside: new Color(0.1f, 0.26f, 0.24f, 0.11f),
+            levelStageColors: springMassColors,
+            storyPauseSecondsOverride: 2.75f,
+            graphStep: 0.085f,
+            levelXStart: -14f,
+            levelXEnd: 14f
+        ));
     }
 
     /// <summary>
@@ -2437,8 +2484,14 @@ public class LevelManager : MonoBehaviour
 
         skipNextStageIntro = false;
 
+        bool runSpawnSpotlight = !graphCalculatorMode && !skipSpawnSpotlight;
+        skipSpawnSpotlight = false;
+
         if (showIntro)
             yield return RunEnumerated(RunStageIntroCoroutine(def));
+
+        if (runSpawnSpotlight && playerController != null)
+            yield return RunEnumerated(RunSpawnSpotlightRoutine());
 
         // Match original behaviour: player can move while the top story banner fades.
         if (playerController != null)
@@ -2461,6 +2514,126 @@ public class LevelManager : MonoBehaviour
 
         while (inner.MoveNext())
             yield return inner.Current;
+    }
+
+    /// <summary>
+    /// Fullscreen dim with a soft hole on the player — runs while input is still locked (after optional roleplay card).
+    /// </summary>
+    private IEnumerator RunSpawnSpotlightRoutine()
+    {
+        var canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null || playerController == null)
+            yield break;
+
+        EnsureSpawnSpotlightOverlay(canvas);
+        if (spawnSpotlightRoot == null || spawnSpotlightMaterial == null || spawnSpotlightRect == null)
+            yield break;
+
+        var playerRt = playerController.PlayerVisualRect;
+        if (playerRt == null)
+            yield break;
+
+        float total = Mathf.Max(0.35f, spawnSpotlightTotalSeconds);
+        float fadeIn = Mathf.Min(0.22f, total * 0.12f);
+        float fadeOut = Mathf.Min(0.22f, total * 0.12f);
+        float hold = Mathf.Max(0.1f, total - fadeIn - fadeOut);
+        const float maxAlpha = 0.84f;
+
+        spawnSpotlightMaterial.SetFloat("_SpotRadius", 0.19f);
+        spawnSpotlightMaterial.SetFloat("_SpotSoft", 0.11f);
+
+        spawnSpotlightRoot.SetActive(true);
+        spawnSpotlightRoot.transform.SetAsLastSibling();
+
+        float t = 0f;
+        while (t < fadeIn)
+        {
+            t += Time.unscaledDeltaTime;
+            float a = Mathf.Clamp01(t / fadeIn) * maxAlpha;
+            spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, a));
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, maxAlpha));
+
+        t = 0f;
+        while (t < hold)
+        {
+            t += Time.unscaledDeltaTime;
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < fadeOut)
+        {
+            t += Time.unscaledDeltaTime;
+            float a = Mathf.Lerp(maxAlpha, 0f, Mathf.Clamp01(t / fadeOut));
+            spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, a));
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, 0f));
+        spawnSpotlightRoot.SetActive(false);
+    }
+
+    private void EnsureSpawnSpotlightOverlay(Canvas canvas)
+    {
+        if (spawnSpotlightRoot != null)
+            return;
+
+        Shader sh = spawnSpotlightShader;
+        if (sh == null)
+            sh = Resources.Load<Shader>("UI_SpotlightDim");
+        if (sh == null)
+            sh = Shader.Find("UI/SpotlightDim");
+        if (sh == null)
+        {
+            Debug.LogWarning("LevelManager: Shader UI/SpotlightDim not found — ensure Assets/Resources/UI_SpotlightDim.shader exists or assign spawnSpotlightShader.");
+            return;
+        }
+
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        Transform parent = safe != null ? safe : canvas.transform;
+
+        spawnSpotlightRoot = new GameObject("SpawnSpotlightOverlay", typeof(RectTransform));
+        spawnSpotlightRect = spawnSpotlightRoot.GetComponent<RectTransform>();
+        spawnSpotlightRect.SetParent(parent, false);
+        spawnSpotlightRect.anchorMin = Vector2.zero;
+        spawnSpotlightRect.anchorMax = Vector2.one;
+        spawnSpotlightRect.offsetMin = Vector2.zero;
+        spawnSpotlightRect.offsetMax = Vector2.zero;
+
+        var img = spawnSpotlightRoot.AddComponent<Image>();
+        img.raycastTarget = false;
+        img.color = Color.white;
+        img.sprite = TryGetSquareSprite();
+
+        spawnSpotlightMaterial = new Material(sh);
+        img.material = spawnSpotlightMaterial;
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, 0f));
+
+        spawnSpotlightRoot.SetActive(false);
+    }
+
+    private static void UpdateSpawnSpotlightHole(RectTransform overlayRt, RectTransform playerRt, Material mat)
+    {
+        if (overlayRt == null || playerRt == null || mat == null)
+            return;
+
+        float aspect = overlayRt.rect.width / Mathf.Max(overlayRt.rect.height, 1e-4f);
+        mat.SetFloat("_Aspect", aspect);
+
+        // Same Canvas tree: world → overlay-local avoids Overlay vs Camera camera-null pitfalls.
+        Vector3 world = playerRt.TransformPoint(playerRt.rect.center);
+        Vector3 local = overlayRt.InverseTransformPoint(world);
+
+        Rect r = overlayRt.rect;
+        float u = Mathf.InverseLerp(r.xMin, r.xMax, local.x);
+        float v = Mathf.InverseLerp(r.yMin, r.yMax, local.y);
+        mat.SetVector("_SpotCenter", new Vector4(u, v, 0f, 0f));
     }
 
     private IEnumerator RunStageIntroCoroutine(LevelDefinition def)
@@ -2761,6 +2934,7 @@ public class LevelManager : MonoBehaviour
         isRestarting = true;
         yield return new WaitForSeconds(restartDelaySeconds);
         skipNextStageIntro = true;
+        skipSpawnSpotlight = true;
         LoadLevel(currentLevelIndex);
     }
 

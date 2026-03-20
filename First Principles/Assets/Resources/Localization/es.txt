@@ -81,3 +81,4 @@ level.46=Transformadas: Fourier — sinc (espectro)
 level.47=Transformadas: Laplace — decaimiento exponencial
 level.48=JEFE: Mandelbrot — final (corte de escape fractal)
 level.49=JEFE: mariposa de Lorenz — final (atractor extraño)
+level.50=Física C: resorte–masa SHM (ley de Hooke, sin amortiguación)

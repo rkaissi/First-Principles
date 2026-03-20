@@ -81,3 +81,4 @@ level.46=Transformations : Fourier — sinc (spectre)
 level.47=Transformations : Laplace — décroissance exponentielle
 level.48=BOSS : Mandelbrot — finale (tranche d’échappement fractale)
 level.49=BOSS : papillon de Lorenz — finale (attracteur étrange)
+level.50=Physique C : ressort–masse SHM (loi de Hooke, non amorti)
