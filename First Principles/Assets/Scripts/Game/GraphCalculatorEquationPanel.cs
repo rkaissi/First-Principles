@@ -132,16 +132,14 @@ public static class GraphCalculatorEquationPanel
         srt.anchorMin = new Vector2(0f, 0f);
         srt.anchorMax = new Vector2(1f, 0f);
         srt.pivot = new Vector2(0.5f, 0f);
-        srt.anchoredPosition = new Vector2(0f, 4f);
-        srt.sizeDelta = new Vector2(-24f, 22f);
         var status = statusGo.AddComponent<TextMeshProUGUI>();
-        status.fontSize = UiTypography.Scale(tablet ? 16 : 14);
         status.alignment = TextAlignmentOptions.Midline;
         status.color = new Color(0.75f, 0.92f, 0.8f, 0.95f);
         status.richText = true;
         status.text = LocalizationManager.Get("graph.status_enter", "Enter / tap away to graph");
         CopyFont(status, typographyReference);
         status.fontStyle = FontStyles.Bold;
+        ApplyStatusHintLayoutAndSize(status, srt, tablet);
 
         labelTmp = label;
         placeholderTmp = ph;
@@ -248,9 +246,24 @@ public static class GraphCalculatorEquationPanel
             t.fontStyle = placeholder ? (FontStyles.Bold | FontStyles.Italic) : FontStyles.Bold;
         }
 
+        bool tablet = DeviceLayout.IsTabletLike();
+        ApplyStatusHintLayoutAndSize(statusTmp, statusTmp != null ? statusTmp.rectTransform : null, tablet);
+
         LocalizationManager.LanguageChanged -= RefreshEquationPanelStaticCopy;
         LocalizationManager.LanguageChanged += RefreshEquationPanelStaticCopy;
 
         WireEquationApplyHandlers(root, plotter);
+    }
+
+    static void ApplyStatusHintLayoutAndSize(TextMeshProUGUI status, RectTransform srt, bool tablet)
+    {
+        if (status == null)
+            return;
+        status.fontSize = UiTypography.Scale(tablet ? 19 : 17);
+        if (srt != null)
+        {
+            srt.anchoredPosition = new Vector2(0f, 0f);
+            srt.sizeDelta = new Vector2(-24f, 28f);
+        }
     }
 }

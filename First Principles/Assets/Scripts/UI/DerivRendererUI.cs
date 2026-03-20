@@ -14,6 +14,15 @@ public class DerivRendererUI : Graphic
 
     public float thickness = 10f;
 
+    [Tooltip("When < 1, the polyline fades in left→right (set by FunctionPlotter).")]
+    [Range(0f, 1f)]
+    public float graphRevealProgress = 1f;
+
+    public float graphRevealXMin;
+    public float graphRevealXMax;
+
+    public bool enableHorizontalGraphReveal = true;
+
     [Tooltip("0 = line uses normal color; 1 = strong highlight when player grazes f′ (driven by PlayerControllerUI2D).")]
     [Range(0f, 1f)]
     public float playerProximityHighlight;
@@ -47,9 +56,23 @@ public class DerivRendererUI : Graphic
         UpdateGridSize();
     }
 
+    public void SetGraphRevealFade(float progress01, float xMinGrid, float xMaxGrid)
+    {
+        graphRevealProgress = Mathf.Clamp01(progress01);
+        graphRevealXMin = xMinGrid;
+        graphRevealXMax = xMaxGrid;
+        SetVerticesDirty();
+    }
+
     private void Update()
     {
         UpdateGridSize();
+    }
+
+    static float HorizontalRevealAlpha(float gridX, float revealX, float feather)
+    {
+        float t = Mathf.Clamp01((gridX - (revealX - feather)) / Mathf.Max(feather, 1e-4f));
+        return 1f - Mathf.SmoothStep(0f, 1f, t);
     }
 
     // When a UI generates a mesh...
@@ -130,8 +153,21 @@ public class DerivRendererUI : Graphic
     // Draws vertices for each point on the graph
     private void DrawVerticesForPoint(Vector2 point, Vector2 point2, VertexHelper vh, float angle)
     {
+        float segAlpha = 1f;
+        if (enableHorizontalGraphReveal && graphRevealProgress < 0.999f)
+        {
+            float left = Mathf.Min(graphRevealXMin, graphRevealXMax);
+            float right = Mathf.Max(graphRevealXMin, graphRevealXMax);
+            float revealX = Mathf.Lerp(left, right, graphRevealProgress);
+            float feather = Mathf.Max((right - left) * 0.055f, 0.35f);
+            float a0 = HorizontalRevealAlpha(point.x, revealX, feather);
+            float a1 = HorizontalRevealAlpha(point2.x, revealX, feather);
+            segAlpha = Mathf.Min(a0, a1);
+        }
+
         UIVertex vertex = UIVertex.simpleVert;
         Color drawCol = Color.Lerp(color, Color.white, Mathf.Clamp01(playerProximityHighlight));
+        drawCol.a *= segAlpha;
         vertex.color = drawCol;
 
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(-thickness / 2, 0);
@@ -143,10 +179,12 @@ public class DerivRendererUI : Graphic
         vertex.position += new Vector3(unitWidth * point.x, unitHeight * point.y);
         vh.AddVert(vertex);
 
+        vertex.color = drawCol;
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(-thickness / 2, 0);
         vertex.position += new Vector3(unitWidth * point2.x, unitHeight * point2.y);
         vh.AddVert(vertex);
 
+        vertex.color = drawCol;
         vertex.position = Quaternion.Euler(0, 0, angle) * new Vector3(thickness / 2, 0);
         vertex.position += new Vector3(unitWidth * point2.x, unitHeight * point2.y);
         vh.AddVert(vertex);

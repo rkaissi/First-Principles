@@ -24,6 +24,7 @@ public static class MathArticlesOverlay
         {
             existing.gameObject.SetActive(true);
             existing.SetAsLastSibling();
+            EnsureGoldenRatioBackdrop(existing);
             RefreshArticleBodyAndLayout(existing);
             return;
         }
@@ -35,6 +36,8 @@ public static class MathArticlesOverlay
         rootRt.anchorMax = Vector2.one;
         rootRt.offsetMin = Vector2.zero;
         rootRt.offsetMax = Vector2.zero;
+
+        EnsureGoldenRatioBackdrop(root.transform);
 
         var dim = root.AddComponent<Image>();
         dim.color = new Color(0.04f, 0.05f, 0.11f, 0.93f);
@@ -68,7 +71,7 @@ public static class MathArticlesOverlay
         closeRt.anchorMin = new Vector2(0.92f, 0.92f);
         closeRt.anchorMax = new Vector2(0.98f, 0.98f);
         closeRt.pivot = new Vector2(1f, 1f);
-        closeRt.sizeDelta = new Vector2(tablet ? 132f : 120f, tablet ? 50f : 44f);
+        closeRt.sizeDelta = new Vector2(tablet ? 148f : 136f, tablet ? 56f : 50f);
         closeRt.anchoredPosition = Vector2.zero;
 
         var closeImg = closeBtnGo.AddComponent<Image>();
@@ -90,10 +93,12 @@ public static class MathArticlesOverlay
         closeTxtRt.offsetMax = Vector2.zero;
         closeButtonTmp = closeTxtGo.AddComponent<TextMeshProUGUI>();
         closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
-        closeButtonTmp.fontSize = UiTypography.Scale(tablet ? 26 : 22);
+        closeButtonTmp.fontSize = UiTypography.Scale(tablet ? 32 : 28);
+        closeButtonTmp.fontStyle = FontStyles.Bold;
         closeButtonTmp.alignment = TextAlignmentOptions.Center;
         closeButtonTmp.color = Color.white;
         CopyFont(closeButtonTmp);
+        closeButtonTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(closeButtonTmp);
         LocalizationManager.LanguageChanged -= RefreshCloseLabel;
         LocalizationManager.LanguageChanged += RefreshCloseLabel;
@@ -180,6 +185,23 @@ public static class MathArticlesOverlay
         root.transform.SetAsLastSibling();
     }
 
+    /// <summary>Full-screen gold φ / Fibonacci drift behind the dim (first sibling so panel stays on top).</summary>
+    private static void EnsureGoldenRatioBackdrop(Transform overlayRoot)
+    {
+        if (overlayRoot == null || overlayRoot.Find("GoldenRatioBackdrop") != null)
+            return;
+
+        var goldenGo = new GameObject("GoldenRatioBackdrop");
+        var gRt = goldenGo.AddComponent<RectTransform>();
+        gRt.SetParent(overlayRoot, false);
+        gRt.anchorMin = Vector2.zero;
+        gRt.anchorMax = Vector2.one;
+        gRt.offsetMin = Vector2.zero;
+        gRt.offsetMax = Vector2.zero;
+        goldenGo.AddComponent<MathTipsGoldenRatioBackdrop>();
+        goldenGo.transform.SetAsFirstSibling();
+    }
+
     private static void RefreshArticleBodyGlobal() => RefreshArticleBodyText();
 
     private static void RefreshArticleBodyText()
@@ -196,6 +218,10 @@ public static class MathArticlesOverlay
 
     private static void RefreshArticleBodyAndLayout(Transform overlayRoot)
     {
+        var closeTr = overlayRoot.Find("Panel/CloseButton/Text");
+        closeButtonTmp = closeTr != null ? closeTr.GetComponent<TextMeshProUGUI>() : null;
+        RefreshCloseLabel();
+
         var bodyTr = overlayRoot.Find("Panel/Scroll/Viewport/Content/ArticleText");
         articleBodyTmp = bodyTr != null ? bodyTr.GetComponent<TextMeshProUGUI>() : null;
         RefreshArticleBodyText();
@@ -210,6 +236,7 @@ public static class MathArticlesOverlay
         if (closeButtonTmp == null)
             return;
         closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
+        closeButtonTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(closeButtonTmp);
     }
 

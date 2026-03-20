@@ -98,7 +98,19 @@ public static class StageRoleplayLibrary
         // 42
         "<b>Risk officer.</b> The 2008 arc is a cliff masquerading as a bull: crawl the crest, brace for the sheer drop, then learn that recovery is a slow integral, not a bounce.",
         // 43
-        "<b>Fractal exile.</b> Mandelbrot boundary guards escape routes—each iterate is a spell. Step wrong and infinity notices; step right and you pierce a holographic veil."
+        "<b>Fractal exile.</b> Mandelbrot boundary guards escape routes—each iterate is a spell. Step wrong and infinity notices; step right and you pierce a holographic veil.",
+        // 44
+        "<b>Heat engine cadet.</b> Compression trades volume for pressure along an adiabat—no heat admitted, just workledger math. Feel the steepening as γ insists the gas fight back harder per liter squeezed.",
+        // 45
+        "<b>Gilded navigator.</b> Every quarter-turn the world wants to scale itself by φ—the spiral is a compass that never forgets proportion. Follow the radius outward: each step is geometric, not arithmetic.",
+        // 46
+        "<b>Spectrum scribe.</b> A rectangle in one domain blooms into a sinc in the other—side lobes are the honest echo of sharp corners. You are reading the interference pattern of changing coordinates.",
+        // 47
+        "<b>s‑plane pilgrim.</b> The exponential after the switch-on is the seed of every pole story: decay in time becomes algebra in s. The past is zero until the kernel says go.",
+        // 48
+        "<b>Fractal exile, encore.</b> You return to Mandelbrot’s coastline for the last word—each iterate still votes on escape, and the boundary remembers every branch you dared to name.",
+        // 49
+        "<b>Strange butterfly.</b> Lorenz’s wings beat on a thread of time: the curve you ride is sensitive, restless, forever retuning—small shifts in the unseen become storms in the visible trace."
     };
 
     /// <summary>Must match <see cref="GameLevelCatalog.LevelCount"/>.</summary>

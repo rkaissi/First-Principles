@@ -285,13 +285,13 @@ public class LevelSelectController : MonoBehaviour
         rt.SetParent(panelRoot, false);
         bool tablet = DeviceLayout.IsTabletLike();
         // Leave room for bottom-left Back button (see CreateBackButton).
-        float bottomInset = tablet ? 84f : 88f;
-        float howH = tablet ? 64f : 58f;
+        float bottomInset = tablet ? 88f : 92f;
+        float howH = tablet ? 76f : 70f;
         // Bottom-centered — lowest chip (Math tips sits above; see CreateMathArticlesButton).
         rt.anchorMin = new Vector2(0.5f, 0f);
         rt.anchorMax = new Vector2(0.5f, 0f);
         rt.pivot = new Vector2(0.5f, 0f);
-        rt.sizeDelta = new Vector2(tablet ? 620f : 560f, howH);
+        rt.sizeDelta = new Vector2(tablet ? 700f : 632f, howH);
         rt.anchoredPosition = new Vector2(0f, bottomInset);
 
         var img = go.AddComponent<Image>();
@@ -310,18 +310,20 @@ public class LevelSelectController : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(12f, 6f);
-        trt.offsetMax = new Vector2(-12f, -6f);
+        trt.offsetMin = new Vector2(16f, 8f);
+        trt.offsetMax = new Vector2(-16f, -8f);
 
         howToPlayTmp = textGo.AddComponent<TextMeshProUGUI>();
         howToPlayTmp.text = LocalizationManager.Get("menu.tutorial_button", "How to play");
-        howToPlayTmp.fontSize = UiTypography.Scale(tablet ? 30 : 27);
+        howToPlayTmp.fontSize = UiTypography.Scale(tablet ? 36 : 32);
+        howToPlayTmp.fontStyle = FontStyles.Bold;
         howToPlayTmp.alignment = TextAlignmentOptions.Center;
         howToPlayTmp.color = new Color(0.92f, 0.98f, 1f, 1f);
         howToPlayTmp.textWrappingMode = TextWrappingModes.Normal;
         howToPlayTmp.overflowMode = TextOverflowModes.Overflow;
         howToPlayTmp.richText = true;
         CopyFontFromAny(howToPlayTmp);
+        howToPlayTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(howToPlayTmp);
 
         btn.onClick.AddListener(() =>
@@ -338,15 +340,15 @@ public class LevelSelectController : MonoBehaviour
         var rt = go.AddComponent<RectTransform>();
         rt.SetParent(panelRoot, false);
         bool tablet = DeviceLayout.IsTabletLike();
-        float bottomInset = tablet ? 84f : 88f;
-        float howH = tablet ? 64f : 58f;
-        float mathH = tablet ? 68f : 62f;
-        float chipGap = 10f;
+        float bottomInset = tablet ? 88f : 92f;
+        float howH = tablet ? 76f : 70f;
+        float mathH = tablet ? 82f : 76f;
+        float chipGap = 12f;
         // Bottom band — directly above "How to play".
         rt.anchorMin = new Vector2(0.5f, 0f);
         rt.anchorMax = new Vector2(0.5f, 0f);
         rt.pivot = new Vector2(0.5f, 0f);
-        rt.sizeDelta = new Vector2(tablet ? 620f : 560f, mathH);
+        rt.sizeDelta = new Vector2(tablet ? 700f : 632f, mathH);
         rt.anchoredPosition = new Vector2(0f, bottomInset + howH + chipGap);
 
         var img = go.AddComponent<Image>();
@@ -365,17 +367,19 @@ public class LevelSelectController : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(12f, 6f);
-        trt.offsetMax = new Vector2(-12f, -6f);
+        trt.offsetMin = new Vector2(16f, 8f);
+        trt.offsetMax = new Vector2(-16f, -8f);
 
         mathTipsTmp = textGo.AddComponent<TextMeshProUGUI>();
         mathTipsTmp.text = LocalizationManager.Get("ui.math_tips", "Math tips & snippets");
-        mathTipsTmp.fontSize = UiTypography.Scale(tablet ? 32 : 28);
+        mathTipsTmp.fontSize = UiTypography.Scale(tablet ? 38 : 34);
+        mathTipsTmp.fontStyle = FontStyles.Bold;
         mathTipsTmp.alignment = TextAlignmentOptions.Center;
         mathTipsTmp.color = new Color(0.9f, 0.96f, 1f, 1f);
         mathTipsTmp.textWrappingMode = TextWrappingModes.Normal;
         mathTipsTmp.overflowMode = TextOverflowModes.Overflow;
         CopyFontFromAny(mathTipsTmp);
+        mathTipsTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(mathTipsTmp);
 
         btn.onClick.AddListener(() => MathArticlesOverlay.Open(canvasTransform));
@@ -431,15 +435,19 @@ public class LevelSelectController : MonoBehaviour
     private static void CopyFontFromAny(TextMeshProUGUI target)
     {
         UiTypography.ApplyDefaultFontAsset(target);
-        if (target.font != null)
-            return;
-        var any = FindAnyObjectByType<TextMeshProUGUI>();
-        if (any != null && any != target && any.font != null)
+        if (target.font == null)
         {
-            target.font = any.font;
-            if (any.fontSharedMaterial != null)
-                target.fontSharedMaterial = any.fontSharedMaterial;
+            var any = FindAnyObjectByType<TextMeshProUGUI>();
+            if (any != null && any != target && any.font != null)
+            {
+                target.font = any.font;
+                if (any.fontSharedMaterial != null)
+                    target.fontSharedMaterial = any.fontSharedMaterial;
+            }
         }
+
+        if (target != null)
+            target.fontStyle = FontStyles.Bold;
     }
 
     /// <returns>Label <see cref="TextMeshProUGUI"/> for live language updates.</returns>
@@ -501,8 +509,8 @@ public class LevelSelectController : MonoBehaviour
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.zero;
         rt.pivot = Vector2.zero;
-        rt.sizeDelta = new Vector2(tablet ? 220f : 195f, tablet ? 50f : 46f);
-        rt.anchoredPosition = new Vector2(margin, margin + 14f);
+        rt.sizeDelta = new Vector2(tablet ? 300f : 272f, tablet ? 64f : 58f);
+        rt.anchoredPosition = new Vector2(margin, margin + 4f);
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -520,15 +528,17 @@ public class LevelSelectController : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = Vector2.zero;
-        trt.offsetMax = Vector2.zero;
+        trt.offsetMin = new Vector2(10f, 6f);
+        trt.offsetMax = new Vector2(-10f, -6f);
 
         backTmp = textGo.AddComponent<TextMeshProUGUI>();
         backTmp.text = LocalizationManager.Get("ui.back_menu", "Back to Menu");
-        backTmp.fontSize = UiTypography.Scale(tablet ? 23 : 21);
+        backTmp.fontSize = UiTypography.Scale(tablet ? 32 : 28);
+        backTmp.fontStyle = FontStyles.Bold;
         backTmp.alignment = TextAlignmentOptions.Center;
         backTmp.color = RuntimeUiPolish.TitleIvory;
         CopyFontFromAny(backTmp);
+        backTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(backTmp);
 
         btn.onClick.AddListener(() => SceneTransitionHost.LoadSingleScene("Menu"));

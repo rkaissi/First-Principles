@@ -776,7 +776,7 @@ public class LevelManager : MonoBehaviour
         rt.anchorMax = new Vector2(1f, 1f);
         rt.pivot = new Vector2(1f, 1f);
         rt.anchoredPosition = new Vector2(-18f, -topPad);
-        rt.sizeDelta = new Vector2(tablet ? 248f : 220f, tablet ? 52f : 48f);
+        rt.sizeDelta = new Vector2(tablet ? 292f : 262f, tablet ? 60f : 56f);
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -795,16 +795,18 @@ public class LevelManager : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(8f, 4f);
-        trt.offsetMax = new Vector2(-8f, -4f);
+        trt.offsetMin = new Vector2(12f, 6f);
+        trt.offsetMax = new Vector2(-12f, -6f);
 
         var tmp = textGo.AddComponent<TextMeshProUGUI>();
         tmp.text = LocalizationManager.Get("ui.math_concepts", "Math concepts");
-        tmp.fontSize = UiTypography.Scale(tablet ? 24 : 21);
+        tmp.fontSize = UiTypography.Scale(tablet ? 30 : 27);
+        tmp.fontStyle = FontStyles.Bold;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = new Color(0.92f, 0.97f, 1f, 1f);
         tmp.raycastTarget = false;
         ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.48f);
+        tmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(tmp);
     }
 
@@ -848,7 +850,7 @@ public class LevelManager : MonoBehaviour
     {
         string stageWord = LocalizationManager.Get("hud.stage", "STAGE");
         return
-            $"<color=#9aa3b8><size=78%>{stageWord}</size></color>\n" +
+            $"<color=#9aa3b8><size=78%><b>{stageWord}</b></size></color>\n" +
             $"<b><color=#f2f4ff>{stage}</color></b><color=#5c6578> / </color><b><color=#e8ebf7>{total}</color></b>";
     }
 
@@ -918,27 +920,64 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Finds or creates <see cref="RiemannStripRendererUI"/> under the cartesian plane, sibling-ordered under the main curve line.
+    /// Finds or creates <see cref="RiemannStripRendererUI"/> under the same parent as the main curve
+    /// (matches <see cref="LineRendererUI"/> rect + draw order so strips align with the graph).
     /// </summary>
     private void EnsureRiemannRenderer()
     {
         if (riemannRenderer == null)
             riemannRenderer = FindAnyObjectByType<RiemannStripRendererUI>();
 
+        if (riemannRenderer != null && curveRenderer != null)
+        {
+            var curveLineRt = curveRenderer.GetComponent<RectTransform>();
+            Transform lineParent = curveLineRt != null ? curveLineRt.parent : null;
+            if (lineParent != null && riemannRenderer.transform.parent != lineParent)
+            {
+                riemannRenderer.transform.SetParent(lineParent, false);
+                var riemannRt = riemannRenderer.GetComponent<RectTransform>();
+                if (curveLineRt != null && riemannRt != null)
+                {
+                    riemannRt.anchorMin = curveLineRt.anchorMin;
+                    riemannRt.anchorMax = curveLineRt.anchorMax;
+                    riemannRt.pivot = curveLineRt.pivot;
+                    riemannRt.anchoredPosition = curveLineRt.anchoredPosition;
+                    riemannRt.sizeDelta = curveLineRt.sizeDelta;
+                    riemannRt.localScale = curveLineRt.localScale;
+                }
+                riemannRenderer.transform.SetSiblingIndex(0);
+            }
+        }
+
         if (riemannRenderer != null || curveRenderer == null || cartesianPlaneRect == null)
             return;
 
         var go = new GameObject("RiemannStrips");
-        go.transform.SetParent(cartesianPlaneRect, false);
-        var rt = go.AddComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
+        RectTransform curveRt = curveRenderer.GetComponent<RectTransform>();
+        Transform parentT = curveRt != null && curveRt.parent != null ? curveRt.parent : cartesianPlaneRect;
+        go.transform.SetParent(parentT, false);
+        var stripsRt = go.AddComponent<RectTransform>();
+        if (curveRt != null)
+        {
+            stripsRt.anchorMin = curveRt.anchorMin;
+            stripsRt.anchorMax = curveRt.anchorMax;
+            stripsRt.pivot = curveRt.pivot;
+            stripsRt.anchoredPosition = curveRt.anchoredPosition;
+            stripsRt.sizeDelta = curveRt.sizeDelta;
+            stripsRt.localScale = curveRt.localScale;
+        }
+        else
+        {
+            stripsRt.anchorMin = Vector2.zero;
+            stripsRt.anchorMax = Vector2.one;
+            stripsRt.offsetMin = Vector2.zero;
+            stripsRt.offsetMax = Vector2.zero;
+        }
 
         riemannRenderer = go.AddComponent<RiemannStripRendererUI>();
         riemannRenderer.raycastTarget = false;
 
+        // Draw before the Function / derivative lines (same parent as curve).
         go.transform.SetSiblingIndex(0);
     }
 
@@ -1928,7 +1967,7 @@ public class LevelManager : MonoBehaviour
             storyPauseSecondsOverride: 2.65f
         ));
 
-        // Economics bonus (41–42) + Mandelbrot boss (43) — order matches GameLevelCatalog.
+        // Economics (41–42) + Mandelbrot (43) + thermo (44) + golden spiral (45); Transforms (46–47); Mandelbrot encore finale (48).
         levels.Add(MakeLevel(
             GameLevelCatalog.DisplayNames[41],
             FunctionType.EconomyDotcomBubbleStylized,
@@ -1998,6 +2037,160 @@ public class LevelManager : MonoBehaviour
             graphStep: 0.14f,
             levelXStart: -16f,
             levelXEnd: 16f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[44],
+            FunctionType.ThermoAdiabaticPV,
+            curveColor: new Color(0.98f, 0.52f, 0.28f, 1f),
+            derivativeColor: new Color(0.45f, 0.82f, 0.98f, 1f),
+            transA: 9.5f,
+            transK: 0.38f,
+            transC: -2.35f,
+            transD: -16f,
+            power: 2,
+            baseN: 140,
+            story:
+                "<b>Thermodynamics — reversible adiabatic path</b> — for an ideal gas, <color=#fdba74>quasi-static adiabats</color> obey <b>PV<sup>γ</sup> = constant</b> (no heat exchange, work comes only from internal energy bookkeeping).\n\n" +
+                "Here the horizontal walk is a scaled <color=#7dd3fc>“volume-like”</color> coordinate; height tracks <b>pressure mood</b> as P ∝ V<sup>−γ</sup>. We set <b>N = 140</b> so γ ≈ 1.40 — a familiar air/diatomic story problem vibe, not a lab instrument.\n\n" +
+                "<size=92%><color=#a8b2d1>Teaching sketch only: real pistons have losses, gradients, and non-equilibrium corners — but the slope story you feel underfoot is still γ.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.38f, 0.18f, 0.1f, 0.36f),
+            gridOutside: new Color(0.22f, 0.1f, 0.06f, 0.1f),
+            storyPauseSecondsOverride: 2.85f,
+            graphStep: 0.11f,
+            levelXStart: -14f,
+            levelXEnd: 14f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[45],
+            FunctionType.PolarGoldenLogSpiral,
+            curveColor: new Color(0.99f, 0.86f, 0.38f, 1f),
+            derivativeColor: new Color(0.62f, 0.42f, 0.98f, 1f),
+            transA: 2.15f,
+            transK: 1f,
+            transC: -3.08f,
+            transD: 0f,
+            power: 1,
+            baseN: 105,
+            story:
+                "<b>Secret boss — golden spiral</b> — nature’s favorite growth curve is a <color=#fbbf24>logarithmic spiral</color>: each time angle θ advances steadily, radius scales by a fixed factor tied to the <color=#fde68a>golden ratio φ = (1+√5)/2</color>.\n\n" +
+                "Fibonacci rectangles, nautilus moods, and phyllotaxis in sunflowers all whisper the same proportion — here you walk the graph as <b>r(θ) ∝ φ^{kθ}</b> on a polar-style readout (horizontal = θ, vertical = r).\n\n" +
+                "<size=92%><color=#a8b2d1>Exact classical spirals use arc-length subtleties; this stage is the clean calculus headline: exponential growth in φ as you turn.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.42f, 0.34f, 0.14f, 0.38f),
+            gridOutside: new Color(0.22f, 0.17f, 0.08f, 0.12f),
+            storyPauseSecondsOverride: 2.95f,
+            graphStep: 0.075f,
+            levelXStart: -11.5f,
+            levelXEnd: 13.5f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[46],
+            FunctionType.TransformFourierSinc,
+            curveColor: new Color(0.42f, 0.78f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.55f, 0.85f, 1f),
+            transA: 2.8f,
+            transK: 0.95f,
+            transC: -1.35f,
+            transD: 0f,
+            power: 1,
+            baseN: 2,
+            story:
+                "<b>Fourier transform — sinc glimpse</b> — a sharp pulse in time smears into a tall <color=#7dd3fc>sinc</color> in frequency: the side lobes are the price of band-limiting dreams.\n\n" +
+                "Here the horizontal axis is an angular-frequency style <i>u</i>; height follows <b>sin(u)/u</b> (normalized to 1 at the origin). It is the magnitude mood of a rectangular window — not a full FFT engine, but the canonical homework picture.\n\n" +
+                "<size=92%><color=#a8b2d1>Real transforms add phase; this stage is the clean symmetric <b>even sinc</b> silhouette.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.12f, 0.22f, 0.38f, 0.38f),
+            gridOutside: new Color(0.08f, 0.14f, 0.22f, 0.11f),
+            storyPauseSecondsOverride: 2.85f,
+            graphStep: 0.085f,
+            levelXStart: -18f,
+            levelXEnd: 18f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[47],
+            FunctionType.TransformLaplaceCausalDecay,
+            curveColor: new Color(0.55f, 0.95f, 0.65f, 1f),
+            derivativeColor: new Color(0.98f, 0.72f, 0.38f, 1f),
+            transA: 3.4f,
+            transK: 0.72f,
+            transC: -2.55f,
+            transD: -6f,
+            power: 1,
+            baseN: 125,
+            story:
+                "<b>Laplace transform — causal exponential</b> — for <b>t ≥ 0</b>, the table favorite <color=#86efac>f(t) = e<sup>−at</sup></color> is the polite ancestor of every damped pole in your s-domain algebra.\n\n" +
+                "We plot that decay with <b>N = 125</b> so the rate is about <b>a ≈ 1.25</b>: horizontal axis as time after the jump, vertical as amplitude.\n\n" +
+                "<size=92%><color=#a8b2d1>Heaviside <b>H(t)</b> hides the past: nothing before <b>t = 0</b>. The transform pairs it with <b>1/(s+a)</b> in your cheat sheet dreams.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.14f, 0.28f, 0.18f, 0.36f),
+            gridOutside: new Color(0.08f, 0.18f, 0.1f, 0.1f),
+            storyPauseSecondsOverride: 2.8f,
+            graphStep: 0.08f,
+            levelXStart: -6f,
+            levelXEnd: 14f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[48],
+            FunctionType.MandelbrotEscapeImSlice,
+            curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
+            derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),
+            transA: -0.743643887f,
+            transK: 0.088f,
+            transC: -2.18f,
+            transD: 0f,
+            power: 80,
+            baseN: 26,
+            story:
+                "<b>True finale — Mandelbrot encore</b> — the <color=#a8b2d1>backdrop</color> is again the classic <b>c-plane</b> (Re horizontal, Im vertical) colored by <color=#a7f3d0>smooth escape time</color>; your path follows the same slice: height vs <color=#86efac>Im(c)</color> at fixed <color=#86efac>Re(c)</color>.\n\n" +
+                "This is the <b>final boss gate</b>: every step still reads Julia–Mandelbrot folklore — bulbs, filaments, and the cardioid where behavior flips.\n\n" +
+                "<size=92%><color=#a8b2d1>Same slice recipe as the mid-finale: fractional escape counts + <b>|Im|</b> symmetry. Welcome back to the boundary.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.12f, 0.32f, 0.48f, 0.4f),
+            gridOutside: new Color(0.08f, 0.18f, 0.28f, 0.12f),
+            storyPauseSecondsOverride: 2.95f,
+            graphStep: 0.14f,
+            levelXStart: -16f,
+            levelXEnd: 16f
+        ));
+
+        float lorenzBossX0 = -14f;
+        float lorenzBossX1 = 14f;
+        float lorenzBossK = LorenzAttractorSamples.TimeMax / Mathf.Max(lorenzBossX1 - lorenzBossX0, 0.01f);
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[49],
+            FunctionType.ChaosLorenzButterflyX,
+            curveColor: new Color(0.42f, 0.86f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.52f, 0.88f, 1f),
+            transA: 6.85f,
+            transK: lorenzBossK,
+            transC: 0f,
+            transD: lorenzBossX0,
+            power: 1,
+            baseN: 2,
+            story:
+                "<b>True finale — Lorenz butterfly</b> — the <color=#a8b2d1>horizontal axis</color> is a long stretch of <color=#86efac>simulation time</color>; height tracks the classic Lorenz <color=#7dd3fc>x(t)</color> with σ=10, ρ=28, β=8/3.\n\n" +
+                "Watch how the attractor <b>keeps retuning</b>: the same law, sensitive dependence, a path that never quite repeats — the <color=#fda4af>butterfly effect</color> made legible as motion.\n\n" +
+                "<size=92%><color=#a8b2d1>Normalized after burn-in so the wings fill your grid; the curve scrolls through phase so the stage feels alive.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.1f, 0.18f, 0.34f, 0.42f),
+            gridOutside: new Color(0.07f, 0.12f, 0.22f, 0.12f),
+            storyPauseSecondsOverride: 3.05f,
+            graphStep: 0.11f,
+            levelXStart: lorenzBossX0,
+            levelXEnd: lorenzBossX1
         ));
     }
 
@@ -2283,7 +2476,7 @@ public class LevelManager : MonoBehaviour
         stageIntroBody.text = TmpLatex.Process(StageRoleplayLibrary.GetRoleplayText(currentLevelIndex));
         LocalizationManager.ApplyTextDirection(stageIntroTitle);
         LocalizationManager.ApplyTextDirection(stageIntroBody);
-        stageIntroHint.text = LocalizationManager.Get("ui.stage_intro_hint", "Tap to continue");
+        stageIntroHint.text = LocalizationManager.Get("ui.stage_intro_hint", "Tap anywhere to continue");
         LocalizationManager.ApplyTextDirection(stageIntroHint);
 
         stageIntroRoot.SetActive(true);
@@ -2342,6 +2535,7 @@ public class LevelManager : MonoBehaviour
 
         var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
         var parent = safe != null ? safe : canvas.transform;
+        bool stageIntroTablet = DeviceLayout.IsTabletLike();
 
         stageIntroRoot = new GameObject("StageIntroOverlay");
         var rootRt = stageIntroRoot.AddComponent<RectTransform>();
@@ -2421,16 +2615,17 @@ public class LevelManager : MonoBehaviour
         hintRt.anchorMin = new Vector2(0f, 0f);
         hintRt.anchorMax = new Vector2(1f, 0f);
         hintRt.pivot = new Vector2(0.5f, 0f);
-        hintRt.offsetMin = new Vector2(16f, 14f);
-        hintRt.offsetMax = new Vector2(-16f, 76f);
+        hintRt.offsetMin = new Vector2(16f, 12f);
+        hintRt.offsetMax = new Vector2(-16f, 88f);
         stageIntroHint = hintGo.AddComponent<TextMeshProUGUI>();
-        stageIntroHint.fontSize = UiTypography.Scale(19);
+        stageIntroHint.fontSize = UiTypography.Scale(stageIntroTablet ? 26 : 23);
         stageIntroHint.alignment = TextAlignmentOptions.Bottom;
         stageIntroHint.color = new Color(0.75f, 0.8f, 0.95f, 0.85f);
         stageIntroHint.fontStyle = FontStyles.Italic;
         stageIntroHint.richText = true;
         stageIntroHint.raycastTarget = false;
         ApplyPrimaryUiTypography(stageIntroHint, FindPrimaryEquationTmp(), outlineWidth: 0.06f, outlineAlpha: 0.3f);
+        stageIntroHint.fontStyle = FontStyles.Italic;
 
         var tapGo = new GameObject("TapToContinue");
         var tapRt = tapGo.AddComponent<RectTransform>();

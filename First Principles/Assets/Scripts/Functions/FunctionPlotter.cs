@@ -9,6 +9,7 @@
  *   • SampleCurvePlotterY / SetEquationExtraSuffix support Riemann overlay & TMP sub-lines.
  */
 
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -73,6 +74,13 @@ public class FunctionPlotter : MonoBehaviour
     private LineRendererUI lineRenderer;
     private DerivRendererUI derivRenderer;
 
+    [Tooltip("Seconds for the main f and f′ curves to fade in left→right after the graph parameters change.")]
+    public float graphRevealDurationSeconds = 2.1f;
+
+    int _graphRevealParamsHash = int.MinValue;
+    float _graphRevealT01 = 1f;
+    float _lorenzPhaseScroll;
+
     // AeroDragPolarTriple: extra polylines (cloned once from main LineRendererUI).
     private LineRendererUI overlayParasitic;
     private LineRendererUI overlayInduced;
@@ -93,8 +101,69 @@ public class FunctionPlotter : MonoBehaviour
 
     private void Update()
     {
+        UpdateGraphRevealAnimation();
         InitPlotFunction();
         RefreshGrid();
+    }
+
+    void UpdateGraphRevealAnimation()
+    {
+        int h = ComputeGraphRevealParamsHash();
+        if (h != _graphRevealParamsHash)
+        {
+            _graphRevealParamsHash = h;
+            _graphRevealT01 = 0f;
+            if (functionType != FunctionType.ChaosLorenzButterflyX)
+                _lorenzPhaseScroll = 0f;
+        }
+
+        float dur = Mathf.Max(0.05f, graphRevealDurationSeconds);
+        _graphRevealT01 = Mathf.MoveTowards(_graphRevealT01, 1f, Time.deltaTime / dur);
+
+        if (functionType == FunctionType.ChaosLorenzButterflyX)
+        {
+            float tMax = LorenzAttractorSamples.TimeMax;
+            if (tMax > 1e-4f)
+                _lorenzPhaseScroll = Mathf.Repeat(_lorenzPhaseScroll + Time.deltaTime * 3.15f, tMax);
+        }
+    }
+
+    int ComputeGraphRevealParamsHash()
+    {
+        int a = HashCode.Combine(functionType, xStart, xEnd, step, transA, transK);
+        int b = HashCode.Combine(transC, transD, power, baseN, customExpression ?? "");
+        return HashCode.Combine(a, b);
+    }
+
+    void PushGraphRevealToRenderers()
+    {
+        if (lineRenderer == null)
+            return;
+
+        Vector2Int go = lineRenderer.gridSize / 2;
+        float gx0 = xStart + go.x;
+        float gx1 = xEnd + go.x;
+
+        lineRenderer.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+        if (derivRenderer != null)
+            derivRenderer.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+
+        if (functionType == FunctionType.AeroDragPolarTriple)
+        {
+            if (overlayParasitic != null)
+                overlayParasitic.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+            if (overlayInduced != null)
+                overlayInduced.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+        }
+    }
+
+    /// <summary>Graphing-calculator derivative overlays share the same left→right reveal as the primary plot.</summary>
+    public void ApplyGraphRevealToLineRenderer(LineRendererUI lr)
+    {
+        if (lr == null || lineRenderer == null)
+            return;
+        Vector2Int go = lineRenderer.gridSize / 2;
+        lr.SetGraphRevealFade(_graphRevealT01, xStart + go.x, xEnd + go.x);
     }
 
     public void InitPlotFunction()
@@ -216,7 +285,7 @@ public class FunctionPlotter : MonoBehaviour
 
     /// <summary>True when the curve is the polar graph <c>r(θ)</c> (horizontal axis = θ, vertical = r), not Cartesian <c>y(x)</c>.</summary>
     public static bool IsPolarPlotStyle(FunctionType type) =>
-        type == FunctionType.PolarCardioid || type == FunctionType.PolarRose;
+        type == FunctionType.PolarCardioid || type == FunctionType.PolarRose || type == FunctionType.PolarGoldenLogSpiral;
 
     /// <summary>Switches to typed expression mode (graphing calculator).</summary>
     public void SetCustomExpression(string expression)
@@ -277,6 +346,7 @@ public class FunctionPlotter : MonoBehaviour
         {
             var gridRt = lineRenderer.transform.parent as RectTransform;
             MandelbrotFractalBackdrop.Sync(gridRt, this);
+            PushGraphRevealToRenderers();
         }
     }
 
@@ -414,6 +484,9 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.PolarCardioid => transA * (1f + Mathf.Cos(u)) + transC,
             FunctionType.PolarRose => transA * Mathf.Cos(Mathf.Max(1, power) * u) + transC,
 
+            // Boss / BC: logarithmic “golden” spiral r ∝ φ^{kθ} with φ = (1+√5)/2; horizontal axis is θ (same as other polar presets).
+            FunctionType.PolarGoldenLogSpiral => GoldenLogSpiralPolarY(u, transA, transC, baseN),
+
             // Upper half of (u)² + (y−k)² = R² with u = transK·(x−h), R = |transA|, k = transC, h = transD.
             FunctionType.CircleUpper => CircleUpperY(u, transA, transC),
 
@@ -421,6 +494,9 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.AeroLiftVsAlpha => AeroLiftVsAlphaY(u, transA, transC),
             FunctionType.AeroIsothermalDensity => AeroIsothermalDensityY(u, transA, transC, baseN),
             FunctionType.AeroNewtonianSinSquared => AeroNewtonianSinSquaredY(u, transA, transC),
+
+            // Thermodynamics: reversible adiabatic ideal gas, P ∝ V^{-γ} with γ from baseN/100 (e.g. 140 → 1.40); u > 0 is “volume-like”.
+            FunctionType.ThermoAdiabaticPV => ThermoAdiabaticPvY(u, transA, transC, baseN),
 
             // Drag polar total C_D,tot: same closed form as Power — A·(u^power + C); overlays plot C_D,par = A·C and C_D,ind = A·u^power.
             FunctionType.AeroDragPolarTriple => transA * (Mathf.Pow(u, power) + transC),
@@ -431,6 +507,13 @@ public class FunctionPlotter : MonoBehaviour
             // Qualitative economics teaching curves (not real market data; smooth spline through stylized knots).
             FunctionType.EconomyDotcomBubbleStylized => EconomyDotcomBubbleStylizedY(u, transA, transC),
             FunctionType.EconomySubprime2008Stylized => EconomySubprime2008StylizedY(u, transA, transC),
+
+            // Transforms (teaching): sinc ↔ rect spectrum; causal exponential ↔ Laplace kernel table intuition.
+            FunctionType.TransformFourierSinc => TransformFourierSincY(u, transA, transC),
+            FunctionType.TransformLaplaceCausalDecay => TransformLaplaceCausalDecayY(u, transA, transC, baseN),
+
+            // Final boss: Lorenz x(t) slice (normalized), “butterfly” chaotic sensitivity.
+            FunctionType.ChaosLorenzButterflyX => ChaosLorenzButterflyYEval(u, transA, transC),
 
             _ => 0f
         };
@@ -531,6 +614,54 @@ public class FunctionPlotter : MonoBehaviour
         float rad = Mathf.Clamp(u, 0f, 1.48f);
         float s = Mathf.Sin(rad);
         return a * s * s + c;
+    }
+
+    /// <summary>Adiabatic P–V relation P ∝ V^{-γ}, γ = clamp(baseN/100) (e.g. diatomic ~ 1.40); u is positive volume-like coordinate.</summary>
+    private static float ThermoAdiabaticPvY(float u, float a, float c, int baseNRaw)
+    {
+        float gamma = Mathf.Clamp(baseNRaw / 100f, 1.02f, 2.2f);
+        float v = Mathf.Max(0.04f, u);
+        return a * Mathf.Pow(v, -gamma) + c;
+    }
+
+    /// <summary>Golden ratio φ for spiral presets.</summary>
+    private static float GoldenRatioPhi => (1f + Mathf.Sqrt(5f)) * 0.5f;
+
+    /// <summary>r(θ) = A·φ^{kθ} + C with k scaled from <paramref name="baseNRaw"/> (growth rate knob).</summary>
+    private static float GoldenLogSpiralPolarY(float u, float a, float c, int baseNRaw)
+    {
+        float k = Mathf.Clamp(Mathf.Max(1, baseNRaw) / 750f, 0.055f, 0.19f);
+        float expArg = Mathf.Clamp(k * u, -5.2f, 5.2f);
+        float r = a * Mathf.Pow(GoldenRatioPhi, expArg);
+        return IsFinite(r) ? r + c : float.NaN;
+    }
+
+    /// <summary>sinc(u)=sin(u)/u, value 1 at 0 — spectrum shape of a rectangular pulse (Fourier mood).</summary>
+    private static float TransformFourierSincY(float u, float a, float c)
+    {
+        if (Mathf.Abs(u) < 1e-5f)
+            return a * 1f + c;
+        float s = Mathf.Sin(u) / u;
+        return a * s + c;
+    }
+
+    /// <summary>Causal decay e^{-s t} for t≥0 (table entry for Laplace-style exponentials); s from baseN/100.</summary>
+    private static float TransformLaplaceCausalDecayY(float u, float a, float c, int baseNRaw)
+    {
+        if (u < -1e-5f)
+            return float.NaN;
+        float s = Mathf.Clamp(baseNRaw / 100f, 0.1f, 4.5f);
+        return a * Mathf.Exp(-s * u) + c;
+    }
+
+    /// <summary>Lorenz attractor x-coordinate vs time (burn-in + normalized); u is time-like; phase scroll animates the slice.</summary>
+    float ChaosLorenzButterflyYEval(float u, float a, float c)
+    {
+        float tMax = LorenzAttractorSamples.TimeMax;
+        if (tMax < 1e-5f)
+            return float.NaN;
+        float t = Mathf.Repeat(u + _lorenzPhaseScroll, tMax);
+        return a * LorenzAttractorSamples.SampleNormalizedX(t) + c;
     }
 
     /// <summary>y = k + √(R² − u²) for |u|≤R; outside domain uses k so samples stay finite (flat shoulder).</summary>
@@ -723,10 +854,21 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.PolarRose:
             {
                 int nRose = Mathf.Max(1, power);
-                float thLo = Mathf.Min(transK * (xStart - transD), transK * (xEnd - transD));
-                float thHi = Mathf.Max(transK * (xStart - transD), transK * (xEnd - transD));
+                float thLo = Mathf.Min(transK * (xStart-transD), transK * (xEnd-transD));
+                float thHi = Mathf.Max(transK * (xStart-transD), transK * (xEnd-transD));
                 equationText.text =
                     $@"\(r(\theta)={a}\cos({nRose}\theta)+{c}\)\n<size=88%><color=#a8b2d1>\(\theta\in[{thLo:0.##},{thHi:0.##}]\)</color></size>";
+                break;
+            }
+            case FunctionType.PolarGoldenLogSpiral:
+            {
+                float thLo = Mathf.Min(transK * (xStart-transD), transK * (xEnd-transD));
+                float thHi = Mathf.Max(transK * (xStart-transD), transK * (xEnd-transD));
+                float kk = Mathf.Clamp(Mathf.Max(1, baseN) / 750f, 0.055f, 0.19f);
+                string phiStr = GoldenRatioPhi.ToString("0.###");
+                equationText.text =
+                    $@"<b>\(\text{{Golden spiral}}\)</b> \(r(\theta)\approx {a}\varphi^{{{kk:0.###}\theta}}+{c}\)\n" +
+                    $@"<size=88%><color=#a8b2d1>\(\varphi=\frac{{1+\sqrt{{5}}}}{{2}}\approx {phiStr}\), \(\theta\in[{thLo:0.##},{thHi:0.##}]\), \(u={k}(x-{d})\).</color></size>";
                 break;
             }
             case FunctionType.CircleUpper:
@@ -748,6 +890,15 @@ public class FunctionPlotter : MonoBehaviour
                     $@"<b>Induced</b> \(C_{{D,\text{{ind}}}} = {a}\,u^{{{power}}}\) · " +
                     $@"<b>Total</b> \(C_{{D,\text{{tot}}}} = {a}\,(u^{{{power}}}+{c})\), \(u={k}(x-{d})\).</color></size>";
                 break;
+            case FunctionType.ThermoAdiabaticPV:
+            {
+                float g = Mathf.Clamp(baseN / 100f, 1.02f, 2.2f);
+                equationText.text =
+                    $@"<b>Adiabatic ideal gas</b> \(PV^{{\gamma}}=\text{{const}}\)\n" +
+                    $@"<size=92%><color=#a8b2d1>Sketch: \(P \propto u^{{-{g:0.##}}}\), \(u={k}(x-{d})\) (&gt;0). " +
+                    $@"\(\gamma\) from <b>N</b>={baseN} → \(\gamma\approx {g:0.##}\).</color></size>";
+                break;
+            }
             case FunctionType.MandelbrotEscapeImSlice:
                 equationText.text =
                     $@"<b>\(\text{{Mandelbrot slice}}\)</b> \(h\propto\text{{escape-time}},\; c=({a})+\mathrm{{i}}u,\; u={k}(x-{d}),\; N={power}\)";
@@ -763,6 +914,24 @@ public class FunctionPlotter : MonoBehaviour
                     "<b>Stylized index path</b> (2008 crisis <i>mood</i>)\n" +
                     $"<size=92%><color=#a8b2d1>Not GSPC / real estate indices — qualitative <color=#fde047>pre-crisis climb</color>, <color=#f87171>sharp stress pocket</color>, then crawl. " +
                     $"Height = <b>{c}</b> + <b>{a}</b>·(piecewise path), <i>u</i> = <b>{k}</b>(x−<b>{d}</b>).</color></size>";
+                break;
+            case FunctionType.TransformFourierSinc:
+                equationText.text =
+                    $@"<b>Fourier mood — \(\mathrm{{sinc}}\)</b> \(\mathrm{{sinc}}(u)=\frac{{\sin u}}{{u}},\; u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Rect pulse in time ↔ tall \(\mathrm{{sinc}}\) in frequency; side lobes are interference homework.</color></size>";
+                break;
+            case FunctionType.TransformLaplaceCausalDecay:
+            {
+                float sL = Mathf.Clamp(baseN / 100f, 0.1f, 4.5f);
+                equationText.text =
+                    $@"<b>Laplace mood — causal decay</b> \(f(t)=H(t)\, e^{{-{sL:0.##}t}},\; t\propto u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Table entry \(\mathcal{{L}}\{{e^{{-at}}\}}=\frac{{1}}{{s+a}}\); walk the exponential after \(t=0\).</color></size>";
+                break;
+            }
+            case FunctionType.ChaosLorenzButterflyX:
+                equationText.text =
+                    $@"<b>\(\text{{Butterfly effect}}\)</b> — Lorenz \(x(t)\), \(\sigma=10,\rho=28,\beta=8/3\), \(u={k}(x-{d})\approx t\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Tiny initial changes diverge on the attractor — this curve is a <b>time slice</b> of that chaos, normalized to read on the grid.</color></size>";
                 break;
             case FunctionType.CustomExpression:
             {
@@ -921,7 +1090,22 @@ public enum FunctionType
     EconomyDotcomBubbleStylized,
 
     /// <summary>Smooth stylized path evoking 2007–09 equity stress / recovery (not real market data).</summary>
-    EconomySubprime2008Stylized
+    EconomySubprime2008Stylized,
+
+    /// <summary>Physics C thermo: adiabatic \(P\propto V^{-\gamma}\); \(\gamma=\texttt{baseN}/100\) (e.g. 140 → 1.40), \(u=k(x-D)&gt;0\) as volume-like axis.</summary>
+    ThermoAdiabaticPV,
+
+    /// <summary>Boss: polar graph \(r(\theta)=A\varphi^{k\theta}+C\) with golden ratio \(\varphi\); horizontal axis = θ.</summary>
+    PolarGoldenLogSpiral,
+
+    /// <summary>\(\mathrm{sinc}(u)=\sin u/u\) — Fourier transform flavor of a rectangular pulse.</summary>
+    TransformFourierSinc,
+
+    /// <summary>Causal \(H(t)\,e^{-st}\) — Laplace-table exponential decay for \(t\ge 0\); \(s\sim \texttt{baseN}/100\).</summary>
+    TransformLaplaceCausalDecay,
+
+    /// <summary>Final boss: Lorenz attractor \(x(t)\) (normalized), butterfly / sensitive dependence visualization.</summary>
+    ChaosLorenzButterflyX
 }
 
 /* 

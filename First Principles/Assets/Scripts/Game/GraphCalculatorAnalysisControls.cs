@@ -32,7 +32,7 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
     float integralCachedXStart;
     float integralCachedXEnd;
 
-    static readonly Color CalculatorRiemannFill = new Color(0.26f, 0.58f, 0.96f, 0.34f);
+    static readonly Color CalculatorRiemannFill = new Color(0.28f, 0.62f, 1f, 0.52f);
 
     Button derivButton;
     Button integralButton;
@@ -143,6 +143,7 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
 
             lr.enabled = false;
             lr.enabled = true;
+            plotter.ApplyGraphRevealToLineRenderer(lr);
         }
     }
 

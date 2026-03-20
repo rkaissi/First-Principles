@@ -176,7 +176,7 @@ public class SceneFader : MonoBehaviour
     {
         if (graphicCalculatorMenuButtonText != null)
         {
-            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
+            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing\ncalculator");
             LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         }
 
@@ -256,7 +256,7 @@ public class SceneFader : MonoBehaviour
 
         graphicCalculatorMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
         bool tablet = DeviceLayout.IsTabletLike();
-        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing calculator");
+        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing\ncalculator");
         graphicCalculatorMenuButtonText.fontSize = UiTypography.Scale(tablet ? 30 : 26);
         graphicCalculatorMenuButtonText.fontStyle = FontStyles.Bold;
         graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
@@ -454,6 +454,8 @@ public class SceneFader : MonoBehaviour
         }
         else if (TMP_Settings.defaultFontAsset != null)
             menuLanguageButtonLabel.font = TMP_Settings.defaultFontAsset;
+
+        menuLanguageButtonLabel.fontStyle = FontStyles.Bold;
     }
 
     public void LoadGame()

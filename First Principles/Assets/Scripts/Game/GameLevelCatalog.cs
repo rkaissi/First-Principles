@@ -79,7 +79,13 @@ public static class GameLevelCatalog
         "Aerospace: re-entry decay envelope (ρV heating mood)",
         "Economics: dot-com bubble & crash (stylized index)",
         "Economics: 2008 crisis & recovery (stylized index)",
-        "BOSS: Mandelbrot escape slice (fractal boundary mood)"
+        "BOSS: Mandelbrot escape slice (fractal boundary mood)",
+        "Physics C: thermodynamics (adiabatic P–V, γ from N)",
+        "BOSS: golden ratio spiral (logarithmic polar)",
+        "Transforms: Fourier — sinc spectrum (rect ↔ sinc)",
+        "Transforms: Laplace — causal exponential decay",
+        "BOSS: Mandelbrot — finale (fractal escape slice)",
+        "BOSS: Lorenz butterfly — finale (strange attractor)"
     };
 
     public static int LevelCount => DisplayNames.Length;
@@ -94,7 +100,9 @@ public static class GameLevelCatalog
         new LevelSelectCategory("level_select.cat.engineering", "Engineering", 14, 16),
         new LevelSelectCategory("level_select.cat.ap_bc", "AP Calculus BC & Physics C", 17, 33),
         new LevelSelectCategory("level_select.cat.aerospace", "Aerospace", 34, 40),
-        new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 43),
+        new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 45),
+        new LevelSelectCategory("level_select.cat.transforms", "Transforms", 46, 47),
+        new LevelSelectCategory("level_select.cat.final_boss", "Final boss", 48, 49),
     };
 
     /// <summary>First index of the contiguous <b>Aerospace:</b> block (must match <see cref="LevelManager"/> sample levels).</summary>

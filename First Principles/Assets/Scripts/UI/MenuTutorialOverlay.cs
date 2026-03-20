@@ -109,9 +109,11 @@ public static class MenuTutorialOverlay
         closeButtonTmp = closeTxtGo.AddComponent<TextMeshProUGUI>();
         closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
         closeButtonTmp.fontSize = UiTypography.Scale(tablet ? 26 : 22);
+        closeButtonTmp.fontStyle = FontStyles.Bold;
         closeButtonTmp.alignment = TextAlignmentOptions.Center;
         closeButtonTmp.color = Color.white;
         CopyFont(closeButtonTmp);
+        closeButtonTmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(closeButtonTmp);
 
         var scrollGo = new GameObject("Scroll");
@@ -238,6 +240,7 @@ public static class MenuTutorialOverlay
         if (closeButtonTmp != null)
         {
             closeButtonTmp.text = LocalizationManager.Get("ui.close", "Close");
+            closeButtonTmp.fontStyle = FontStyles.Bold;
             LocalizationManager.ApplyTextDirection(closeButtonTmp);
         }
     }

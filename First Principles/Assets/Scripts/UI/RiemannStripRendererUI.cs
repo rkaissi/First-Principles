@@ -42,11 +42,38 @@ public class RiemannStripRendererUI : Graphic
 
     private void UpdateGridSizeFromParent()
     {
+        var curve = LineRendererUI.FindPrimaryCurve();
+        if (curve != null && curve.gridSize.x >= 1 && curve.gridSize.y >= 1
+                         && (curve.gridSize != gridSize))
+        {
+            gridSize = curve.gridSize;
+            SetVerticesDirty();
+            return;
+        }
+
         if (grid != null && grid.gridSize != gridSize)
         {
             gridSize = grid.gridSize;
             SetVerticesDirty();
         }
+    }
+
+    /// <summary>Match strip math space to the primary curve (Riemann is not under the same GO as <see cref="GridRendererUI"/>).</summary>
+    void SyncGridSizeFromPrimaryCurve()
+    {
+        var curve = LineRendererUI.FindPrimaryCurve();
+        if (curve != null && curve.gridSize.x >= 1 && curve.gridSize.y >= 1)
+        {
+            gridSize = curve.gridSize;
+            return;
+        }
+
+        if (grid == null)
+            grid = GetComponentInParent<GridRendererUI>();
+        if (grid == null)
+            grid = FindAnyObjectByType<GridRendererUI>();
+        if (grid != null && grid.gridSize.x >= 1)
+            gridSize = grid.gridSize;
     }
 
     /// <summary>Clears rectangles (e.g. switching to free graphing mode).</summary>
@@ -74,9 +101,10 @@ public class RiemannStripRendererUI : Graphic
             return;
         }
 
+        SyncGridSizeFromPrimaryCurve();
         if (grid == null)
             grid = GetComponentInParent<GridRendererUI>();
-        if (grid != null)
+        if (grid != null && (gridSize.x < 1 || gridSize.y < 1))
             gridSize = grid.gridSize;
 
         Vector2Int origin = gridSize / 2;
@@ -125,9 +153,10 @@ public class RiemannStripRendererUI : Graphic
             return;
         }
 
+        SyncGridSizeFromPrimaryCurve();
         if (grid == null)
             grid = GetComponentInParent<GridRendererUI>();
-        if (grid != null)
+        if (grid != null && (gridSize.x < 1 || gridSize.y < 1))
             gridSize = grid.gridSize;
 
         Vector2Int origin = gridSize / 2;
