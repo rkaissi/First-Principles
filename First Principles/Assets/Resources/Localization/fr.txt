@@ -1,8 +1,8 @@
 # Français
-ui.choose_stage=Choisissez un niveau graphique
+ui.choose_stage=Choisir un niveau
 ui.math_tips=Astuces & formules
 ui.back_menu=Retour au menu
-ui.graphic_calculator_mode=Mode calculatrice graphique
+ui.graphing_calculator_mode=Calculatrice graphique
 ui.loading=Chargement…
 ui.language=Langue
 ui.tap_change_language=Appuyez pour changer
@@ -28,11 +28,9 @@ graph.param_k=k (échelle horizontale)
 graph.param_c=C (translation verticale)
 graph.param_d=D (translation horizontale)
 graph.calculator_intro=<b>Mode calculatrice graphique</b>\n<size=88%>Saisissez presque n’importe quelle <b>f(u)</b> (variable <b>x</b> dans la formule) ; <b>Trans</b> règle A, k, C, D ; <b>Échelle</b> et <b>pincement</b> zooment la fenêtre.</size>
-footer.proprietary=© 2022-2026 · Propriétaire · Tous droits réservés · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=Diplômés fiers du <b>Garth Webb Secondary School</b>, Oakville.
-footer.support=Quatre ans de développement — si ce travail vous parle, soutenez le projet. Merci.
-footer.unity=Développé avec <b>Unity</b>. Unity est une marque d’Unity Technologies.
+menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × Rayan Kaissi (GameGenesis)</size>
+menu.support_contact=<size=32><color=#94a3b8>Assistance :</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
 level.0=Introduction : premiers principes
 level.1=Pente d’une parabole
 level.2=Vague sinusoïdale
@@ -68,11 +66,19 @@ level.31=BC : cubique & inflexion (esquisse)
 level.32=BC : b^x & d/dx b^x
 level.33=Cercle : (x−h)² + (y−k)² = R²
 level.34=Aéro : portance C_L(α) linéaire + décrochage
-level.35=Aéro : polaire de traînée parabolique C_D(C_L)
+level.35=Aéro : polaire (traînée de profil, induite, totale)
 level.36=Aéro : atmosphère isotherme ρ(h)
 level.37=Aéro : phugoïde / oscillation amortie tangage–pilonnement
 level.38=Aéro : newtonien Cp ~ sin²α
 level.39=Aéro : Strouhal / tonalité tourbillonnaire
 level.40=Aéro : enveloppe rentrée (échauffement ρV)
-level.41=Concours : ln, concavité & bornes
-level.42=BOSS : tranche d’échappement Mandelbrot (fractale)
+level.41=Éco : bulle internet & krach (indice stylisé)
+level.42=Éco : crise 2008 & reprise (indice stylisé)
+level.43=BOSS : tranche d’échappement Mandelbrot (fractale)
+level.44=Physique C : thermodynamique (adiabatique P–V, γ depuis N)
+level.45=BOSS : spirale d’or (polaire logarithmique)
+level.46=Transformations : Fourier — sinc (spectre)
+level.47=Transformations : Laplace — décroissance exponentielle
+level.48=BOSS : Mandelbrot — finale (tranche d’échappement fractale)
+level.49=BOSS : papillon de Lorenz — finale (attracteur étrange)
+level.50=Physique C : ressort–masse SHM (loi de Hooke, non amorti)

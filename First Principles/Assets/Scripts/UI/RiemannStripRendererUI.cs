@@ -42,11 +42,38 @@ public class RiemannStripRendererUI : Graphic
 
     private void UpdateGridSizeFromParent()
     {
+        var curve = LineRendererUI.FindPrimaryCurve();
+        if (curve != null && curve.gridSize.x >= 1 && curve.gridSize.y >= 1
+                         && (curve.gridSize != gridSize))
+        {
+            gridSize = curve.gridSize;
+            SetVerticesDirty();
+            return;
+        }
+
         if (grid != null && grid.gridSize != gridSize)
         {
             gridSize = grid.gridSize;
             SetVerticesDirty();
         }
+    }
+
+    /// <summary>Match strip math space to the primary curve (Riemann is not under the same GO as <see cref="GridRendererUI"/>).</summary>
+    void SyncGridSizeFromPrimaryCurve()
+    {
+        var curve = LineRendererUI.FindPrimaryCurve();
+        if (curve != null && curve.gridSize.x >= 1 && curve.gridSize.y >= 1)
+        {
+            gridSize = curve.gridSize;
+            return;
+        }
+
+        if (grid == null)
+            grid = GetComponentInParent<GridRendererUI>();
+        if (grid == null)
+            grid = FindAnyObjectByType<GridRendererUI>();
+        if (grid != null && grid.gridSize.x >= 1)
+            gridSize = grid.gridSize;
     }
 
     /// <summary>Clears rectangles (e.g. switching to free graphing mode).</summary>
@@ -62,15 +89,22 @@ public class RiemannStripRendererUI : Graphic
         strips.Clear();
         color = def.riemannFillColor;
 
-        if (!def.showRiemannVisualization || def.riemannRectCount < 1 || plotter == null)
+        bool backdrop =
+            def.riemannRectCount >= 1
+            && plotter != null
+            && (def.showRiemannVisualization
+                || (def.useRiemannStairPlatforms && def.riemannRule != RiemannRule.None));
+
+        if (!backdrop)
         {
             SetVerticesDirty();
             return;
         }
 
+        SyncGridSizeFromPrimaryCurve();
         if (grid == null)
             grid = GetComponentInParent<GridRendererUI>();
-        if (grid != null)
+        if (grid != null && (gridSize.x < 1 || gridSize.y < 1))
             gridSize = grid.gridSize;
 
         Vector2Int origin = gridSize / 2;
@@ -91,14 +125,69 @@ public class RiemannStripRendererUI : Graphic
             float xL = xStart + i * dx;
             float xR = xStart + (i + 1) * dx;
             float xS = SampleX(def.riemannRule, xL, xR);
-            float yPlot = plotter.SampleCurvePlotterY(xS);
-            if (!IsFinite(yPlot))
+            float gyTop = plotter.SampleCurveGridY(xS);
+            if (!IsFinite(gyTop))
                 continue;
 
-            float gxL = xL + origin.x;
-            float gxR = xR + origin.x;
+            float gxL = plotter.MapPlotterXToGridX(xL, origin.x);
+            float gxR = plotter.MapPlotterXToGridX(xR, origin.x);
+            if (gxL > gxR)
+                (gxL, gxR) = (gxR, gxL);
             float gyAxis = origin.y;
-            float gyTop = yPlot + origin.y;
+            float ymin = Mathf.Min(gyAxis, gyTop);
+            float ymax = Mathf.Max(gyAxis, gyTop);
+
+            strips.Add(new Vector4(gxL, gxR, ymin, ymax));
+        }
+
+        SetVerticesDirty();
+    }
+
+    /// <summary>Riemann rectangles over the graphing calculator window (no <see cref="LevelDefinition"/>).</summary>
+    public void RebuildForGraphingCalculator(FunctionPlotter plotter, int rectCount, RiemannRule rule, Color fillColor)
+    {
+        strips.Clear();
+        color = fillColor;
+
+        if (plotter == null || rectCount < 1)
+        {
+            SetVerticesDirty();
+            return;
+        }
+
+        SyncGridSizeFromPrimaryCurve();
+        if (grid == null)
+            grid = GetComponentInParent<GridRendererUI>();
+        if (grid != null && (gridSize.x < 1 || gridSize.y < 1))
+            gridSize = grid.gridSize;
+
+        Vector2Int origin = gridSize / 2;
+        int n = Mathf.Max(1, rectCount);
+        float xStart = plotter.xStart;
+        float xEnd = plotter.xEnd;
+        float span = xEnd - xStart;
+        if (span <= 1e-6f)
+        {
+            SetVerticesDirty();
+            return;
+        }
+
+        float dx = span / n;
+
+        for (int i = 0; i < n; i++)
+        {
+            float xL = xStart + i * dx;
+            float xR = xStart + (i + 1) * dx;
+            float xS = SampleX(rule, xL, xR);
+            float gyTop = plotter.SampleCurveGridY(xS);
+            if (!IsFinite(gyTop))
+                continue;
+
+            float gxL = plotter.MapPlotterXToGridX(xL, origin.x);
+            float gxR = plotter.MapPlotterXToGridX(xR, origin.x);
+            if (gxL > gxR)
+                (gxL, gxR) = (gxR, gxL);
+            float gyAxis = origin.y;
             float ymin = Mathf.Min(gyAxis, gyTop);
             float ymax = Mathf.Max(gyAxis, gyTop);
 

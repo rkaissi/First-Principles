@@ -1,0 +1,46 @@
+# Level stories (hi) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>अवकलज</b></color> = स्पर्श रेखा की ढाल — <b>f(x)</b> कितनी तेज़ बदलता है।\n\nसुनहरी रोशनी आपका रास्ता; बर्फीला नीला f'(x) <i>ज़मीन कहाँ टिकती है</i> चुनता है। |f'| बड़ा ⇒ प्लैटफ़ॉर्म; छोटा ⇒ खाली।\n\n<size=88%><color=#94a3b8><b>फर्स्ट प्रिन्सिपल्स:</b> तुलना छीनकर तथ्य और फिर ऊपर तर्क। <b>f</b> परिणाम; <b>f'</b> इनपुट संवेदनशीलता।</color></size>
+story.1=यात्री मुलायम ढाल पर चलता है। अवकलज ऋणात्मक होते ये ज़मीन दरार बनती है।
+story.2=वक्र साँस की तरह उठता-गिरता है। अवकलज बताता है कहाँ उतरना है।
+story.3=कोज्या अपना अर्थ अवकलज के चिन्ह में छिपाता है। पॉप खतरे का संकेत।
+story.4=निरपेक्ष मान वक्र को एक पथ में मोड़ता है। शिखर पर अवकलज पलटता है — ज़मीन भी।
+story.5=<color=#86efac>टेलर बहुपद</color> चिकनी फलन को छूते हैं। <b>मैक्लॉरिन</b> <b>0</b> पर टेलर।\n\nयहाँ <b>e^u</b> का आंशिक योग।
+story.6=<color=#7dd3fc>विषम घात</color> चिन्ह बदलते — <b>sin(u)</b> की मैक्लॉरिन पहचान।\n\nकटा टॉवर साइन लहर की ओर।
+story.7=<color=#f5d0fe>ज्यामिति श्रृंखला</color> <b>u</b> की घातें। अर्धव्यास के भीतर पूँछ सिकुड़ती है।\n\nसीमित योग का अवकलज रूप बदलता है।
+story.8=<b>z = x² − y₀²</b> — <color=#38bdf8>खुरपरी</color> का काट।\n\nx-अवकलज बहुचर को 1D दौड़ में पढ़ता है।
+story.9=अब <b>z = x² + y₀²</b> — <color=#fde047>दीर्घवृत्तीय पैराबोलॉइड</color>। y₀ स्थिर कटोरा जैसा।\n\nढाल ऊपर चढ़ने की प्रवृत्ति दिखाता है।
+story.10=<color=#fde047>निश्चित समाकलन</color> दर को जोड़कर <b>कुल मात्रा</b> — वक्र के नीचे क्षेत्र।\n\nनीले स्तंभ <b>रीमान योग</b> ∫f की ओर।\n\n<size=92%><color=#a8b2d1>रास्ता चिकने ग्राफ पर; छाया समाकलन का अनुमान।</color></size>
+story.11=<b>बायाँ रीमान:</b> <b>f(xᵢ)</b> — <color=#f87171>बायाँ सिरा</color>। बद्ध f पर <b>कम</b> अनुमान।\n\n<size=92%><color=#a8b2d1>सावधान सीढ़ियाँ।</color></size>
+story.12=<b>दायाँ रीमान:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>दायाँ</color>। बद्ध f पर <b>अधिक</b> अनुमान।\n\n<size=92%><color=#a8b2d1>बाएँ का दर्पण।</color></size>
+story.13=<b>मध्यबिंदु:</b> <color=#86efac>केंद्र</color> पर नमूना। अक्सर सटीक।\n\n<size=92%><color=#a8b2d1>हर फीते के बीच सीढ़ी।</color></size>
+story.14=<b>मंद दोलन</b> — स्प्रिंग, परिपथ। लिफाफा <color=#38bdf9>घटता</color> exp×sin।\n\n<size=92%><color=#a8b2d1>अवकलज शिखर के पास सुरक्षित स्तंभ चुनता है।</color></size>
+story.15=लटकती ज़ंजीर ⇒ <b>कैटनरी</b>, अक्सर <color=#fde047>cosh</color>। प्रक्षेप्य परबोला नहीं।\n\n<size=92%><color=#a8b2d1>मेहराब-तार।</color></size>
+story.16=<b>|sin(x)|</b> <color=#f0abfc>पूल-तरंग निर्देशित</color>। शून्य पर कोण।\n\n<size=92%><color=#a8b2d1>त्रिकोणमिति से पावर इलेक्ट्रॉनिक्स।</color></size>
+story.17=<b>BC व्युत्क्रम त्रिक</b>। <color=#38bdf8>arctan</color>, 1/(1+x²)।\n\n<size=92%><color=#a8b2d1>क्षैतिज असिम्पटोट।</color></size>
+story.18=<b>लॉजिस्टिक:</b> dP/dt = kP(1−P/L)। शुरू में लगभग घात, फिर <color=#86efac>L</color> की ओर मोड़।\n\n<size=92%><color=#a8b2d1>बिंदु प्रगाढ़ता = अधिकतम वृद्धि।</color></size>
+story.19=<b>ध्रुवीय</b> <color=#fde047>(r,θ)</color>। <b>कार्डियॉयड</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>क्षेत्रफल ½∫r² dθ.</color></size>
+story.20=<b>गुलाब</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>अवकलज पॉप जहाँ r तेज़ बदले।</color></size>
+story.21=<b>sinh/cosh</b> अतिपरवलयिक पहचान।\n\n<size=92%><color=#a8b2d1>sinh विषम साथी।</color></size>
+story.22=<b>भौतिकी C:</b> Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>वक्र नीचे; अवकलज शून्य की ओर।</color></size>
+story.23=<b>घूर्णन</b> <color=#7dd3fc>L = Iω</color>, τ = dL/dt.\n\n<size=92%><color=#a8b2d1>छोटा दोलन SHM जैसा।</color></size>
+story.24=<b>प्रक्षेप्य ऊँचाई y(t)</b> — समय में <color=#fde047>परबोला</color>, शिखर v=0.\n\n<size=92%><color=#a8b2d1>y,v,a कड़ियाँ।</color></size>
+story.25=<b>मैक्लॉरिन cos</b> सम घातें।\n\n<size=92%><color=#a8b2d1>अधिक पद ⇒ 0 के पास बेहतर।</color></size>
+story.26=<b>ln x</b> व ∫dx/x.\n\n<size=92%><color=#a8b2d1>ढाल ह्रासमान।</color></size>
+story.27=<b>√x</b> 0⁺ पर अनंत ढाल।\n\n<size=92%><color=#a8b2d1>खेल चिकना; विश्लेषण चेतावनी।</color></size>
+story.28=<b>tan x</b> असिम्पटोट के बीच शाखा।\n\n<size=92%><color=#a8b2d1>BC त्रिक कंकाल।</color></size>
+story.29=<b>y′=ky ⇒ Ce^{kx}</b>.\n\n<size=92%><color=#a8b2d1>दर मात्रा के अनुपाती।</color></size>
+story.30=<b>कला व SHM</b>.\n\n<size=92%><color=#a8b2d1>अवकलज lag/cos कहानी।</color></size>
+story.31=<b>घन</b> — गुणक, <color=#fca5a5>प्रगाढ़ता</color>.\n\n<size=92%><color=#a8b2d1>पहाड़-घाटी नमूना।</color></size>
+story.32=<b>b^x</b> अवकलज (ln b)b^x.\n\n<size=92%><color=#a8b2d1>आधार e पुल।</color></size>
+story.33=<b>वृत्त</b> — ऊपरी अर्धवृत्त y=k+√(⋯).\n\n<size=92%><color=#a8b2d1>अप्रत्यक्ष व पैरामीट्रिक AP।</color></size>
+story.34=<b>लिफ़्ट C_L(α)</b> रेखीय + <b>स्टॉल</b>.\n\n<size=92%><color=#a8b2d1>शिक्षण सिल्हूट</color></size>
+story.35=<b>ड्रैग पोलर</b> C_D = C_{D0} + K C_L².\n\n<size=92%><color=#a8b2d1>उत्तम L/D अंतर्ज्ञान।</color></size>
+story.36=<b>समतापमान वायुमंडल</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>गतिक दाब ρ पर।</color></size>
+story.37=<b>फ्यूगॉइड/लघु</b> मंद कार्टून।\n\n<size=92%><color=#a8b2d1>वास्तविक नियंत्रण समृद्ध।</color></size>
+story.38=<b>न्यूटनी ~ sin²α</b> शिक्षा मॉडल.\n\n<size=92%><color=#a8b2d1>CFD नहीं।</color></size>
+story.39=<b>स्ट्रौहल</b> शेडिंग.\n\n<size=92%><color=#a8b2d1>f ≈ St·U/D.</color></size>
+story.40=<b>पुनः प्रवेश</b> गर्मी वक्र ढील।\n\n<size=92%><color=#a8b2d1>मात्रात्मक मेमो नहीं।</color></size>
+story.41=<b>डॉट-कॉम बुलबुला</b> — नमूना सूचकांक (वास्तविक S&amp;P नहीं)।\n\n<size=92%><color=#a8b2d1>उछाल, गिरावट, धीमी वसूली — शिक्षण रूपक।</color></size>
+story.42=<b>2008 संकट</b> — गिरवी/क्रेडिट तनाव माहौल, केवल गुणात्मक।\n\n<size=92%><color=#a8b2d1>वास्तविक डेटा पुनर्निर्माण नहीं।</color></size>
+story.43=<b>मैंडेलब्रॉट</b> c-तल, भागने का समय, स्थिर Re काट।\n\n<size=92%><color=#a8b2d1>जुलिया सीमा; गहरा ज़ूम अलग इंजन।</color></size>

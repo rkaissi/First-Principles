@@ -1,0 +1,46 @@
+# Level stories (es) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>Derivada</b></color> = pendiente tangente: qué tan rápido sube/baja <b>f(x)</b>.\n\nLuz dorada = camino ; azul hielo = f'(x) moldea <i>dónde hay suelo</i>. Donde |f'| basta, hay plataformas ; si no, el vacío.\n\n<size=88%><color=#94a3b8><b>Principios primero:</b> quitar analogías hasta hechos, luego razonar. <b>f</b> modelo del resultado ; <b>f'</b> sensibilidad.</color></size>
+story.1=Un viajero camina donde la pendiente es amable. Si la derivada es negativa, el suelo se vuelve grieta.
+story.2=La curva sube y baja como respiración. La derivada indica dónde aterrizar.
+story.3=El coseno esconde su lectura en el signo de su derivada. El pop marca el peligro.
+story.4=El valor absoluto dobla la curva. En el vértice la derivada cambia y el suelo también.
+story.5=<color=#86efac>Polinomios de Taylor</color> aproximan funciones suaves. <b>Maclaurin</b> centrado en <b>0</b>.\n\nAquí suma parcial de <b>e^u</b>.
+story.6=<color=#7dd3fc>Potencias impares</color> alternan — ADN Maclaurin de <b>sin(u)</b>.\n\nTorre truncada hacia la onda seno.
+story.7=<color=#f5d0fe>Serie geométrica</color> apila potencias de <b>u</b>. En el radio, la cola mengua.\n\nLa derivada de la suma finita remodela el terreno.
+story.8=Piensa <b>z = x² − y₀²</b> — <color=#38bdf8>rebanada</color> de silla.\n\nLa derivada en x cuenta la historia multivariada en 1D.
+story.9=Ahora <b>z = x² + y₀²</b> — <color=#fde047>paraboloide</color>. y₀ fijo = cuenco.\n\nMientras corres, la rebanada muestra la pendiente.
+story.10=La <color=#fde047>integral definida</color> acumula tasa ⇒ <b>área bajo curva</b>.\n\nColumnas = <b>Riemann</b> f(x*)·Δx → ∫f.\n\n<size=92%><color=#a8b2d1>Sombreado aproxima ; caminas la gráfica lisa.</color></size>
+story.11=<b>Riemann izquierda:</b> altura <b>f(xᵢ)</b> — <color=#f87171>extremo izquierdo</color>. Si f crece ⇒ <b>subestima</b>.\n\n<size=92%><color=#a8b2d1>Peldaños bajos conservadores.</color></size>
+story.12=<b>Riemann derecha:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>derecha</color> ⇒ <b>sobrestima</b> al crecer f.\n\n<size=92%><color=#a8b2d1>Espejo del caso izquierdo.</color></size>
+story.13=<b>Punto medio:</b> centro del subintervalo — <color=#86efac>simétrico</color>, suele ser más ajustado.\n\n<size=92%><color=#a8b2d1>Pasos centrados en cada franja.</color></size>
+story.14=<b>Oscilación amortiguada</b> en resortes/circuitos. Envuelve <color=#38bdf9>decae</color> exponencial × seno.\n\n<size=92%><color=#a8b2d1>La derivada sigue gobernando columnas seguras.</color></size>
+story.15=Cadena colgante ⇒ <b>catenaria</b>, modelo <color=#fde047>cosh</color>. No parábola balística.\n\n<size=92%><color=#a8b2d1>Funciones hiperbólicas en estática.</color></size>
+story.16=<b>|sin(x)|</b> seno <color=#f0abfc>rectificado</color>. Esquinas en ceros.\n\n<size=92%><color=#a8b2d1>De trig a ondas de potencia.</color></size>
+story.17=<b>BC — inversa.</b> <color=#38bdf8>Arctan</color>, derivada 1/(1+x²).\n\n<size=92%><color=#a8b2d1>Asíntotas horizontales = límites.</color></size>
+story.18=<b>Logística:</b> dP/dt = kP(1−P/L). Casi exp, luego <color=#86efac>pliegue</color> a <b>L</b>.\n\n<size=92%><color=#a8b2d1>Punto de inflexión = máxima tasa.</color></size>
+story.19=<b>Polares</b> <color=#fde047>(r,θ)</color>. <b>Cardioide</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>Área ½∫r² dθ.</color></size>
+story.20=<b>Rosa</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>Pops donde r cambia rápido.</color></size>
+story.21=<b>sinh, cosh</b> — identidad hiperbólica, EDO.\n\n<size=92%><color=#a8b2d1>sinh impar desde 0.</color></size>
+story.22=<b>Física C</b> decaimiento Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>La derivada fluye hacia cero.</color></size>
+story.23=<b>Rotación</b> <color=#7dd3fc>L = Iω</color>, τ = dL/dt.\n\n<size=92%><color=#a8b2d1>Energía entre términos como un resorte.</color></size>
+story.24=<b>Proyectil y(t)</b> parábola <color=#fde047>en t</color>. Pico en v=0.\n\n<size=92%><color=#a8b2d1>Cadena y,v,a.</color></size>
+story.25=<b>Maclaurin cos</b> potencias pares.\n\n<size=92%><color=#a8b2d1>Más términos ⇒ mejor cerca de 0.</color></size>
+story.26=<b>ln x</b> y ∫dx/x.\n\n<size=92%><color=#a8b2d1>Pendiente positiva decreciente.</color></size>
+story.27=<b>√x</b> singularidad de pendiente en 0⁺.\n\n<size=92%><color=#a8b2d1>El juego suaviza ; la analisis advierte.</color></size>
+story.28=<b>tan x</b> entre asíntotas.\n\n<size=92%><color=#a8b2d1>Trig del BC.</color></size>
+story.29=<b>y′=ky</b> ⇒ Ce^{kx}.\n\n<size=92%><color=#a8b2d1>Tasa proporcional.</color></size>
+story.30=<b>Fase / SHM</b>.\n\n<size=92%><color=#a8b2d1>Derivada adelantada 90° (hasta constantes).</color></size>
+story.31=<b>Cúbica</b> — críticos, <color=#fca5a5>inflexión</color>.\n\n<size=92%><color=#a8b2d1>Forma típica montaña-valle.</color></size>
+story.32=<b>b^x</b> con factor ln b.\n\n<size=92%><color=#a8b2d1>Puente a base e.</color></size>
+story.33=<b>Círculo</b> — semicírculo superior y = k+√(⋯).\n\n<size=92%><color=#a8b2d1>Implícita y paramétrica AP.</color></size>
+story.34=<b>Lift C_L(α)</b> lineal + <b>stall</b>.\n\n<size=92%><color=#a8b2d1>Juguete pedagógico.</color></size>
+story.35=<b>Polar de arrastre</b> C_D = C_D0 + K C_L².\n\n<size=92%><color=#a8b2d1>Mejor L/D cerca de un C_L óptimo.</color></size>
+story.36=<b>Atm isoterma</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>q dinámico ∝ ρ.</color></size>
+story.37=<b>Fugoide / corto período</b> cartoon amortiguado.\n\n<size=92%><color=#a8b2d1>Control real más rico.</color></size>
+story.38=<b>Newton ~ sin²α</b> windward.\n\n<size=92%><color=#a8b2d1>Modelo docente, no CFD.</color></size>
+story.39=<b>Strouhal</b> vórtices.\n\n<size=92%><color=#a8b2d1>Frecuencia ⋍ St·U/D.</color></size>
+story.40=<b>Reentrada</b> relajación cualitativa.\n\n<size=92%><color=#a8b2d1>No memo cuantitativo.</color></size>
+story.41=<b>Burbuja dot-com</b> — trayectoria de índice estilizada (no S&amp;P real).\n\n<size=92%><color=#a8b2d1>Auge, caída, reconstrucción lenta — alegoría docente.</color></size>
+story.42=<b>Crisis 2008</b> — estrés hipotecario y repricing global (curva cualitativa).\n\n<size=92%><color=#a8b2d1>No es data descargada; solo forma para clase de cálculo.</color></size>
+story.43=<b>Mandelbrot</b> plano c, tiempo escape, corte Re fijo.\n\n<size=92%><color=#a8b2d1>Julia desconexión ; zoom profundo otro motor.</color></size>

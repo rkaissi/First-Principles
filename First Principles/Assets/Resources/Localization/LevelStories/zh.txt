@@ -1,0 +1,46 @@
+# Level stories (zh) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>导数</b></color>=切线斜率：<b>f(x)</b>变化多快。\n\n金光为路径，冰蓝f'(x)决定<i>地面承载</i>何处。|f'|够大才有平台，否则裂开虚空。\n\n<size=88%><color=#94a3b8><b>第一性原理：</b>剥离类比直到事实，再向上推理。<b>f</b>是结果故事，<b>f'</b>是输入敏感度。</color></size>
+story.1=旅人在缓坡行走。导数为负，地面变薄成缝。
+story.2=曲线像呼吸升降。导数告诉你落点：正可踏，负需跳。
+story.3=余弦把意义藏在导数符号里。“弹出”预告危险。
+story.4=绝对值把曲线折成一路。在拐点导数翻转，地面也翻转。
+story.5=<color=#86efac>泰勒多项式</color>贴近光滑函数。<b>麦克劳林</b>是中心在<b>0</b>的泰勒。\n\n此处是<b>e^u</b>的部分和之路。
+story.6=<color=#7dd3fc>u的奇次幂</color>交替符号—<b>sin(u)</b>的麦克劳林基因。\n\n截断塔攀向正弦波。
+story.7=<color=#f5d0fe>等比级数</color>堆叠<b>u</b>的幂。半径内尾项收缩。\n\n有限和的导数重塑地形。
+story.8=<b>z = x² − y₀²</b> — 鞍面的<color=#38bdf8>切片</color>。\n\n对x的导数用一维跑酷读多元图景。
+story.9=现在<b>z = x² + y₀²</b> — <color=#fde047>椭圆抛物面</color>。固定y₀得像碗。\n\n梯度指向上坡，切片显示爬升多陡。
+story.10=<color=#fde047>定积分</color>累加速率得<b>总量</b>—曲线下面积。\n\n蓝柱是<b>黎曼和</b> Δx、f(x*)·Δx 逼近∫f。\n\n<size=92%><color=#a8b2d1>路径沿光滑曲线，阴影近似积分。</color></size>
+story.11=<b>左黎曼：</b><b>f(xᵢ)</b> — <color=#f87171>左端</color>。f递增则和<b>低估</b>面积。\n\n<size=92%><color=#a8b2d1>抛物线下的保守台阶。</color></size>
+story.12=<b>右黎曼：</b><b>f(xᵢ₊₁)</b> — <color=#38bdf8>右端</color>。递增则<b>高估</b>。\n\n<size=92%><color=#a8b2d1>与左端镜像。</color></size>
+story.13=<b>中点法则：</b><color=#86efac>中点</color>取样，对称条带常更贴曲线。\n\n<size=92%><color=#a8b2d1>台阶落在每段中央。</color></size>
+story.14=<b>阻尼振动</b>—弹簧、电路。包络<color=#38bdf9>衰减</color>指数×正弦。\n\n<size=92%><color=#a8b2d1>导数仍决定峰附近安全柱。</color></size>
+story.15=悬链成<b>悬链线</b>，常用<color=#fde047>cosh</color>。不是抛体抛物线。\n\n<size=92%><color=#a8b2d1>拱与缆绳直觉。</color></size>
+story.16=<b>|sin(x)|</b> <color=#f0abfc>全波整流</color>波形，零点有尖角。\n\n<size=92%><color=#a8b2d1>从三角到电源波形。</color></size>
+story.17=<b>BC 反三角</b>。<color=#38bdf8>arctan</color>，1/(1+x²)。水平渐近线。\n\n<size=92%><color=#a8b2d1>积分与几何常客。</color></size>
+story.18=<b>逻辑斯蒂：</b>dP/dt = kP(1−P/L)。初段近指数，后向容量<b>L</b><color=#86efac>弯曲</color>。\n\n<size=92%><color=#a8b2d1>拐点处增长最快。</color></size>
+story.19=<b>极坐标</b><color=#fde047>(r,θ)</color>。<b>心形线</b> r ~ 1+cos θ。\n\n<size=92%><color=#a8b2d1>极面积 ½∫r² dθ。</color></size>
+story.20=<b>极坐标玫瑰</b> r ~ cos(nθ)。\n\n<size=92%><color=#a8b2d1>导数弹出标记r急变—花瓣边缘。</color></size>
+story.21=<b>sinh/cosh</b> 双曲恒等式、ODE、绳索。\n\n<size=92%><color=#a8b2d1>sinh是从0升起的奇伙伴。</color></size>
+story.22=<b>物理C：</b>Q = Q₀ e^{−t/τ}。RC/RL时间常数。\n\n<size=92%><color=#a8b2d1>曲线下沉，导数仍带“漏向零”的符号。</color></size>
+story.23=<b>转动</b><color=#7dd3fc>L = Iω</color>，τ = dL/dt。\n\n<size=92%><color=#a8b2d1>小振动同SHM，能量互换。</color></size>
+story.24=<b>抛体高度 y(t)</b> — 时间的<color=#fde047>抛物线</color>，v=0为顶点。\n\n<size=92%><color=#a8b2d1>y,v,a链条。</color></size>
+story.25=<b>cos 麦克劳林</b>偶次幂交替。\n\n<size=92%><color=#a8b2d1>更多项⇢0附近更准。</color></size>
+story.26=<b>ln x</b>与∫dx/x。\n\n<size=92%><color=#a8b2d1>正斜率渐细—收益递减。</color></size>
+story.27=<b>√x</b>在0⁺斜率爆炸（BC经典）。\n\n<size=92%><color=#a8b2d1>游玩采样光滑，解析提醒边界。</color></size>
+story.28=<b>tan x</b>渐近线之间的单枝。sec²x。\n\n<size=92%><color=#a8b2d1>BC参数/极坐标骨架。</color></size>
+story.29=<b>y′=ky ⇒ Ce^{kx}</b>。\n\n<size=92%><color=#a8b2d1>变化率正比于量。</color></size>
+story.30=<b>相位与SHM</b> sin(ωt+ϕ)。\n\n<size=92%><color=#a8b2d1>导数（差常数）如cos—谁先谁后。</color></size>
+story.31=<b>三次</b>—临界点、<color=#fca5a5>拐点</color>曲率翻转。\n\n<size=92%><color=#a8b2d1>典型丘谷图案。</color></size>
+story.32=<b>b^x</b>导数(ln b)b^x。\n\n<size=92%><color=#a8b2d1>把任意底连到e。</color></size>
+story.33=<b>圆</b>—上半圆 y=k+√(⋯)。\n\n<size=92%><color=#a8b2d1>隐函数与参数式AP最爱。</color></size>
+story.34=<b>升力C_L(α)</b>线性+<b>失速</b>折断。\n\n<size=92%><color=#a8b2d1>教学剪影非真机试验。</color></size>
+story.35=<b>阻力极曲线</b> C_D = C_{D0} + K C_L²。\n\n<size=92%><color=#a8b2d1>最佳升阻比直觉。</color></size>
+story.36=<b>等温大气</b>ρ ~ e^{−h/H}。\n\n<size=92%><color=#a8b2d1>动压等随ρ(h)。</color></size>
+story.37=<b>长周期/短周期</b>用阻尼振荡漫画化。\n\n<size=92%><color=#a8b2d1>真实飞控更复杂。</color></size>
+story.38=<b>牛顿型</b>~<color=#fca5a5>sin²α</color>迎风压—教学习题。\n\n<size=92%><color=#a8b2d1>非CFD。</color></size>
+story.39=<b>斯特劳哈尔</b>涡脱落频率 ~ St·U/D。\n\n<size=92%><color=#a8b2d1>振动与噪声线索。</color></size>
+story.40=<b>再入</b>热威胁曲线定性放松。\n\n<size=92%><color=#a8b2d1>非定量备忘录。</color></size>
+story.41=<b>互联网泡沫</b> — 示意指数走势（非真实标普数据）。\n\n<size=92%><color=#a8b2d1>爬升、急跌、缓慢修复的教学轮廓。</color></size>
+story.42=<b>2008危机</b> — 房贷与信用压力氛围，仅定性曲线。\n\n<size=92%><color=#a8b2d1>非下载行情；课堂斜率叙事。</color></size>
+story.43=<b>曼德博</b>c平面、光滑逃逸时间、固定Re切片。\n\n<size=92%><color=#a8b2d1>Julia边界；深 zoom 另需引擎。|Im(c)|切片。</color></size>

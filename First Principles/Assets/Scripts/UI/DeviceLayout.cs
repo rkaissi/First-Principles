@@ -77,12 +77,13 @@ public static class DeviceLayout
 
     public static float TouchHintVerticalOffset => IsTabletLike() ? 212f : 188f;
 
+    // Leave vertical room for bottom “Math tips” / “How to play” band + back chip.
     public static Vector2 LevelSelectScrollAnchorMin =>
-        IsTabletLike() ? new Vector2(0.1f, 0.08f) : new Vector2(0.04f, 0.08f);
+        IsTabletLike() ? new Vector2(0.1f, 0.32f) : new Vector2(0.04f, 0.34f);
 
-    // Top of scroll sits below the “Math tips & snippets” chip (chip ~0.81–0.86 on phone).
+    // Chips moved to bottom — scroll extends higher (below title).
     public static Vector2 LevelSelectScrollAnchorMax =>
-        IsTabletLike() ? new Vector2(0.9f, 0.72f) : new Vector2(0.96f, 0.74f);
+        IsTabletLike() ? new Vector2(0.9f, 0.84f) : new Vector2(0.96f, 0.82f);
 
     public static float LevelSelectScrollSensitivity => IsTabletLike() ? 44f : 28f;
 

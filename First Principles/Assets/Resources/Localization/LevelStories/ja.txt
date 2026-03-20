@@ -1,0 +1,46 @@
+# Level stories (ja) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>導関数</b></color>＝接線の傾き。<b>f(x)</b>がどれだけ速く上下するか。\n\n金色が道、水色がf'(x)で<i>床が続く場所</i>を形作る。|f'|が十分大きいと足場が支え、小さいと虚空が開く。\n\n<size=88%><color=#94a3b8><b>第一原理の思考:</b>比喩を剥がして事実まで下り、再構築する。<b>f</b>は成果の物語、<b>f'</b>は入力の感度。</color></size>
+story.1=旅人は坂が優しい所を歩く。導関数が負に転じると地面が途切れ、隙間が現れる。
+story.2=曲線は息のように上下する。導関数は着地地点を示す：正なら踏みしめ、負なら跳ぶ。
+story.3=余弦は導関数の符号に意味を隠す。ポップが危険の合図。
+story.4=絶対値は曲線を折り畳み一本道にする。頂点で導関数が反転し、床もひっくり返る。
+story.5=<color=#86efac>テイラー多項式</color>は滑らかな関数に近づく。<b>マクローリン</b>は<b>0</b>中心のテイラー。\n\n道は<b>e^u</b>の部分和——指数級数へ積み上がる多項式。
+story.6=<color=#7dd3fc>uの奇数乗</color>が符号を交互に変える——<b>sin(u)</b>のマクローリンDNA。\n\n打ち切られたテイラーの塔が正弦波へ伸びる。
+story.7=<color=#f5d0fe>等比級数</color>が<b>u</b>のべきを積む。収束半径の内側では尾が細り部分和が落ち着く。\n\n有限和の導関数が地形を変える。
+story.8=<b>z = x² − y₀²</b>（<b>y₀</b>固定）は鞍面の<color=#38bdf8>切断</color>。\n\nxの微分がマルチ変数の景観を1次元走行で読む。
+story.9=今度は<b>z = x² + y₀²</b>——<color=#fde047>楕円放物面</color>。<b>y₀</b>固定は皿状の断面。\n\n勾配は上り方向、走りでどれだけ急か見える。
+story.10=非負レートの<color=#fde047>定積分</color>は<b>積み上げ量</b>——すなわち曲線下の面積。\n\n青い柱は<b>リーマン和</b>：Δxで切り、f(x*)·Δxを足す→∫fへ。\n\n<size=92%><color=#a8b2d1>足場は滑らかなグラフを辿り、塗りは積分の近似。</color></size>
+story.11=<b>左リーマン:</b> 高さ<b>f(xᵢ)</b>——<color=#f87171>左端</color>。fが増関数なら和は面積<b>過小</b>。\n\n<size=92%><color=#a8b2d1>低い段の階段が放物線の下で保守的に伸びる。</color></size>
+story.12=<b>右リーマン:</b> <b>f(xᵢ₊₁)</b>——<color=#38bdf8>右端</color>。増関数なら<b>過大</b>——左の鏡。\n\n<size=92%><color=#a8b2d1>段は右端で跳ねる。左ステージと比較してみて。</color></size>
+story.13=<b>中点則:</b> 区間の<color=#86efac>中点</color>で高さ。対称な帯で滑らか曲線によく合う。\n\n<size=92%><color=#a8b2d1>段は各スライスの真ん中に乗る。</color></size>
+story.14=<b>減衰振動</b>はバネ・回路・構造に登場。包絡線が<color=#38bdf9>縮み</color>指数×正弦。\n\n<size=92%><color=#a8b2d1>グラフは坂道、導関数が峰の近くの安全柱を決める。</color></size>
+story.15=吊り鎖は<b>懸垂線</b>——多くは<color=#fde047>cosh</color>で模型化。投げ物の放物線とは別：自重下の張力バランス。\n\n<size=92%><color=#a8b2d1>アーチやケーブルの感覚。</color></size>
+story.16=<b>|sin(x)|</b>は全波整流された正弦——<color=#f0abfc>下側を折り上げ</color>。零点で角、導関数は跳ぶ。\n\n<size=92%><color=#a8b2d1>純粋三角から電源波形の橋。</color></size>
+story.17=<b>BC: 逆三角</b>。<color=#38bdf8>arctan</color>は1/(1+x²)で傾きが有界。水平漸近線が±∞の視覚。\n\n<size=92%><color=#a8b2d1>積分と幾何の定番。</color></size>
+story.18=<b>ロジスティック:</b> dP/dt = kP(1−P/L)。初期はほぼ指数、<color=#86efac>飽和</color>へ曲がる容量<b>L</b>。\n\n<size=92%><color=#a8b2d1>変曲点で成長率最大。</color></size>
+story.19=<b>極座標</b><color=#fde047>(r,θ)</color>。<b>心臓線</b> r ~ 1+cos θ。\n\n<size=92%><color=#a8b2d1>極面積 ½∫r² dθ。</color></size>
+story.20=<b>極バラ</b> r ~ cos(nθ)。対称が花弁数を決める。\n\n<size=92%><color=#a8b2d1>導関数のポップがrの急変——花弁の縁の壁。</color></size>
+story.21=<b>sinh/cosh</b>、恒等式 cosh²−sinh²=1。ODEやケーブルで三角形に似た仲間。\n\n<size=92%><color=#a8b2d1>sinhは0から立つ奇関数パートナー。</color></size>
+story.22=<b>物理C:</b> Q = Q₀ e^{−t/τ}。RC/RLの時定数。\n\n<size=92%><color=#a8b2d1>グラフは沈み、導関数はまだゼロへ漏れる符号。</color></size>
+story.23=<b>回転</b><color=#7dd3fc>L = Iω</color>、トルクτ = dL/dt。\n\n<size=92%><color=#a8b2d1>小振幅はSHMと同系、エネルギーの行き来。</color></size>
+story.24=<b>投擲高さ y(t)</b>——下向き<color=#fde047>放物線</color>。v=0が頂点。\n\n<size=92%><color=#a8b2d1>y,v,aの三歩。</color></size>
+story.25=<b>cos のマクローリン</b>は偶数乗が符号交互。\n\n<size=92%><color=#a8b2d1>項を足すほど0近傍が改善。</color></size>
+story.26=<b>ln x</b>と∫dx/x。定義域は正側にシフト。\n\n<size=92%><color=#a8b2d1>正の傾きは遠ざかるほど小さく。</color></size>
+story.27=<b>√x</b>は0⁺で傾きが爆発（BCの古典）。\n\n<size=92%><color=#a8b2d1>ゲームは滑らかに見せるが解析は境界に注意。</color></size>
+story.28=<b>tan x</b>は漸近線の間の1枝。sec²x。\n\n<size=92%><color=#a8b2d1>パラメトリック/極で骨格となる。</color></size>
+story.29=<b>y′=ky → Ce^{kx}</b>。分離、場、半減期の周辺。\n\n<size=92%><color=#a8b2d1>量に比例する変化率。</color></size>
+story.30=<b>位相とSHM</b> sin(ωt+ϕ)。\n\n<size=92%><color=#a8b2d1>導関数は（定数倍まで）cos——誰が先行か。</color></size>
+story.31=<b>三次</b>：臨界点、<color=#fca5a5>変曲点</color>で曲率が反転。\n\n<size=92%><color=#a8b2d1>山と谷の間の典型パターン。</color></size>
+story.32=<b>b^x</b>の微分は(ln b)b^x。\n\n<size=92%><color=#a8b2d1>底をeへつなぐ定数。</color></size>
+story.33=<b>円</b>(x−h)²+(y−k)²=R²。ここは上側半円y=k+√(⋯)。\n\n<size=92%><color=#a8b2d1>陰関数微分と媒介表示はAPの定番。</color></size>
+story.34=<b>揚力C_L(α)</b>がだいたい線形、<b>失速</b>で崩れる。\n\n<size=92%><color=#a8b2d1>教育用シルエット（実機はもっと複雑）。</color></size>
+story.35=<b>抗力極曲線</b><color=#c4b5fd>C_D = C_{D0} + K C_L²</color>。\n\n<size=92%><color=#a8b2d1>最適C_L周りの滑走比の感覚。</color></size>
+story.36=<b>等温大気カートゥーン</b>：ρ ~ <color=#86efac>e^{−h/H}</color>。\n\n<size=92%><color=#a8b2d1>動圧などρ(h)に乗る物すべて。</color></size>
+story.37=<b>フーゴイド/短周期</b>を減衰振動で漫画化。\n\n<size=92%><color=#a8b2d1>実機の制御はもっと豊か。</color></size>
+story.38=<b>ニュートン的</b>風上圧力～<color=#fca5a5>sin²α</color>の教養モデル。\n\n<size=92%><color=#a8b2d1>CFDの代替ではない。</color></size>
+story.39=<b>ストルーハル</b>：f ≈ St·U/D、渦放出のトーン。\n\n<size=92%><color=#a8b2d1>振動と騒音の指針。</color></size>
+story.40=<b>再突入</b>の熱脅威カーブを質的に緩めるイメージ。\n\n<size=92%><color=#a8b2d1>定量メモではない。</color></size>
+story.41=<b>ドットコムバブル</b> — 模式化インデックス（実S&amp;Pではない）。\n\n<size=92%><color=#a8b2d1>上昇・エアポケット・緩い回復の教学シルエット。</color></size>
+story.42=<b>2008年危機</b> — 住宅・信用ストレスの雰囲気、定性曲線のみ。\n\n<size=92%><color=#a8b2d1>実データの再現ではない。</color></size>
+story.43=<b>マンデルブロ集合</b>：c平面の滑らか脱出時間、<color=#86efac>Re(c)</color>固定の切断。\n\n<size=92%><color=#a8b2d1>ジュリアの境界；深いズームは別エンジン。|Im(c)|切断。</color></size>

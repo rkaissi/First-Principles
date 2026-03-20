@@ -3,12 +3,13 @@
  *
  * Maintenance overview:
  *   • Each Update() calls InitPlotFunction → samples f and numeric f' over [xStart,xEnd].
- *   • Points are in “grid space”: (xPlot + gridOrigin.x, yPlot + gridOrigin.y).
+ *   • Points are in “grid space”: (MapDisplayX(xPlot) + gridOrigin.x, MapDisplayY(yPlot) + gridOrigin.y).
  *   • To add a new curve: extend FunctionType, EvaluateFunctionY, and UpdateEquationText.
  *   • LevelManager sets public fields to match LevelDefinition; differentiate=true feeds DerivRendererUI.
  *   • SampleCurvePlotterY / SetEquationExtraSuffix support Riemann overlay & TMP sub-lines.
  */
 
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -32,6 +33,9 @@ public class FunctionPlotter : MonoBehaviour
     // A infinitesimally small number chosen in order to perform numerical differentiation
     private float hValue = (float)(Mathf.Pow(10, -4));
 
+    /// <summary>Step <c>h</c> used for numeric derivatives (graph overlays share this).</summary>
+    public float NumericalDerivativeStep => hValue;
+
     // The type of function to be plotted
     public FunctionType functionType;
 
@@ -43,9 +47,37 @@ public class FunctionPlotter : MonoBehaviour
 
     public bool differentiate = false;
 
+    [Tooltip("Level mode: vertically scale f and f′ so the band fits the grid (flat curves read clearly).")]
+    public bool autoScaleVertical = true;
+
+    [Tooltip("Fraction of half the grid height (from center) used by the fitted band.")]
+    [Range(0.38f, 0.92f)]
+    public float verticalFillFraction = 0.74f;
+
+    [Tooltip("Level mode: horizontally scale the domain window [xStart,xEnd] so it fills most of the grid.")]
+    public bool autoScaleHorizontal = true;
+
+    [Tooltip("Fraction of half the grid width (from center) used by the fitted x-window.")]
+    [Range(0.38f, 0.92f)]
+    public float horizontalFillFraction = 0.74f;
+
+    public float verticalScaleClampMin = 0.38f;
+    public float verticalScaleClampMax = 7.5f;
+
+    public float horizontalScaleClampMin = 0.38f;
+    public float horizontalScaleClampMax = 7.5f;
+
     // Local points list
     private List<Vector2> points = new List<Vector2>();
     private List<Vector2> dPoints = new List<Vector2>();
+
+    /// <summary>Vertical map: raw plotter y → offset used in grid space before adding grid origin y.</summary>
+    private float _autoMid;
+    private float _autoScale = 1f;
+    /// <summary>Horizontal map: plotter x → offset from center in grid columns before adding grid origin x.</summary>
+    private float _autoMidX;
+    private float _autoScaleX = 1f;
+    private int _cachedGridOriginY;
 
     [SerializeField] TextMeshProUGUI equationText;
 
@@ -54,6 +86,19 @@ public class FunctionPlotter : MonoBehaviour
 
     private LineRendererUI lineRenderer;
     private DerivRendererUI derivRenderer;
+
+    [Tooltip("Seconds for the main f and f′ curves to fade in left→right after the graph parameters change.")]
+    public float graphRevealDurationSeconds = 2.1f;
+
+    int _graphRevealParamsHash = int.MinValue;
+    float _graphRevealT01 = 1f;
+    float _lorenzPhaseScroll;
+
+    // AeroDragPolarTriple: extra polylines (cloned once from main LineRendererUI).
+    private LineRendererUI overlayParasitic;
+    private LineRendererUI overlayInduced;
+    private Color overlayDragPolarParasiticColor = new Color(0.55f, 0.66f, 0.85f, 1f);
+    private Color overlayDragPolarInducedColor = new Color(0.96f, 0.52f, 0.55f, 0.92f);
 
     private void Reset()
     {
@@ -69,8 +114,70 @@ public class FunctionPlotter : MonoBehaviour
 
     private void Update()
     {
+        UpdateGraphRevealAnimation();
         InitPlotFunction();
         RefreshGrid();
+    }
+
+    void UpdateGraphRevealAnimation()
+    {
+        int h = ComputeGraphRevealParamsHash();
+        if (h != _graphRevealParamsHash)
+        {
+            _graphRevealParamsHash = h;
+            _graphRevealT01 = 0f;
+            if (functionType != FunctionType.ChaosLorenzButterflyX)
+                _lorenzPhaseScroll = 0f;
+        }
+
+        float dur = Mathf.Max(0.05f, graphRevealDurationSeconds);
+        _graphRevealT01 = Mathf.MoveTowards(_graphRevealT01, 1f, Time.deltaTime / dur);
+
+        if (functionType == FunctionType.ChaosLorenzButterflyX)
+        {
+            float tMax = LorenzAttractorSamples.TimeMax;
+            if (tMax > 1e-4f)
+                _lorenzPhaseScroll = Mathf.Repeat(_lorenzPhaseScroll + Time.deltaTime * 3.15f, tMax);
+        }
+    }
+
+    int ComputeGraphRevealParamsHash()
+    {
+        int a = HashCode.Combine(functionType, xStart, xEnd, step, transA, transK);
+        int b = HashCode.Combine(transC, transD, power, baseN, customExpression ?? "");
+        int c = HashCode.Combine(autoScaleVertical, autoScaleHorizontal, verticalFillFraction, horizontalFillFraction);
+        return HashCode.Combine(a, b, c);
+    }
+
+    void PushGraphRevealToRenderers()
+    {
+        if (lineRenderer == null)
+            return;
+
+        Vector2Int go = lineRenderer.gridSize / 2;
+        float gx0 = MapDisplayX(xStart) + go.x;
+        float gx1 = MapDisplayX(xEnd) + go.x;
+
+        lineRenderer.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+        if (derivRenderer != null)
+            derivRenderer.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+
+        if (functionType == FunctionType.AeroDragPolarTriple)
+        {
+            if (overlayParasitic != null)
+                overlayParasitic.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+            if (overlayInduced != null)
+                overlayInduced.SetGraphRevealFade(_graphRevealT01, gx0, gx1);
+        }
+    }
+
+    /// <summary>Graphing-calculator derivative overlays share the same left→right reveal as the primary plot.</summary>
+    public void ApplyGraphRevealToLineRenderer(LineRendererUI lr)
+    {
+        if (lr == null || lineRenderer == null)
+            return;
+        Vector2Int go = lineRenderer.gridSize / 2;
+        lr.SetGraphRevealFade(_graphRevealT01, MapDisplayX(xStart) + go.x, MapDisplayX(xEnd) + go.x);
     }
 
     public void InitPlotFunction()
@@ -108,12 +215,111 @@ public class FunctionPlotter : MonoBehaviour
         return EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter);
     }
 
+    /// <summary>Grid-space y of the curve at plotter x (includes auto vertical fit). Used by platforms &amp; Riemann UI.</summary>
+    public float SampleCurveGridY(float xPlotter)
+    {
+        if (lineRenderer == null)
+            lineRenderer = LineRendererUI.FindPrimaryCurve();
+        if (lineRenderer != null)
+            _cachedGridOriginY = lineRenderer.gridSize.y / 2;
+        float raw = SampleCurvePlotterY(xPlotter);
+        if (!IsFinite(raw))
+            return float.NaN;
+        return MapDisplayY(raw) + _cachedGridOriginY;
+    }
+
+    /// <summary>
+    /// Graphing calculator: numeric <c>dⁿy/dxⁿ</c> at plotter <paramref name="xPlotter"/> (same vertical map as <see cref="ComputeGraph"/>).
+    /// </summary>
+    public float SampleNthDerivativeGridY(float xPlotter, int order)
+    {
+        if (lineRenderer == null)
+            lineRenderer = LineRendererUI.FindPrimaryCurve();
+        if (lineRenderer == null)
+            return float.NaN;
+
+        Vector2Int gridOrigin = lineRenderer.gridSize / 2;
+        float raw = MathNthDerivative.Evaluate(
+            xx => EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xx),
+            xPlotter,
+            Mathf.Clamp(order, 1, 4),
+            hValue);
+        if (!IsFinite(raw))
+            return float.NaN;
+        return MapDisplayY(raw) + gridOrigin.y;
+    }
+
+    /// <summary>Numeric f′(x) in <b>raw</b> plotter units (not affected by vertical exaggeration). For gameplay thresholds.</summary>
+    public float EvaluateNumericalDerivativeY(float xPlotter)
+    {
+        float yp = (EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter + hValue)
+                    - EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xPlotter - hValue))
+                        / (hValue * 2f);
+        return yp;
+    }
+
+    float MapDisplayY(float rawY) => (rawY - _autoMid) * _autoScale;
+
+    float MapDisplayX(float rawX) => (rawX - _autoMidX) * _autoScaleX;
+
+    /// <summary>Grid column offset from center → plotter <c>x</c> sampled for f / f′ (inverse of <see cref="MapDisplayX"/>).</summary>
+    public float DisplayOffsetFromCenterToPlotterX(float displayOffsetFromCenter)
+    {
+        float s = Mathf.Max(_autoScaleX, 1e-6f);
+        return displayOffsetFromCenter / s + _autoMidX;
+    }
+
+    /// <summary>Plotter <c>x</c> → absolute grid X (same convention as <see cref="ComputeGraph"/> polyline points).</summary>
+    public float MapPlotterXToGridX(float xPlotter, int gridOriginX) => MapDisplayX(xPlotter) + gridOriginX;
+
+    /// <summary>
+    /// Inverse of vertical display fit: grid tick offset from center (one unit = one plotter‑y step)
+    /// maps to the <b>mathematical</b> y (or polar r) read on that horizontal line.
+    /// When auto-fit is off, this is identity (mid 0, scale 1).
+    /// </summary>
+    public float AxisTickOffsetToMathY(float tickOffsetFromCenter)
+    {
+        float s = Mathf.Max(_autoScale, 1e-6f);
+        return _autoMid + tickOffsetFromCenter / s;
+    }
+
+    /// <summary>
+    /// Horizontal axis readout at a tick <paramref name="tickOffsetFromCenter"/> grid columns right of center
+    /// (one column = one plotter unit in <c>x</c> or polar <c>θ</c>).
+    /// • Level / preset graphs: tick shows plotter <c>x</c> (or <c>θ</c>).
+    /// • Graphing calculator (<see cref="FunctionType.CustomExpression"/>): tick shows inner <c>u = transK·(x−transD)</c>
+    ///   so numbers match <b>Trans</b> the same way your <c>f(u)</c> does.
+    /// </summary>
+    public float AxisTickOffsetToMathX(float tickOffsetFromCenter)
+    {
+        float xPlot = DisplayOffsetFromCenterToPlotterX(tickOffsetFromCenter);
+        if (functionType == FunctionType.CustomExpression)
+            return transK * (xPlot - transD);
+        return xPlot;
+    }
+
+    /// <summary>Current vertical auto-fit pivot (math axis). For axis label refresh.</summary>
+    public float VerticalAxisLabelPivot => _autoMid;
+
+    /// <summary>Current vertical display stretch factor. For axis label refresh.</summary>
+    public float VerticalAxisLabelScale => _autoScale;
+
+    /// <summary>Horizontal auto-fit pivot in plotter <c>x</c>. For axis label refresh.</summary>
+    public float HorizontalAxisLabelPivot => _autoMidX;
+
+    /// <summary>Horizontal display stretch (grid columns per plotter‑<c>x</c> unit). For axis label refresh.</summary>
+    public float HorizontalAxisLabelScale => _autoScaleX;
+
     public void SetEquationExtraSuffix(string suffix)
     {
         equationExtraSuffix = suffix ?? "";
     }
 
-    /// <summary>Switches to typed expression mode (graphic calculator).</summary>
+    /// <summary>True when the curve is the polar graph <c>r(θ)</c> (horizontal axis = θ, vertical = r), not Cartesian <c>y(x)</c>.</summary>
+    public static bool IsPolarPlotStyle(FunctionType type) =>
+        type == FunctionType.PolarCardioid || type == FunctionType.PolarRose || type == FunctionType.PolarGoldenLogSpiral;
+
+    /// <summary>Switches to typed expression mode (graphing calculator).</summary>
     public void SetCustomExpression(string expression)
     {
         customExpression = string.IsNullOrWhiteSpace(expression) ? "0" : expression.Trim();
@@ -122,7 +328,7 @@ public class FunctionPlotter : MonoBehaviour
 
     private void PlotFunction(FunctionType type)
     {
-        lineRenderer = FindAnyObjectByType<LineRendererUI>();
+        lineRenderer = LineRendererUI.FindPrimaryCurve();
         derivRenderer = FindAnyObjectByType<DerivRendererUI>();
 
         if (lineRenderer != null)
@@ -132,6 +338,16 @@ public class FunctionPlotter : MonoBehaviour
 
             ComputeGraph(type, transA, transK, transC, transD, power, baseN);
             lineRenderer.points = points;
+
+            if (type == FunctionType.AeroDragPolarTriple)
+            {
+                EnsureDragPolarOverlayLines(lineRenderer);
+                PopulateDragPolarOverlayPoints(transA, transK, transC, transD, power);
+                overlayParasitic.gameObject.SetActive(true);
+                overlayInduced.gameObject.SetActive(true);
+            }
+            else
+                SetDragPolarOverlaysActive(false);
         }
 
         if (differentiate == true && lineRenderer != null)
@@ -149,13 +365,20 @@ public class FunctionPlotter : MonoBehaviour
                 derivRenderer.points = dPoints;
             }
         }
-
         else if (differentiate == false)
         {
             dPoints.Clear();
 
             // Refresh ONLY the derivative graph & hide on the UI
             RefreshDeriv();
+        }
+
+        // Boss: show classic Mandelbrot set in c-plane behind the grid (1D slice curve on top).
+        if (lineRenderer != null)
+        {
+            var gridRt = lineRenderer.transform.parent as RectTransform;
+            MandelbrotFractalBackdrop.Sync(gridRt, this);
+            PushGraphRevealToRenderers();
         }
     }
 
@@ -165,7 +388,21 @@ public class FunctionPlotter : MonoBehaviour
             UpdateEquationText(functionType, transA, transK, transC, transD, power, baseN);
 
         Vector2Int gridOrigin = lineRenderer.gridSize / 2;
+        _cachedGridOriginY = gridOrigin.y;
 
+        // --- Pass 1: measure vertical extent (raw y) for auto fit ---
+        float fLo = float.PositiveInfinity, fHi = float.NegativeInfinity;
+
+        for (float i = xStart; i <= xEnd; i += step)
+        {
+            AddFunctionExtentSample(functionType, transA, transK, transC, transD, power, baseN, i, ref fLo, ref fHi);
+        }
+
+        // Fit primarily to f(x) (and drag-polar overlays) so flat teaching curves fill the grid; f′ uses the same map.
+        ComputeVerticalAutoFit(lineRenderer.gridSize.y, fLo, fHi);
+        ComputeHorizontalAutoFit(lineRenderer.gridSize.x, xStart, xEnd);
+
+        // --- Pass 2: build polylines with display mapping ---
         for (float i = xStart; i <= xEnd; i += step)
         {
             float xValue = i;
@@ -173,17 +410,97 @@ public class FunctionPlotter : MonoBehaviour
             float dyValue = (EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue + hValue) - EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue - hValue)) / (hValue * 2);
 
             if (IsFinite(yValue))
-            {
-                // Add the coordinates to the array
-                this.points.Add(new Vector2(xValue + gridOrigin.x, yValue + gridOrigin.y));
-            }
+                points.Add(new Vector2(MapDisplayX(xValue) + gridOrigin.x, MapDisplayY(yValue) + gridOrigin.y));
 
             if (IsFinite(dyValue))
+                dPoints.Add(new Vector2(MapDisplayX(xValue) + gridOrigin.x, MapDisplayY(dyValue) + gridOrigin.y));
+        }
+    }
+
+    void AddFunctionExtentSample(FunctionType functionType, float transA, float transK, float transC, float transD, int power, int baseN, float xValue,
+        ref float fLo, ref float fHi)
+    {
+        float yValue = EvaluateFunctionY(functionType, transA, transK, transC, transD, power, baseN, xValue);
+        if (IsFinite(yValue))
+        {
+            if (yValue < fLo) fLo = yValue;
+            if (yValue > fHi) fHi = yValue;
+        }
+
+        if (functionType == FunctionType.AeroDragPolarTriple)
+        {
+            float u = transK * (xValue - transD);
+            float yPar = transA * transC;
+            float yInd = transA * Mathf.Pow(u, power);
+            if (IsFinite(yPar))
             {
-                // Get the differentiated coordinates to another array
-                this.dPoints.Add(new Vector2(xValue + gridOrigin.x, dyValue + gridOrigin.y));
+                if (yPar < fLo) fLo = yPar;
+                if (yPar > fHi) fHi = yPar;
+            }
+            if (IsFinite(yInd))
+            {
+                if (yInd < fLo) fLo = yInd;
+                if (yInd > fHi) fHi = yInd;
             }
         }
+    }
+
+    void ComputeVerticalAutoFit(int gridYCells, float fLo, float fHi)
+    {
+        if (!autoScaleVertical || float.IsInfinity(fLo) || float.IsInfinity(fHi) || fLo > fHi)
+        {
+            _autoMid = 0f;
+            _autoScale = 1f;
+            return;
+        }
+
+        float lo = fLo;
+        float hi = fHi;
+
+        bool useZeroPivot = lo <= 0f && hi >= 0f;
+        _autoMid = useZeroPivot ? 0f : (lo + hi) * 0.5f;
+
+        float halfSpan = Mathf.Max(
+            Mathf.Max(Mathf.Abs(lo - _autoMid), Mathf.Abs(hi - _autoMid)),
+            1e-3f);
+        halfSpan *= 1.085f;
+
+        const float marginCells = 0.85f;
+        float targetHalf = verticalFillFraction * (gridYCells * 0.5f - marginCells);
+        targetHalf = Mathf.Max(targetHalf, 0.72f);
+
+        _autoScale = Mathf.Clamp(targetHalf / halfSpan, verticalScaleClampMin, verticalScaleClampMax);
+    }
+
+    void ComputeHorizontalAutoFit(int gridXCells, float xDomainLo, float xDomainHi)
+    {
+        if (!autoScaleHorizontal
+            || gridXCells < 2
+            || float.IsInfinity(xDomainLo)
+            || float.IsInfinity(xDomainHi)
+            || Mathf.Abs(xDomainHi - xDomainLo) < 1e-6f)
+        {
+            _autoMidX = 0f;
+            _autoScaleX = 1f;
+            return;
+        }
+
+        float lo = Mathf.Min(xDomainLo, xDomainHi);
+        float hi = Mathf.Max(xDomainLo, xDomainHi);
+
+        bool useZeroPivot = lo <= 0f && hi >= 0f;
+        _autoMidX = useZeroPivot ? 0f : (lo + hi) * 0.5f;
+
+        float halfSpan = Mathf.Max(
+            Mathf.Max(Mathf.Abs(lo - _autoMidX), Mathf.Abs(hi - _autoMidX)),
+            1e-3f);
+        halfSpan *= 1.085f;
+
+        const float marginCells = 0.85f;
+        float targetHalf = horizontalFillFraction * (gridXCells * 0.5f - marginCells);
+        targetHalf = Mathf.Max(targetHalf, 0.72f);
+
+        _autoScaleX = Mathf.Clamp(targetHalf / halfSpan, horizontalScaleClampMin, horizontalScaleClampMax);
     }
 
     private float EvaluateFunctionY(FunctionType type, float transA, float transK, float transC, float transD, int power, int baseN, float xValue)
@@ -219,6 +536,7 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.MultivarSaddleSlice => transA * (u * u - transC * transC),
 
             // Engineering / applied: u = transK*(x - transD); `power` ↔ oscillation index; `baseN` ↔ decay strength.
+            FunctionType.SpringMassUndamped => SpringMassUndampedY(u, transA, transC, power),
             FunctionType.DampedOscillator => DampedOscillatorY(u, transA, transC, power, baseN),
             FunctionType.HyperbolicCosine => transA * ((float)System.Math.Cosh(Mathf.Clamp(u, -8f, 8f)) + transC),
             FunctionType.FullWaveRectifiedSine => transA * (Mathf.Abs(Mathf.Sin(u)) + transC),
@@ -231,6 +549,9 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.PolarCardioid => transA * (1f + Mathf.Cos(u)) + transC,
             FunctionType.PolarRose => transA * Mathf.Cos(Mathf.Max(1, power) * u) + transC,
 
+            // Boss / BC: logarithmic “golden” spiral r ∝ φ^{kθ} with φ = (1+√5)/2; horizontal axis is θ (same as other polar presets).
+            FunctionType.PolarGoldenLogSpiral => GoldenLogSpiralPolarY(u, transA, transC, baseN),
+
             // Upper half of (u)² + (y−k)² = R² with u = transK·(x−h), R = |transA|, k = transC, h = transD.
             FunctionType.CircleUpper => CircleUpperY(u, transA, transC),
 
@@ -239,11 +560,78 @@ public class FunctionPlotter : MonoBehaviour
             FunctionType.AeroIsothermalDensity => AeroIsothermalDensityY(u, transA, transC, baseN),
             FunctionType.AeroNewtonianSinSquared => AeroNewtonianSinSquaredY(u, transA, transC),
 
+            // Thermodynamics: reversible adiabatic ideal gas, P ∝ V^{-γ} with γ from baseN/100 (e.g. 140 → 1.40); u > 0 is “volume-like”.
+            FunctionType.ThermoAdiabaticPV => ThermoAdiabaticPvY(u, transA, transC, baseN),
+
+            // Drag polar total C_D,tot: same closed form as Power — A·(u^power + C); overlays plot C_D,par = A·C and C_D,ind = A·u^power.
+            FunctionType.AeroDragPolarTriple => transA * (Mathf.Pow(u, power) + transC),
+
             // Mandelbrot: escape-time vs Im(c) with Re(c)=transA; use |Im| inside iteration (same count as c̄) — cheap symmetry about the real axis.
             FunctionType.MandelbrotEscapeImSlice => MandelbrotEscapeImSliceY(u, transA, transC, power, baseN),
 
+            // Qualitative economics teaching curves (not real market data; smooth spline through stylized knots).
+            FunctionType.EconomyDotcomBubbleStylized => EconomyDotcomBubbleStylizedY(u, transA, transC),
+            FunctionType.EconomySubprime2008Stylized => EconomySubprime2008StylizedY(u, transA, transC),
+
+            // Transforms (teaching): sinc ↔ rect spectrum; causal exponential ↔ Laplace kernel table intuition.
+            FunctionType.TransformFourierSinc => TransformFourierSincY(u, transA, transC),
+            FunctionType.TransformLaplaceCausalDecay => TransformLaplaceCausalDecayY(u, transA, transC, baseN),
+
+            // Final boss: Lorenz x(t) slice (normalized), “butterfly” chaotic sensitivity.
+            FunctionType.ChaosLorenzButterflyX => ChaosLorenzButterflyYEval(u, transA, transC),
+
             _ => 0f
         };
+    }
+
+    /// <summary>Knots for a smooth “index chart” arc: grind higher, parabolic enthusiasm, air-pocket, long recovery (dot-com era mood).</summary>
+    private static readonly float[] EconomyDotcomKnotsU =
+    {
+        -2.65f, -1.55f, -0.65f, 0.02f, 0.32f, 0.52f, 0.88f, 1.35f, 2.65f
+    };
+
+    private static readonly float[] EconomyDotcomKnotsY =
+    {
+        0.11f, 0.24f, 0.48f, 0.93f, 0.62f, 0.37f, 0.35f, 0.46f, 0.71f
+    };
+
+    /// <summary>Knots: pre-crisis climb, crest, cliff, trough, slow crawl up (2008 financial-crisis mood).</summary>
+    private static readonly float[] EconomySubprimeKnotsU =
+    {
+        -2.65f, -1.15f, -0.35f, 0.02f, 0.22f, 0.42f, 0.72f, 1.25f, 2.65f
+    };
+
+    private static readonly float[] EconomySubprimeKnotsY =
+    {
+        0.17f, 0.38f, 0.78f, 0.9f, 0.36f, 0.29f, 0.33f, 0.49f, 0.67f
+    };
+
+    private static float EconomyDotcomBubbleStylizedY(float u, float a, float c) =>
+        c + a * PiecewiseSmoothstepY(u, EconomyDotcomKnotsU, EconomyDotcomKnotsY);
+
+    private static float EconomySubprime2008StylizedY(float u, float a, float c) =>
+        c + a * PiecewiseSmoothstepY(u, EconomySubprimeKnotsU, EconomySubprimeKnotsY);
+
+    /// <summary>Piecewise segments with SmoothStep for a continuous, chart-like polyline (no real ticker data).</summary>
+    private static float PiecewiseSmoothstepY(float u, float[] xs, float[] ys)
+    {
+        if (xs == null || ys == null || xs.Length != ys.Length || xs.Length < 2)
+            return 0f;
+        if (u <= xs[0])
+            return ys[0];
+        if (u >= xs[xs.Length - 1])
+            return ys[xs.Length - 1];
+        for (int i = 0; i < xs.Length - 1; i++)
+        {
+            if (u <= xs[i + 1])
+            {
+                float denom = xs[i + 1] - xs[i];
+                float t = denom > 1e-6f ? (u - xs[i]) / denom : 0f;
+                t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t));
+                return Mathf.Lerp(ys[i], ys[i + 1], t);
+            }
+        }
+        return ys[ys.Length - 1];
     }
 
     private float EvaluateCustomExpression(float transA, float transC, float u)
@@ -254,31 +642,16 @@ public class FunctionPlotter : MonoBehaviour
     }
 
     /// <summary>
-    /// 1D slice through the Mandelbrot diag: c = cr + i·u, y ≈ normalized escape iterations (cheap preview, not deep zoom).
-    /// Uses <paramref name="ciAbs"/> = |u| when computing z²+c since n(c) = n(c̄). Keep <paramref name="maxIter"/> modest (e.g. 24–32) for CPU.
+    /// 1D slice: c = c_r + i·u with u = transK·(x−D); height ∝ <b>smooth</b> escape-time (fractional iteration count).
+    /// Uses |u| in the iteration because escape-time is even in Im(c) (conjugate symmetry). See <see cref="MandelbrotFractalBackdrop"/> for the 2D set.
     /// </summary>
     private static float MandelbrotEscapeImSliceY(float u, float cr, float yOffset, int maxIter, int heightScaleFromBaseN)
     {
-        maxIter = Mathf.Clamp(maxIter, 10, 34);
-        float amp = 0.14f * Mathf.Max(1, heightScaleFromBaseN);
-        int it = MandelbrotEscapeIterations(cr, Mathf.Abs(u), maxIter);
-        float norm = it / (float)maxIter;
+        maxIter = Mathf.Clamp(maxIter, 16, 160);
+        float amp = 0.17f * Mathf.Max(1, heightScaleFromBaseN);
+        float smooth = MandelbrotEscapeMath.SmoothIterations(cr, Mathf.Abs(u), maxIter);
+        float norm = smooth / maxIter;
         return yOffset + amp * norm;
-    }
-
-    private static int MandelbrotEscapeIterations(float cr, float ci, int maxIter)
-    {
-        float zr = 0f, zi = 0f;
-        for (int n = 0; n < maxIter; n++)
-        {
-            float zr2 = zr * zr - zi * zi + cr;
-            float zi2 = 2f * zr * zi + ci;
-            zr = zr2;
-            zi = zi2;
-            if (zr * zr + zi * zi > 4f)
-                return n;
-        }
-        return maxIter;
     }
 
     /// <summary>Crude CL(α): linear to ±α_stall then exponential decay (stall).</summary>
@@ -308,6 +681,54 @@ public class FunctionPlotter : MonoBehaviour
         return a * s * s + c;
     }
 
+    /// <summary>Adiabatic P–V relation P ∝ V^{-γ}, γ = clamp(baseN/100) (e.g. diatomic ~ 1.40); u is positive volume-like coordinate.</summary>
+    private static float ThermoAdiabaticPvY(float u, float a, float c, int baseNRaw)
+    {
+        float gamma = Mathf.Clamp(baseNRaw / 100f, 1.02f, 2.2f);
+        float v = Mathf.Max(0.04f, u);
+        return a * Mathf.Pow(v, -gamma) + c;
+    }
+
+    /// <summary>Golden ratio φ for spiral presets.</summary>
+    private static float GoldenRatioPhi => (1f + Mathf.Sqrt(5f)) * 0.5f;
+
+    /// <summary>r(θ) = A·φ^{kθ} + C with k scaled from <paramref name="baseNRaw"/> (growth rate knob).</summary>
+    private static float GoldenLogSpiralPolarY(float u, float a, float c, int baseNRaw)
+    {
+        float k = Mathf.Clamp(Mathf.Max(1, baseNRaw) / 750f, 0.055f, 0.19f);
+        float expArg = Mathf.Clamp(k * u, -5.2f, 5.2f);
+        float r = a * Mathf.Pow(GoldenRatioPhi, expArg);
+        return IsFinite(r) ? r + c : float.NaN;
+    }
+
+    /// <summary>sinc(u)=sin(u)/u, value 1 at 0 — spectrum shape of a rectangular pulse (Fourier mood).</summary>
+    private static float TransformFourierSincY(float u, float a, float c)
+    {
+        if (Mathf.Abs(u) < 1e-5f)
+            return a * 1f + c;
+        float s = Mathf.Sin(u) / u;
+        return a * s + c;
+    }
+
+    /// <summary>Causal decay e^{-s t} for t≥0 (table entry for Laplace-style exponentials); s from baseN/100.</summary>
+    private static float TransformLaplaceCausalDecayY(float u, float a, float c, int baseNRaw)
+    {
+        if (u < -1e-5f)
+            return float.NaN;
+        float s = Mathf.Clamp(baseNRaw / 100f, 0.1f, 4.5f);
+        return a * Mathf.Exp(-s * u) + c;
+    }
+
+    /// <summary>Lorenz attractor x-coordinate vs time (burn-in + normalized); u is time-like; phase scroll animates the slice.</summary>
+    float ChaosLorenzButterflyYEval(float u, float a, float c)
+    {
+        float tMax = LorenzAttractorSamples.TimeMax;
+        if (tMax < 1e-5f)
+            return float.NaN;
+        float t = Mathf.Repeat(u + _lorenzPhaseScroll, tMax);
+        return a * LorenzAttractorSamples.SampleNormalizedX(t) + c;
+    }
+
     /// <summary>y = k + √(R² − u²) for |u|≤R; outside domain uses k so samples stay finite (flat shoulder).</summary>
     private static float CircleUpperY(float u, float radiusSigned, float k)
     {
@@ -325,6 +746,15 @@ public class FunctionPlotter : MonoBehaviour
         float z = Mathf.Clamp(-s * u, -30f, 30f);
         return carryingCapacity / (1f + Mathf.Exp(z)) + c;
     }
+
+    /// <summary>Undamped spring: \(x=A\cos(\omega u)+x_0\); \(u=k(x-D)\) time-like; \(\omega\) from <paramref name="power"/>.</summary>
+    private static float SpringMassUndampedY(float u, float amplitude, float xEq, int power)
+    {
+        float omega = SpringMassUndampedOmega(power);
+        return amplitude * Mathf.Cos(omega * u) + xEq;
+    }
+
+    private static float SpringMassUndampedOmega(int power) => 0.118f * Mathf.Max(1, power);
 
     /// <summary>Underdamped-style envelope A·e^(-α|u|)·sin(ωu) + C (u = scaled time/position).</summary>
     private static float DampedOscillatorY(float u, float a, float c, int power, int baseN)
@@ -466,6 +896,14 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.MultivarSaddleSlice:
                 equationText.text = $@"\(z={a}\left(u^{2}-y_{{0}}^{2}\right),\; u={k}(x-{d}),\; y_{{0}}={c}\)";
                 break;
+            case FunctionType.SpringMassUndamped:
+            {
+                float omegaDisp = SpringMassUndampedOmega(power);
+                equationText.text =
+                    $@"<b>\(\text{{Spring–mass (undamped)}}\)</b> \(x \approx {a}\cos({omegaDisp:0.###}\,u)+{c},\; u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Hooke \(F=-kx\Rightarrow \ddot{{x}}=-\omega^2 x\), \(\omega=\sqrt{{k/m}}\).</color></size>";
+                break;
+            }
             case FunctionType.DampedOscillator:
                 equationText.text = $@"\(f={a}\, e^{{-\alpha|u|}}\sin(\omega u)+{c},\; u={k}(x-{d})\)";
                 break;
@@ -488,11 +926,33 @@ public class FunctionPlotter : MonoBehaviour
                 equationText.text = $@"\(f={a}\, e^{{-{k}|u|}}+{c},\; u={k}(x-{d})\)";
                 break;
             case FunctionType.PolarCardioid:
-                equationText.text = $@"\(r \propto 1+\cos\theta,\; \theta\leftrightarrow u={k}(x-{d})\)";
+            {
+                float thLo = Mathf.Min(transK * (xStart - transD), transK * (xEnd - transD));
+                float thHi = Mathf.Max(transK * (xStart - transD), transK * (xEnd - transD));
+                equationText.text =
+                    $@"\(r(\theta)={a}(1+\cos\theta)+{c}\)\n<size=88%><color=#a8b2d1>\(\theta\in[{thLo:0.##},{thHi:0.##}]\)</color></size>";
                 break;
+            }
             case FunctionType.PolarRose:
-                equationText.text = $@"\(r \propto \cos({power}\theta),\; \theta\leftrightarrow u={k}(x-{d})\)";
+            {
+                int nRose = Mathf.Max(1, power);
+                float thLo = Mathf.Min(transK * (xStart-transD), transK * (xEnd-transD));
+                float thHi = Mathf.Max(transK * (xStart-transD), transK * (xEnd-transD));
+                equationText.text =
+                    $@"\(r(\theta)={a}\cos({nRose}\theta)+{c}\)\n<size=88%><color=#a8b2d1>\(\theta\in[{thLo:0.##},{thHi:0.##}]\)</color></size>";
                 break;
+            }
+            case FunctionType.PolarGoldenLogSpiral:
+            {
+                float thLo = Mathf.Min(transK * (xStart-transD), transK * (xEnd-transD));
+                float thHi = Mathf.Max(transK * (xStart-transD), transK * (xEnd-transD));
+                float kk = Mathf.Clamp(Mathf.Max(1, baseN) / 750f, 0.055f, 0.19f);
+                string phiStr = GoldenRatioPhi.ToString("0.###");
+                equationText.text =
+                    $@"<b>\(\text{{Golden spiral}}\)</b> \(r(\theta)\approx {a}\varphi^{{{kk:0.###}\theta}}+{c}\)\n" +
+                    $@"<size=88%><color=#a8b2d1>\(\varphi=\frac{{1+\sqrt{{5}}}}{{2}}\approx {phiStr}\), \(\theta\in[{thLo:0.##},{thHi:0.##}]\), \(u={k}(x-{d})\).</color></size>";
+                break;
+            }
             case FunctionType.CircleUpper:
                 equationText.text = $@"\(u^{2}+(y-{c})^{2}={a}^{2}\ \text{{(upper)}},\; u={k}(x-{d})\)";
                 break;
@@ -505,9 +965,55 @@ public class FunctionPlotter : MonoBehaviour
             case FunctionType.AeroNewtonianSinSquared:
                 equationText.text = $@"\(C_p \propto \sin^{{2}}\alpha,\; u={k}(x-{d})\)";
                 break;
+            case FunctionType.AeroDragPolarTriple:
+                equationText.text =
+                    $@"<b>\(\text{{Drag polar — three traces}}\)</b>\n" +
+                    $@"<size=92%><color=#a8b2d1><b>Parasitic</b> \(C_{{D,\text{{par}}}} \approx {a}\cdot({c})\) (flat) · " +
+                    $@"<b>Induced</b> \(C_{{D,\text{{ind}}}} = {a}\,u^{{{power}}}\) · " +
+                    $@"<b>Total</b> \(C_{{D,\text{{tot}}}} = {a}\,(u^{{{power}}}+{c})\), \(u={k}(x-{d})\).</color></size>";
+                break;
+            case FunctionType.ThermoAdiabaticPV:
+            {
+                float g = Mathf.Clamp(baseN / 100f, 1.02f, 2.2f);
+                equationText.text =
+                    $@"<b>Adiabatic ideal gas</b> \(PV^{{\gamma}}=\text{{const}}\)\n" +
+                    $@"<size=92%><color=#a8b2d1>Sketch: \(P \propto u^{{-{g:0.##}}}\), \(u={k}(x-{d})\) (&gt;0). " +
+                    $@"\(\gamma\) from <b>N</b>={baseN} → \(\gamma\approx {g:0.##}\).</color></size>";
+                break;
+            }
             case FunctionType.MandelbrotEscapeImSlice:
                 equationText.text =
                     $@"<b>\(\text{{Mandelbrot slice}}\)</b> \(h\propto\text{{escape-time}},\; c=({a})+\mathrm{{i}}u,\; u={k}(x-{d}),\; N={power}\)";
+                break;
+            case FunctionType.EconomyDotcomBubbleStylized:
+                equationText.text =
+                    "<b>Stylized equity index path</b> (dot-com era <i>mood</i>)\n" +
+                    $"<size=92%><color=#a8b2d1>Not S&amp;P 500 or Nasdaq data — a smooth teaching curve through a <color=#86efac>late-90s run-up</color>, <color=#fca5a5>2000–02 drawdown</color>, and slow recovery. " +
+                    $"Height = <b>{c}</b> + <b>{a}</b>·(piecewise path), <i>u</i> = <b>{k}</b>(x−<b>{d}</b>).</color></size>";
+                break;
+            case FunctionType.EconomySubprime2008Stylized:
+                equationText.text =
+                    "<b>Stylized index path</b> (2008 crisis <i>mood</i>)\n" +
+                    $"<size=92%><color=#a8b2d1>Not GSPC / real estate indices — qualitative <color=#fde047>pre-crisis climb</color>, <color=#f87171>sharp stress pocket</color>, then crawl. " +
+                    $"Height = <b>{c}</b> + <b>{a}</b>·(piecewise path), <i>u</i> = <b>{k}</b>(x−<b>{d}</b>).</color></size>";
+                break;
+            case FunctionType.TransformFourierSinc:
+                equationText.text =
+                    $@"<b>Fourier mood — \(\mathrm{{sinc}}\)</b> \(\mathrm{{sinc}}(u)=\frac{{\sin u}}{{u}},\; u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Rect pulse in time ↔ tall \(\mathrm{{sinc}}\) in frequency; side lobes are interference homework.</color></size>";
+                break;
+            case FunctionType.TransformLaplaceCausalDecay:
+            {
+                float sL = Mathf.Clamp(baseN / 100f, 0.1f, 4.5f);
+                equationText.text =
+                    $@"<b>Laplace mood — causal decay</b> \(f(t)=H(t)\, e^{{-{sL:0.##}t}},\; t\propto u={k}(x-{d})\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Table entry \(\mathcal{{L}}\{{e^{{-at}}\}}=\frac{{1}}{{s+a}}\); walk the exponential after \(t=0\).</color></size>";
+                break;
+            }
+            case FunctionType.ChaosLorenzButterflyX:
+                equationText.text =
+                    $@"<b>\(\text{{Butterfly effect}}\)</b> — Lorenz \(x(t)\), \(\sigma=10,\rho=28,\beta=8/3\), \(u={k}(x-{d})\approx t\)\n" +
+                    $@"<size=88%><color=#a8b2d1>Tiny initial changes diverge on the attractor — this curve is a <b>time slice</b> of that chaos, normalized to read on the grid.</color></size>";
                 break;
             case FunctionType.CustomExpression:
             {
@@ -530,6 +1036,79 @@ public class FunctionPlotter : MonoBehaviour
 
         if (equationText != null)
             equationText.text = TmpLatex.Process(equationText.text);
+    }
+
+    /// <summary>LevelManager sets tint for parasitic / induced overlay lines (total stays <c>curveRenderer.color</c>).</summary>
+    public void ConfigureDragPolarOverlayColors(Color parasitic, Color induced)
+    {
+        overlayDragPolarParasiticColor = parasitic;
+        overlayDragPolarInducedColor = induced;
+        if (overlayParasitic != null)
+            overlayParasitic.color = parasitic;
+        if (overlayInduced != null)
+            overlayInduced.color = induced;
+    }
+
+    void SetDragPolarOverlaysActive(bool on)
+    {
+        if (overlayParasitic != null)
+            overlayParasitic.gameObject.SetActive(on);
+        if (overlayInduced != null)
+            overlayInduced.gameObject.SetActive(on);
+    }
+
+    void EnsureDragPolarOverlayLines(LineRendererUI template)
+    {
+        if (template == null || overlayParasitic != null)
+            return;
+
+        overlayParasitic = CreateDragPolarOverlay(template, "Parasitic");
+        overlayInduced = CreateDragPolarOverlay(template, "Induced");
+        overlayParasitic.color = overlayDragPolarParasiticColor;
+        overlayInduced.color = overlayDragPolarInducedColor;
+        overlayParasitic.raycastTarget = false;
+        overlayInduced.raycastTarget = false;
+        float t = template.thickness;
+        overlayParasitic.thickness = t * 0.78f;
+        overlayInduced.thickness = t * 0.78f;
+    }
+
+    static LineRendererUI CreateDragPolarOverlay(LineRendererUI template, string objectName)
+    {
+        var parent = template.transform.parent;
+        int idx = template.transform.GetSiblingIndex();
+        var clone = Instantiate(template.gameObject, parent);
+        clone.name = LineRendererUI.DragPolarOverlayNamePrefix + objectName;
+        clone.transform.SetSiblingIndex(idx);
+        return clone.GetComponent<LineRendererUI>();
+    }
+
+    void PopulateDragPolarOverlayPoints(float transA, float transK, float transC, float transD, int pow)
+    {
+        if (overlayParasitic == null || overlayInduced == null || lineRenderer == null)
+            return;
+
+        Vector2Int gridOrigin = lineRenderer.gridSize / 2;
+        overlayParasitic.points.Clear();
+        overlayInduced.points.Clear();
+
+        for (float i = xStart; i <= xEnd; i += step)
+        {
+            float xValue = i;
+            float u = transK * (xValue - transD);
+            float yPar = transA * transC;
+            float yInd = transA * Mathf.Pow(u, pow);
+
+            if (IsFinite(yPar))
+                overlayParasitic.points.Add(new Vector2(MapDisplayX(xValue) + gridOrigin.x, MapDisplayY(yPar) + gridOrigin.y));
+            if (IsFinite(yInd))
+                overlayInduced.points.Add(new Vector2(MapDisplayX(xValue) + gridOrigin.x, MapDisplayY(yInd) + gridOrigin.y));
+        }
+
+        overlayParasitic.enabled = false;
+        overlayParasitic.enabled = true;
+        overlayInduced.enabled = false;
+        overlayInduced.enabled = true;
     }
 }
 
@@ -557,6 +1136,8 @@ public enum FunctionType
     MultivarSaddleSlice,
 
     // Engineering / applied classical shapes
+    /// <summary>Undamped linear spring SHM: \(x=A\cos(\omega u)+x_0\); \texttt{power} sets \(\omega\), \(u=k(x-D)\).</summary>
+    SpringMassUndamped,
     DampedOscillator,
     HyperbolicCosine,
     FullWaveRectifiedSine,
@@ -580,8 +1161,35 @@ public enum FunctionType
     /// <summary>Escape iteration count vs Im(c) with fixed Re(c) = transA (boss slice); uses |Im| in iteration for conjugate symmetry.</summary>
     MandelbrotEscapeImSlice,
 
-    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (graphic calculator).</summary>
-    CustomExpression
+    /// <summary>User-typed <c>f(u)</c> via <see cref="FunctionPlotter.customExpression"/> (graphing calculator).</summary>
+    CustomExpression,
+
+    /// <summary>
+    /// Parabolic drag polar with <b>three</b> rendered curves: \(C_{D,\mathrm{par}}\) (flat),
+    /// \(C_{D,\mathrm{ind}} \propto u^{\texttt{power}}\), and total \(C_{D,\mathrm{tot}}\) (same as <see cref="Power"/> with \(u=k(x-D)\)).
+    /// </summary>
+    AeroDragPolarTriple,
+
+    /// <summary>Smooth stylized “index chart” evoking late-90s run-up and drawdown (not real market data).</summary>
+    EconomyDotcomBubbleStylized,
+
+    /// <summary>Smooth stylized path evoking 2007–09 equity stress / recovery (not real market data).</summary>
+    EconomySubprime2008Stylized,
+
+    /// <summary>Physics C thermo: adiabatic \(P\propto V^{-\gamma}\); \(\gamma=\texttt{baseN}/100\) (e.g. 140 → 1.40), \(u=k(x-D)&gt;0\) as volume-like axis.</summary>
+    ThermoAdiabaticPV,
+
+    /// <summary>Boss: polar graph \(r(\theta)=A\varphi^{k\theta}+C\) with golden ratio \(\varphi\); horizontal axis = θ.</summary>
+    PolarGoldenLogSpiral,
+
+    /// <summary>\(\mathrm{sinc}(u)=\sin u/u\) — Fourier transform flavor of a rectangular pulse.</summary>
+    TransformFourierSinc,
+
+    /// <summary>Causal \(H(t)\,e^{-st}\) — Laplace-table exponential decay for \(t\ge 0\); \(s\sim \texttt{baseN}/100\).</summary>
+    TransformLaplaceCausalDecay,
+
+    /// <summary>Final boss: Lorenz attractor \(x(t)\) (normalized), butterfly / sensitive dependence visualization.</summary>
+    ChaosLorenzButterflyX
 }
 
 /* 

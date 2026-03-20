@@ -25,6 +25,8 @@ public class SceneFader : MonoBehaviour
 
 	private TextMeshProUGUI graphicCalculatorMenuButtonText;
 	private TextMeshProUGUI menuLanguageButtonLabel;
+	private Image playerIconMenuButtonImage;
+	private TextMeshProUGUI playerIconMenuGlyphTmp;
 
 	public float fadeSpeed = 0.8f;
 
@@ -49,6 +51,8 @@ public class SceneFader : MonoBehaviour
 			fadeOutUIImage.enabled = true;
 			fadeOutUIImage.raycastTarget = true;
 			fadeOutUIImage2.gameObject.SetActive(false);
+
+            PlayerGlyphSettings.GlyphChanged += RefreshPlayerIconMenuButton;
 
 			ZoomIn();
 			StartCoroutine(SpawnMenuExtrasNextFrame());
@@ -80,6 +84,7 @@ public class SceneFader : MonoBehaviour
     void OnDisable()
     {
         LocalizationManager.LanguageChanged -= RefreshMenuLocalizedControls;
+        PlayerGlyphSettings.GlyphChanged -= RefreshPlayerIconMenuButton;
     }
 	#endregion
 
@@ -144,7 +149,7 @@ public class SceneFader : MonoBehaviour
 
         var tmp = go.AddComponent<TextMeshProUGUI>();
         tmp.text = LocalizationManager.Get("ui.loading", "Loading…");
-        tmp.fontSize = 36;
+        tmp.fontSize = UiTypography.Scale(36);
         tmp.alignment = TextAlignmentOptions.Bottom;
         tmp.color = new Color(0.92f, 0.94f, 0.98f, 0.95f);
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
@@ -162,6 +167,8 @@ public class SceneFader : MonoBehaviour
         yield return null;
         TrySpawnGraphicCalculatorMenuButton();
         TrySpawnLanguagePicker();
+        // Spawn last so it stays above sibling buttons under the play row for clicks.
+        TrySpawnPlayerIconPickerButton();
         RefreshMenuLocalizedControls();
     }
 
@@ -169,19 +176,31 @@ public class SceneFader : MonoBehaviour
     {
         if (graphicCalculatorMenuButtonText != null)
         {
-            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
+            graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing\ncalculator");
             LocalizationManager.ApplyTextDirection(graphicCalculatorMenuButtonText);
         }
 
         if (menuLanguageButtonLabel != null)
         {
-            menuLanguageButtonLabel.text =
-                $"{LocalizationManager.Get("ui.language", "Language")}: {LocalizationManager.GetLanguagePickerLabel(LocalizationManager.CurrentLanguage)}";
-            LocalizationManager.ApplyTextDirection(menuLanguageButtonLabel);
+            menuLanguageButtonLabel.text = LocalizationManager.GetLanguageChipDisplayText();
+            LocalizationManager.ApplyLanguagePickerTextDirection(menuLanguageButtonLabel);
+        }
+
+        RefreshPlayerIconMenuButton();
+
+        if (string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
+        {
+            var creditsGo = GameObject.Find("MenuCreditsBlock");
+            var creditsTmp = creditsGo != null ? creditsGo.GetComponent<TextMeshProUGUI>() : null;
+            if (creditsTmp != null)
+            {
+                creditsTmp.text = SceneCreditsFooter.BuildMenuFooterRichText();
+                LocalizationManager.ApplyTextDirection(creditsTmp);
+            }
         }
     }
 
-    /// <summary>Runtime entry for graphic calculator mode (no extra scene objects required).</summary>
+    /// <summary>Runtime entry for graphing calculator mode (no extra scene objects required).</summary>
     private void TrySpawnGraphicCalculatorMenuButton()
     {
         if (!string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
@@ -205,7 +224,8 @@ public class SceneFader : MonoBehaviour
         rt.anchorMax = playRt.anchorMax;
         rt.pivot = playRt.pivot;
         rt.sizeDelta = playRt.sizeDelta;
-        rt.anchoredPosition = playRt.anchoredPosition + new Vector2(0f, 168f);
+        // Former "Exit" slot: mirror Play button on the right (Play is at x=-180, exit was x=+180).
+        rt.anchoredPosition = playRt.anchoredPosition + new Vector2(360f, 0f);
 
         var playImg = play.GetComponent<Image>();
         var img = go.AddComponent<Image>();
@@ -231,13 +251,14 @@ public class SceneFader : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(10f, 6f);
-        trt.offsetMax = new Vector2(-10f, -6f);
+        trt.offsetMin = new Vector2(12f, 6f);
+        trt.offsetMax = new Vector2(-12f, -6f);
 
         graphicCalculatorMenuButtonText = textGo.AddComponent<TextMeshProUGUI>();
         bool tablet = DeviceLayout.IsTabletLike();
-        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphic_calculator_mode", "Graphic calculator mode");
-        graphicCalculatorMenuButtonText.fontSize = tablet ? 30 : 26;
+        graphicCalculatorMenuButtonText.text = LocalizationManager.Get("ui.graphing_calculator_mode", "Graphing\ncalculator");
+        graphicCalculatorMenuButtonText.fontSize = UiTypography.Scale(tablet ? 30 : 26);
+        graphicCalculatorMenuButtonText.fontStyle = FontStyles.Bold;
         graphicCalculatorMenuButtonText.alignment = TextAlignmentOptions.Center;
         graphicCalculatorMenuButtonText.color = new Color(0.92f, 0.98f, 1f, 1f);
         graphicCalculatorMenuButtonText.textWrappingMode = TextWrappingModes.Normal;
@@ -252,6 +273,121 @@ public class SceneFader : MonoBehaviour
         }
         else if (TMP_Settings.defaultFontAsset != null)
             graphicCalculatorMenuButtonText.font = TMP_Settings.defaultFontAsset;
+    }
+
+    private void RefreshPlayerIconMenuButton()
+    {
+        if (playerIconMenuGlyphTmp != null)
+        {
+            string g = PlayerGlyphSettings.GetSelectedGlyph();
+            string setLabel = LocalizationManager.Get("menu.player_icon_set", "Player icon");
+            playerIconMenuGlyphTmp.text =
+                $"<size=188%><b><color=#fffef9>{g}</color></b></size>\n<size=82%><b>{setLabel}</b></size>";
+            LocalizationManager.ApplyTextDirection(playerIconMenuGlyphTmp);
+        }
+
+        if (playerIconMenuButtonImage != null)
+        {
+            playerIconMenuButtonImage.color =
+                RuntimeUiPolish.BrightenPlayerAccent(PlayerGlyphSettings.GetAccentForCurrentSelection());
+        }
+    }
+
+    /// <summary>Above Play, screen-centered horizontally (Play may be offset in scene art).</summary>
+    private void TrySpawnPlayerIconPickerButton()
+    {
+        if (!string.Equals(SceneManager.GetActiveScene().name, "Menu", System.StringComparison.Ordinal))
+            return;
+        if (GameObject.Find("MenuPlayerIconButton") != null)
+            return;
+
+        var play = GameObject.FindGameObjectWithTag("PlayButton");
+        if (play == null)
+            return;
+
+        var playRt = play.GetComponent<RectTransform>();
+        if (playRt == null)
+            return;
+
+        bool tablet = DeviceLayout.IsTabletLike();
+        // Lower toward Play (smaller gap above the Play button).
+        float aboveOffset = tablet ? 38f : 30f;
+
+        var go = new GameObject("MenuPlayerIconButton");
+        var rt = go.AddComponent<RectTransform>();
+        rt.SetParent(playRt.parent, false);
+        rt.localScale = Vector3.one;
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        // Slightly narrower than Play width; keep enough height so two-line label isn’t cramped (not short vertically).
+        float iconWidth = playRt.sizeDelta.x * (tablet ? 1.02f : 1.06f);
+        rt.sizeDelta = new Vector2(iconWidth, tablet ? 112f : 102f);
+        float stackY = playRt.anchoredPosition.y + aboveOffset + playRt.sizeDelta.y * 0.5f + rt.sizeDelta.y * 0.5f;
+        rt.anchoredPosition = new Vector2(0f, stackY);
+        rt.SetAsLastSibling();
+
+        var playImg = play.GetComponent<Image>();
+        var img = go.AddComponent<Image>();
+        if (playImg != null && playImg.sprite != null)
+        {
+            img.sprite = playImg.sprite;
+            img.type = playImg.type;
+        }
+
+        RuntimeUiPolish.UseRoundedSliced(img);
+        img.color = RuntimeUiPolish.BrightenPlayerAccent(PlayerGlyphSettings.GetAccentForCurrentSelection());
+        playerIconMenuButtonImage = img;
+
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        RuntimeUiPolish.ApplyButtonTransitions(btn, img.color,
+            Color.Lerp(img.color, Color.white, 0.2f),
+            Color.Lerp(img.color, Color.black, 0.18f));
+        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(2f, -3f), 0.28f);
+        btn.onClick.AddListener(OpenMenuPlayerGlyphPickerOverlay);
+
+        var textGo = new GameObject("Text");
+        var trt = textGo.AddComponent<RectTransform>();
+        trt.SetParent(go.transform, false);
+        trt.anchorMin = Vector2.zero;
+        trt.anchorMax = Vector2.one;
+        // Extra bottom inset so two-line label has comfortable space below the words.
+        trt.offsetMin = new Vector2(10f, tablet ? 16f : 14f);
+        trt.offsetMax = new Vector2(-10f, -8f);
+
+        playerIconMenuGlyphTmp = textGo.AddComponent<TextMeshProUGUI>();
+        playerIconMenuGlyphTmp.fontSize = UiTypography.Scale(tablet ? 29 : 26);
+        playerIconMenuGlyphTmp.fontStyle = FontStyles.Bold;
+        playerIconMenuGlyphTmp.enableAutoSizing = false;
+        playerIconMenuGlyphTmp.alignment = TextAlignmentOptions.Center;
+        playerIconMenuGlyphTmp.color = new Color(0.98f, 0.99f, 1f, 1f);
+        playerIconMenuGlyphTmp.outlineWidth = 0.22f;
+        playerIconMenuGlyphTmp.outlineColor = new Color(0f, 0f, 0f, 0.38f);
+        playerIconMenuGlyphTmp.textWrappingMode = TextWrappingModes.Normal;
+        playerIconMenuGlyphTmp.overflowMode = TextOverflowModes.Overflow;
+        playerIconMenuGlyphTmp.richText = true;
+        LocalizationManager.ApplyTextDirection(playerIconMenuGlyphTmp);
+
+        var refTmp = play.GetComponentInChildren<TextMeshProUGUI>();
+        if (refTmp != null && refTmp.font != null)
+        {
+            playerIconMenuGlyphTmp.font = refTmp.font;
+            if (refTmp.fontSharedMaterial != null)
+                playerIconMenuGlyphTmp.fontSharedMaterial = refTmp.fontSharedMaterial;
+        }
+        else if (TMP_Settings.defaultFontAsset != null)
+            playerIconMenuGlyphTmp.font = TMP_Settings.defaultFontAsset;
+
+        playerIconMenuGlyphTmp.fontStyle = FontStyles.Bold;
+    }
+
+    private static void OpenMenuPlayerGlyphPickerOverlay()
+    {
+        var canvas = Object.FindFirstObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+        MenuPlayerGlyphPickerOverlay.Open(canvas.transform);
     }
 
     /// <summary>Tappable control to cycle UI language (compact for phones).</summary>
@@ -277,8 +413,8 @@ public class SceneFader : MonoBehaviour
         rt.anchorMin = new Vector2(0f, 1f);
         rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
-        rt.anchoredPosition = new Vector2(tablet ? 22f : 16f, tablet ? -18f : -14f);
-        rt.sizeDelta = new Vector2(tablet ? 320f : 280f, tablet ? 48f : 44f);
+        rt.anchoredPosition = new Vector2(tablet ? 22f : 16f, tablet ? -20f : -16f);
+        rt.sizeDelta = new Vector2(tablet ? 400f : 360f, tablet ? 68f : 60f);
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -296,14 +432,18 @@ public class SceneFader : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(10f, 4f);
-        trt.offsetMax = new Vector2(-10f, -4f);
+        trt.offsetMin = new Vector2(12f, 6f);
+        trt.offsetMax = new Vector2(-12f, -6f);
 
         menuLanguageButtonLabel = textGo.AddComponent<TextMeshProUGUI>();
-        menuLanguageButtonLabel.fontSize = tablet ? 22 : 19;
+        menuLanguageButtonLabel.enableAutoSizing = true;
+        menuLanguageButtonLabel.fontSizeMin = Mathf.Max(12, UiTypography.Scale(14));
+        menuLanguageButtonLabel.fontSizeMax = UiTypography.Scale(tablet ? 28 : 24);
+        menuLanguageButtonLabel.fontSize = menuLanguageButtonLabel.fontSizeMax;
         menuLanguageButtonLabel.alignment = TextAlignmentOptions.Center;
         menuLanguageButtonLabel.color = new Color(0.93f, 0.96f, 1f, 1f);
         menuLanguageButtonLabel.textWrappingMode = TextWrappingModes.Normal;
+        menuLanguageButtonLabel.overflowMode = TextOverflowModes.Overflow;
 
         var refTmp = Object.FindAnyObjectByType<TextMeshProUGUI>();
         if (refTmp != null && refTmp.font != null)
@@ -314,6 +454,8 @@ public class SceneFader : MonoBehaviour
         }
         else if (TMP_Settings.defaultFontAsset != null)
             menuLanguageButtonLabel.font = TMP_Settings.defaultFontAsset;
+
+        menuLanguageButtonLabel.fontStyle = FontStyles.Bold;
     }
 
     public void LoadGame()
@@ -339,7 +481,7 @@ public class SceneFader : MonoBehaviour
 		StartCoroutine(FadeAndLoadScene(FadeDirection.In, "LevelSelect"));
 	}
 
-	/// <summary>Graphic calculator mode (same <c>Game</c> scene, platformer off).</summary>
+	/// <summary>Graphing calculator mode (same <c>Game</c> scene, platformer off).</summary>
 	public void LoadGraphCalculator()
 	{
 		GraphCalculatorSession.RequestEnterFromMenu();

@@ -310,12 +310,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 52
+  m_fontSize: 41
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 12
-  m_fontSizeMax: 36
+  m_fontSizeMin: 14
+  m_fontSizeMax: 41
   m_fontStyle: 1
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 256
@@ -583,11 +583,11 @@ RectTransform:
   m_Father: {fileID: 285435207}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.4, y: -30.5}
-  m_SizeDelta: {x: 254.5176, y: 122.5515}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 18, y: 106}
+  m_SizeDelta: {x: 248, y: 112}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &231419965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,7 +634,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1441103586}
         m_TargetAssemblyTypeName: SceneFader, Assembly-CSharp
-        m_MethodName: LoadMenu
+        m_MethodName: LoadLevelSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

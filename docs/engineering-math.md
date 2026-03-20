@@ -71,7 +71,15 @@ You don’t need complex numbers to enjoy this repo—but if you keep studying *
 | Idea | Typical model / graph | Game stage |
 |------|----------------------|------------|
 | **Lift vs α** | \(C_L\) ~ linear before **stall**, then loss of lift | *Aerospace: lift C_L(α) linear + stall* |
-| **Drag polar** | \(C_D = C_{D0} + K C_L^2\) | *Aerospace: parabolic drag polar* |
+| **Drag polar** | \(C_D = C_{D0} + K C_L^2\) | *Aerospace: drag polar (parasitic, induced, total — three traces)* |
+
+**Parasitic vs induced vs total (parabolic polar cartoon):**
+
+- **Parasitic (profile / zero-lift) drag** — lumped in **\(C_{D0}\)** in this model: skin friction, pressure form drag, interference — the part that does **not** grow with \(C_L\) in \(C_D = C_{D0} + K C_L^2\).
+- **Induced drag** — trailing-vortex / lift-carrying cost, **\(\propto C_L^2\)** (here **\(K C_L^2\)**); high \(C_L\) (slow flight, tight turns) pays extra.
+- **Overall drag curve** — plot **\(C_D\)** vs **\(C_L\)** (the **drag polar**): an upward-opening parabola; its **minimum** locates a best-compromise **\(C_L\)** for min drag at a given configuration (before adding propulsion and constraint soup).
+
+In-game, **every Aerospace stage** prepends a short **drag polar refresher** on the story banner above that stage’s specific topic.
 | **Atmosphere** | \(\rho(h) \propto e^{-h/H}\) (isothermal cartoon) | *Aerospace: isothermal atmosphere ρ(h)* |
 | **Longitudinal modes** | Damped oscillation (phugoid / short-period mood) | *Aerospace: phugoid / damped pitch–heave mood* |
 | **Hypersonic teaching** | \(C_p \propto \sin^{2}\alpha\) (Newtonian impact) | *Aerospace: Newtonian \(C_p \propto \sin^{2}\alpha\)* |

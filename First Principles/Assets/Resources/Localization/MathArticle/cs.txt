@@ -1,0 +1,23 @@
+<b><size=120%>Matematické pojmy — čtečka ve hře</size></b>
+<size=92%>Kompletní dlouhý článek (všechna pravidla derivování, integrály, aerodynamika, příprava na AMC / AP / TMUA atd.) je v repozitáři zatím plně dostupný v <b>angličtině</b> — v menu přepněte jazyk na <b>English</b> pro stejný text ve hře, nebo otevřete <b>docs/math-concepts.md</b> a související soubory v docs / na GitHub Pages.</size>
+<size=92%>Tato obrazovka sdílí stejný obsah jako <b>Tipy k matematice</b> ve výběru úrovní. Pro zavření klepněte na pozadí nebo <b>Zavřít</b>.</size>
+
+<b><size=115%>Jak hra vyučuje kalkulus (stručně)</size></b>
+<size=92%>
+• <b>Hlavní křivka</b> — na mřížce je \(y = f(x)\) pro danou úroveň. Postava stojí na plošinách podle tvaru. Popisek <b>Rovnice</b> (kdy je vidět) pojmenovává pravidlo.
+
+• <b>Křivka derivace \(f'(x)\)</b> — druhý graf z <i>numerické</i> derivace. Na mnoha úrovních <b>kde je \(|f'|\) dostatečné, je pevná zem</b>; jinak propad — platformer sleduje logiku sklonu.
+
+• <b>Fáze a „pop“</b> — HUD <b>FÁZE</b> počítá narativní momenty. Derivace se může přebarvit v daném \(x\) (jako scény lekce).
+
+• <b>Riemannovy součty / plocha</b> — některé úrovně stínují obdélníky nebo schody zleva/zprava/střed.\n\(\displaystyle \int_a^b f(x)\,dx\) jako limit \(\sum f(x^\ast)\,\Delta x\).
+
+• <b>Příběh</b> — horní banner váže úroveň na matematiku.
+
+V anglické verzi článku níže najdete kompletní glosář §1–13, aerospace, myšlení „first principles“ a mapu zkoušek — nebo přepněte jazyk na EN v nabídce.
+</size>
+
+<b><size=110%>Kde číst dál</size></b>
+<b>docs/math-concepts.md</b>, <b>docs/derivative-rules.md</b>, <b>docs/definite-indefinite-integrals.md</b>, <b>docs/first-principles-business.md</b>, <b>docs/engineering-math.md</b>, přípravné soubory AP / AMC / TMUA / MAT.
+
+— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles

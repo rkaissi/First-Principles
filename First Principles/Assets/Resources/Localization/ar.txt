@@ -1,8 +1,8 @@
 # العربية (RTL)
-ui.choose_stage=اختر مرحلة الرسم
+ui.choose_stage=اختر المستوى
 ui.math_tips=نصائح وقصاصات رياضية
 ui.back_menu=العودة للقائمة
-ui.graphic_calculator_mode=وضع آلة الرسوم البيانية
+ui.graphing_calculator_mode=آلة حاسبة رسومية
 ui.loading=جارٍ التحميل…
 ui.language=اللغة
 ui.tap_change_language=اضغط للتبديل
@@ -28,11 +28,9 @@ graph.param_k=k (مقياس أفقي)
 graph.param_c=C (إزاحة عمودية)
 graph.param_d=D (إزاحة أفقية)
 graph.calculator_intro=<b>وضع آلة الرسوم البيانية</b>\n<size=88%>اكتب تقريبًا أي <b>f(u)</b> (المتغير <b>x</b> في صيغتك)؛ <b>Trans</b> يضبط A و k و C و D؛ <b>Scale</b> و<b>القرصة</b> تكبّران النافذة.</size>
-footer.proprietary=© 2022-2026 · ملكية خاصة · جميع الحقوق محفوظة · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=خريجو <b>Garth Webb Secondary School</b> في أوكفيل، نفتخر بذلك.
-footer.support=أربع سنوات من التطوير — إن أعجبك العمل، يُرجى دعم المشروع. شكرًا.
-footer.unity=صُنع باستخدام <b>Unity</b>. Unity علامة تجارية لشركة Unity Technologies.
+menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>
+menu.credits_line=<size=34>جون سونغ (أورك إيروسبيس) × رايان قيسي (GameGenesis)</size>
+menu.support_contact=<size=32><color=#94a3b8>الدعم:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
 level.0=مقدمة المبادئ الأولى
 level.1=ميل قطع مكافئ
 level.2=أمواج الجيب
@@ -68,11 +66,19 @@ level.31=BC: تكعيب ونقطة انعطاف (رسم)
 level.32=BC: b^x و d/dx b^x
 level.33=دائرة: (x−h)² + (y−k)² = R²
 level.34=طيران: رفع C_L(α) خطي + انفصال
-level.35=طيران: قطب مقاومة قطع مكافئ C_D(C_L)
+level.35=طيران: قطب السحب (طفيلي، مُستحثّ، إجمالي)
 level.36=طيران: جو متساوي الحرارة ρ(h)
 level.37=طيران: حركة مجنحة / اهتزاز مُخمَّد
 level.38=طيران: نيوتوني Cp ~ sin²α
 level.39=طيران: Strouhal / نبرة انبعاث دوامات
 level.40=طيران: غلاف دخول غلاف جوي (تسخين ρV)
-level.41=مسابقات: ln وتقعر وحدود
-level.42=الزعيم: شريحة هروب ماندلبروت (كسيري)
+level.41=اقتصاد: فقاعة الدوت كوم والانهيار (مؤشر توضيحي)
+level.42=اقتصاد: أزمة 2008 والتعافي (مؤشر توضيحي)
+level.43=الزعيم: شريحة هروب ماندلبروت (كسيري)
+level.44=فيزياء C: الديناميكا الحرارية (P–V أديباتي، γ من N)
+level.45=زعيم: لولب النسبة الذهبية (قطبي لوغاريتمي)
+level.46=تحويلات: فورييه — طيف sinc
+level.47=تحويلات: لابلاس — تضاؤل أسي
+level.48=زعيم: ماندلبروت — الختام (شريحة هروب كسيرية)
+level.49=زعيم: فراشة لورينز — الختام (جذاب غريب)
+level.50=فيزياء C: نابض–كتلة حركة توافقية (قانون هوك، بلا تخميد)

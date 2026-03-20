@@ -32,6 +32,14 @@ For a dedicated **engineering** lens, see [**Engineering math**]({% link enginee
 
 ---
 
+## 1b. Differentiation rules — power, product, quotient, chain (game playbook)
+
+The **Math tips / Math concepts** reader includes a section **“Differentiation rules — your skill tree”**: same formulas as class, written with **player / stage** metaphors (buffs, dual meters, nested stages, quotient “lanes”). It’s the quick **in-run** version.
+
+For the longer **GitHub Pages** strip with tables and mnemonics: **[Differentiation rules (playbook)]({% link derivative-rules.md %})**.
+
+---
+
 ## 2. Parabolas (power / quadratic)
 
 A quadratic like \(y = a(x-h)^2 + k\) is a **single smooth bump or bowl**. Classic uses:
@@ -88,6 +96,16 @@ A surface \(z = f(x,y)\) can be **cut** by fixing \(y = y_0\). You then see a **
 
 ## 8. Integrals and Riemann sums
 
+### Definite vs indefinite (quick)
+
+- **Indefinite** \(\int f(x)\,dx\) → a **family** of antiderivatives \(F(x)+C\) with \(F'=f\) (“+ \(C\)” because derivatives kill constants).
+- **Definite** \(\int_a^b f(x)\,dx\) → a **number**: **signed area** from \(a\) to \(b\); **no** “+ \(C\)” in the final value.
+- **FTC link:** if \(F'=f\), then \(\int_a^b f(x)\,dx = F(b)-F(a)\).
+
+In-app Metaphor block: **“Integrals: definite vs indefinite — score vs loadout”** in the Math reader. Longer table + notes: **[Definite vs indefinite integrals]({% link definite-indefinite-integrals.md %})**.
+
+### Riemann sums → definite integral
+
 The **definite integral** \(\int_a^b f(x)\,dx\) is (for nice functions) the **signed area** under the curve from \(a\) to \(b\).
 
 **Riemann sum recipe:**
@@ -131,9 +149,9 @@ Engineering math is still “calculus + algebra + models,” but the **goal** is
 
 ---
 
-## Competition math stage (level select)
+## Economics “index chart” stages (qualitative)
 
-Level select includes **“Competition math: ln, concavity & bound tricks”** — a \(\ln\)-shaped run framed for **contest-style** thinking (bounds, concavity, domain care). Unofficial context and study map: **[Competition math]({% link competition-math.md %})**.
+Level select includes **two stylized curves** meant to evoke broad equity-index narratives: a **late‑1990s / dot‑com run-up and unwind**, and a **2007–09 global financial crisis** arc (housing, credit, Lehman-era history-book framing). The graphs are **smooth teaching splines**, not downloaded ticker data. For contest/concavity notes with \(\ln\), see **[Competition math]({% link competition-math.md %})** (still in docs; the old dedicated \(\ln\) contest stage was replaced by these economics moods in the catalog).
 
 ---
 
@@ -153,8 +171,8 @@ This is a **teaching** view (moderate iteration cap, wide sample step), not a de
 
 | Where | What |
 |--------|------|
-| **Level select → Math tips & snippets** | Short TMP article + **[first principles thinking & business]({% link first-principles-business.md %})** + prep blocks (AMC, competition, TMUA, MAT, AP BC, AP Physics C). |
-| **This site (`math-concepts.md`)** | Game concepts + index to exam prep + **[first principles thinking & business]({% link first-principles-business.md %})** + **[competition math]({% link competition-math.md %})** + **[AMC 10 & 12 — prep]({% link amc-10-12.md %})**. |
+| **Level select → Math tips & snippets** | Short TMP article (incl. **differentiation rules** + **definite vs indefinite integrals**) + **[first principles thinking & business]({% link first-principles-business.md %})** + prep blocks (AMC, competition, TMUA, MAT, AP BC, AP Physics C). |
+| **This site (`math-concepts.md`)** | Game concepts + index to exam prep + **[derivative rules]({% link derivative-rules.md %})** + **[definite vs indefinite integrals]({% link definite-indefinite-integrals.md %})** + **[first principles thinking & business]({% link first-principles-business.md %})** + **[competition math]({% link competition-math.md %})** + **[AMC 10 & 12 — prep]({% link amc-10-12.md %})**. |
 | **`amc-10-12.md`**, **`tmua-calculus.md`**, **`mat-calculus.md`**, **`ap-calculus-bc.md`**, **`ap-physics-c.md`** | Unofficial **standalone** prep notes (not past papers). |
 | **`engineering-math.md`** | Damped motion, phasors, transforms, linear algebra hooks. |
 

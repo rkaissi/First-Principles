@@ -1,0 +1,46 @@
+# Level stories (de) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>Ableitung</b></color> = Steigung der Tangente — wie schnell <b>f(x)</b> steigt oder fällt.\n\nGoldenes Licht: Ihr Pfad ; Eisblau: f'(x) formt <i>wo der Boden trägt</i>. Wo |f'| groß genug ist, gibt es Plattformen — sonst öffnet sich die Leere.\n\n<size=88%><color=#94a3b8><b>First-Principles-Denken:</b> Analogien streifen bis zu Fakten, dann neu aufbauen. <b>f</b> = Outcome-Modell ; <b>f'</b> = Sensitivität.</color></size>
+story.1=Ein Wanderer geht, wo die Steigung freundlich ist. Wird die Ableitung negativ, schmilzt der Boden zur Lücke.
+story.2=Die Kurve steigt und fällt wie Atem. Die Ableitung zeigt, wo man landet: positiv = sicherer Schritt, negativ = Sprung.
+story.3=Der Kosinus verbirgt sich im Vorzeichen seiner Ableitung. Der Pop markiert die Gefahr.
+story.4=Der Betrag faltet die Kurve zu einem Pfad. Am Knick wechselt die Ableitung — und der Boden kippt.
+story.5=<color=#86efac>Taylorpolynome</color> schmiegen sich glatten Funktionen an. <b>Maclaurin</b> = Taylor bei <b>0</b>.\n\nHier: Partialsumme von <b>e^u</b> — Stapel Richtung Exponentialreihe.
+story.6=<color=#7dd3fc>Ungerade Potenzen</color> wechseln das Vorzeichen — Maclaurin-DNA von <b>sin(u)</b>.\n\nGraph = abgeschnittener Taylorturm zur Sinuswelle.
+story.7=<color=#f5d0fe>Geometrische Reihe</color> stapelt Potenzen von <b>u</b>. Im Konvergenzradius schrumpft der Rest.\n\nSpüren Sie, wie die Ableitung der Partialsumme das Terrain formt.
+story.8=Denken Sie <b>z = x² − y₀²</b> — <color=#38bdf8>Schnitt</color> durch eine Sattelfläche.\n\nx-Ableitung liest Multivar- Landschaft in 1D.
+story.9=Jetzt <b>z = x² + y₀²</b> — <color=#fde047>elliptisches Paraboloid</color>. Festes <b>y₀</b> = Schale in Ihrer Ebene.\n\nGradient zeigt bergauf ; der Schnitt zeigt die Steigung beim Lauf.
+story.10=Das <color=#fde047>bestimmte Integral</color> nichtnegativer Rate = <b>akkumulierte Menge</b> — Fläche unter der Kurve.\n\nBlaue Säulen = <b>Riemannsumme</b>: Δx, f(x*)·Δx, Grenz ∫f.\n\n<size=92%><color=#a8b2d1>Pfad folgt glattem Graph ; Schattierung approximiert.</color></size>
+story.11=<b>Riemann links:</b> Höhe <b>f(xᵢ)</b> — <color=#f87171>linker Rand</color>. Wenn f wächst: Summe <b>unterschätzt</b>.\n\n<size=92%><color=#a8b2d1>Flache Stufen — konservative Treppe.</color></size>
+story.12=<b>Riemann rechts:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>rechter Rand</color>. Wachsendes f ⇒ <b>Überschätzung</b>.\n\n<size=92%><color=#a8b2d1>Spiegelbild zur Linkssumme.</color></size>
+story.13=<b>Mittelpunkt:</b> Stützpunkt in der <color=#86efac>Mitte</color>. Symmetrisch ; oft genauer.\n\n<size=92%><color=#a8b2d1>Stufen mittig in jeder Scheibe.</color></size>
+story.14=<b>Gedämpfte Schwingung</b> — Feder, Kreise, Struktur. Envelope <color=#38bdf9>schwindet</color> exponential × sin.\n\n<size=92%><color=#a8b2d1>Ableitung wählt weiter sichere Säulen an den Buckeln.</color></size>
+story.15=Hängende Kette ⇒ <b>Ketenlinie</b>, oft <color=#fde047>cosh</color>. Nicht Wurfparabel — Hyperbolik in Statik.\n\n<size=92%><color=#a8b2d1>Bogen und Seile.</color></size>
+story.16=<b>|sin(x)|</b> — <color=#f0abfc>vollweggerichtete</color> Welle. Ecken bei Nullen ; Sprung der Ableitung.\n\n<size=92%><color=#a8b2d1>Brücke von Trig zu Leistungselektronik-Formen.</color></size>
+story.17=<b>BC — Arkus.</b> <color=#38bdf8>Arctan</color>, Ableitung 1/(1+x²). Asymptoten = Grenzwerte.\n\n<size=92%><color=#a8b2d1>Horizontale Asymptoten visualisieren ±∞.</color></size>
+story.18=<b>Logistisch:</b> dP/dt = kP(1−P/L). Fast exp, dann <color=#86efac>Sättigung</color> bei <b>L</b>.\n\n<size=92%><color=#a8b2d1>Wendepunkt = max. Wachstum.</color></size>
+story.19=<b>Polarkoord.</b> <color=#fde047>(r,θ)</color>. <b>Kardioide</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>Fläche ½∫r² dθ.</color></size>
+story.20=<b>Rosenkurve</b> r ~ cos(nθ). Symmetrie ⇒ Petalen.\n\n<size=92%><color=#a8b2d1>Pop markiert steiles r.</color></size>
+story.21=<b>sinh, cosh</b> — hyperbolische Identitäten, ODEs, Seile.\n\n<size=92%><color=#a8b2d1>sinh ungerade Partner von cosh.</color></size>
+story.22=<b>Physik C</b> — Q = Q₀ e^{−t/τ}. RC / RL Zeitkonstante.\n\n<size=92%><color=#a8b2d1>Ableitung zeigt Entleerung zu null.</color></size>
+story.23=<b>Rotation</b> <color=#7dd3fc>L = Iω</color>, τ = dL/dt.\n\n<size=92%><color=#a8b2d1>Kleine Schwingungen wie SHM — Energietausch.</color></size>
+story.24=<b>Projektil y(t)</b> — nach unten offene <color=#fde047>Parabel</color>. Maximum bei v=0.\n\n<size=92%><color=#a8b2d1>y,v,a Kette.</color></size>
+story.25=<b>Maclaurin cos</b> — gerade Potenzen wechseln Vorzeichen.\n\n<size=92%><color=#a8b2d1>Mehr Terme ⇒ besser bei 0.</color></size>
+story.26=<b>ln x</b> und ∫dx/x. Hier verschoben für x>0.\n\n<size=92%><color=#a8b2d1>Positive, schwindende Steigung.</color></size>
+story.27=<b>√x</b> singuläre Ableitung bei 0⁺.\n\n<size=92%><color=#a8b2d1>Gameplay glättet ; Analysis warnt am Rand.</color></size>
+story.28=<b>tan x</b> zwischen Asymptoten, sec²x.\n\n<size=92%><color=#a8b2d1>Trig-Algebra des BC.</color></size>
+story.29=<b>y′=ky</b> ⇒ Ce^{kx}.\n\n<size=92%><color=#a8b2d1>Rate proportional zum Bestand.</color></size>
+story.30=<b>Phase / SHM</b> sin(ωt+ϕ).\n\n<size=92%><color=#a8b2d1>Ableitung = cos bis auf Konstante.</color></size>
+story.31=<b>Kubik</b> — Extrema, <color=#fca5a5>Wendepunkte</color>.\n\n<size=92%><color=#a8b2d1>Typisches Hoch-Tal-Muster.</color></size>
+story.32=<b>b^x</b> ableitet mit ln b.\n\n<size=92%><color=#a8b2d1>Brücke aller Basen zur e-Basis.</color></size>
+story.33=<b>Kreis</b> — oberer Halbkreis als Graph. Implizit ableiten.\n\n<size=92%><color=#a8b2d1>Parametrisierung klassisch AP.</color></size>
+story.34=<b>Auftrieb C_L(α)</b> linear, dann <b>Strömungsabriss</b>.\n\n<size=92%><color=#a8b2d1>Didaktisches Profil.</color></size>
+story.35=<b>Widerstandspolar</b> C_D = C_D0 + K C_L².\n\n<size=92%><color=#a8b2d1>Minimum und Gleitverhältnis.</color></size>
+story.36=<b>Isothermes Modell</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1> Dynamikdruck skaliert mit ρ.</color></size>
+story.37=<b>Phugoid / kurze Periode</b> — gedämpfte Oszillation cartoon.\n\n<size=92%><color=#a8b2d1>Regelkreis in der Realität komplexer.</color></size>
+story.38=<b>Newton DRUCK ~ sin²α</b> Leeseite.\n\n<size=92%><color=#a8b2d1>Lehrmodell Hyperschall, kein CFD.</color></size>
+story.39=<b>Strouhal</b> f ~ St·U/D.\n\n<size=92%><color=#a8b2d1>Ergung & Schall.</color></size>
+story.40=<b>Wiedereintritt</b> — qualitative Entspannung der Heizkurve.\n\n<size=92%><color=#a8b2d1>Kein quantitatives Memo.</color></size>
+story.41=<b>Dotcom-Blase</b> — stilisierter Index (keine echten S&amp;P-Daten).\n\n<size=92%><color=#a8b2d1>Aufstieg, Luftloch, langsames Erholen — Lehr-Allegorie.</color></size>
+story.42=<b>Finanzkrise 2008</b> — Hypotheken-Stress, qualitativ (keine Tickdaten).\n\n<size=92%><color=#a8b2d1>Nur Kurvenform fürs Kalkül-Gefühl.</color></size>
+story.43=<b>Mandelbrot</b> — c-Ebene, Fluchtzeit, Schnitt bei festem Re(c).\n\n<size=92%><color=#a8b2d1>Julia-Grenze ; tiefer Zoom braucht andere Engine.</color></size>

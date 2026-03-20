@@ -1,57 +1,45 @@
-using TMPro;
-using UnityEngine;
-
 // -----------------------------------------------------------------------------
-// SceneCreditsFooter — same legal/credits lines as Menu.unity (keep in sync)
+// Menu footer copy — title + optional credits (localized separately).
 // -----------------------------------------------------------------------------
-// Level select + Game HUD build UI at runtime; this centralizes copy so all scenes agree.
+// <c>menu.version_line</c> + <c>menu.credits_line</c> in each <c>Localization/{code}.txt</c>.
 // -----------------------------------------------------------------------------
 
-/// <summary>Footer rich text shown on level select and in-game (matches <c>Menu</c> scene).</summary>
+/// <summary>Composes menu footer rich text for TextMesh Pro.</summary>
 public static class SceneCreditsFooter
 {
-    public const string ProprietaryLine = "© 2022-2026 · Proprietary · All rights reserved · First Principles";
+    /// <summary>Title + version line only (fallback if credits key empty).</summary>
+    public const string HomeFooterDefault =
+        "<b>First Principles</b> <color=#555555>(version 1.0)</color>";
 
-    public const string AttributionLine =
-        "<b><link=\"https://game-genesis.itch.io\"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link=\"https://github.com/rkaissi/\"><color=#8b9dc9>Rayan Kaissi</color></link>) × " +
-        "<b><link=\"https://orchaerospace.com\"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link=\"https://github.com/wonmor/\"><color=#8b9dc9>John Wonmo Seong</color></link>)";
+    public const string CreditsLineDefaultEn =
+        "<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>";
 
-    public const string SchoolPrideLine =
-        "Proud graduates of <b>Garth Webb Secondary School</b>, Oakville.";
+    public const string SupportContactDefault =
+        "<size=32><color=#94a3b8>Support:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>";
 
-    /// <summary>Encourages support — keep tone grateful, not pushy (store / tip jars / wishlists).</summary>
-    public const string SupportLine =
-        "Four years of development — if you value this work, please support the project. Thank you.";
-
-    public const string UnityLine = "Made with <b>Unity</b>. Unity is a trademark of Unity Technologies.";
-
-    /// <summary>Compact block for small bottom strips (rich text).</summary>
-    public static string BuildCompactRichText()
+    /// <summary>Centered block: version, credits, support email (<c>menu.support_contact</c>).</summary>
+    public static string BuildMenuFooterRichText()
     {
-        string p = LocalizationManager.Get("footer.proprietary", ProprietaryLine);
-        string a = LocalizationManager.Get("footer.attribution", AttributionLine);
-        string s = LocalizationManager.Get("footer.school", SchoolPrideLine);
-        string u = LocalizationManager.Get("footer.support", SupportLine);
-        string unity = LocalizationManager.Get("footer.unity", UnityLine);
-        return
-            "<align=center>" +
-            $"<size=90%><color=#aaaaaa>{p}</color></size>\n" +
-            $"<size=82%><color=#888899>{a}</color></size>\n" +
-            $"<size=74%><color=#7a8498><i>{s}</i></color></size>\n" +
-            $"<size=76%><color=#6f7d90><i>{u}</i></color></size>\n" +
-            $"<size=78%><color=#6a6f80>{unity}</color></size>" +
-            "</align>";
-    }
+        string ver = LocalizationManager.Get("menu.version_line", HomeFooterDefault);
+        string cred = LocalizationManager.Get("menu.credits_line", CreditsLineDefaultEn);
+        string sup = LocalizationManager.Get("menu.support_contact", SupportContactDefault);
 
-    public static void CopyFontIfPossible(TextMeshProUGUI target)
-    {
-        if (target == null)
-            return;
+        var sb = new System.Text.StringBuilder();
+        sb.Append("<align=center>");
+        sb.Append(ver);
+        if (!string.IsNullOrWhiteSpace(cred))
+        {
+            sb.Append("\n\n");
+            sb.Append(cred);
+        }
 
-        var any = Object.FindAnyObjectByType<TextMeshProUGUI>();
-        if (any != null && any != target && any.font != null)
-            target.font = any.font;
-        else if (TMP_Settings.defaultFontAsset != null)
-            target.font = TMP_Settings.defaultFontAsset;
+        if (!string.IsNullOrWhiteSpace(sup))
+        {
+            sb.Append("\n\n");
+            sb.Append(sup);
+        }
+
+        sb.Append("</align>");
+        return sb.ToString();
     }
 }

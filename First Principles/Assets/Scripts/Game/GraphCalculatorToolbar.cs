@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// Graphic calculator mode: <b>Trans</b> edits transformation parameters; <b>Scale</b> zooms the window in/out.
+/// Graphing calculator mode: <b>Trans</b> edits transformation parameters; <b>Scale</b> zooms the window in/out.
 /// Trans: short tap cycles A → k → C → D; double-tap nudges +; hold (~½s) nudges −.
 /// Scale: short tap zoom in; hold zoom out. Pair with <see cref="GraphPinchZoom"/> for pinch.
 /// </summary>
@@ -135,32 +135,57 @@ public class GraphCalculatorToolbar : MonoBehaviour
         if (hint == null || plot == null)
             return;
 
-        string[] names =
-        {
-            LocalizationManager.Get("graph.param_a", "A (vertical scale)"),
-            LocalizationManager.Get("graph.param_k", "k (horizontal scale)"),
-            LocalizationManager.Get("graph.param_c", "C (vertical shift)"),
-            LocalizationManager.Get("graph.param_d", "D (horizontal shift)")
-        };
-        string line1 = LocalizationManager.Get("graph.line1", "<b>Graphic calculator mode</b>");
-        string line2 = LocalizationManager.Get("graph.line2",
-            "<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>");
+        bool polar = FunctionPlotter.IsPolarPlotStyle(plot.functionType);
+        string[] names = polar
+            ? new[]
+            {
+                LocalizationManager.Get("graph.polar.param_a", "A (r scale)"),
+                LocalizationManager.Get("graph.polar.param_k", "k (θ scale)"),
+                LocalizationManager.Get("graph.polar.param_c", "C (r shift)"),
+                LocalizationManager.Get("graph.polar.param_d", "D (θ phase / axis shift)")
+            }
+            : new[]
+            {
+                LocalizationManager.Get("graph.param_a", "A (vertical scale)"),
+                LocalizationManager.Get("graph.param_k", "k (horizontal scale)"),
+                LocalizationManager.Get("graph.param_c", "C (vertical shift)"),
+                LocalizationManager.Get("graph.param_d", "D (horizontal shift)")
+            };
+        // Title lives in the top story banner (graph.calculator_intro); keep this hint to controls + params only.
+        string line2 = polar
+            ? LocalizationManager.Get("graph.polar.line2",
+                "<size=88%><color=#c4d0e8>Polar plot: horizontal axis is <b>θ</b>, vertical is <b>r(θ)</b>. <b>Trans</b> adjusts A, k, C, D in the polar equation.</color></size>")
+            : LocalizationManager.Get("graph.line2",
+                "<size=88%><color=#c4d0e8>Type <b>f(u)</b> below (variable <b>x</b> in the box = inner u). Then:</color></size>");
         string line3Fmt = LocalizationManager.Get("graph.line3",
-            "<size=92%><b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> zoom in / hold zoom out · two-finger <b>pinch</b></size>");
+            "<size=96%><b>Deriv</b> adds f′ once (numeric) · <b>∫ area</b> Riemann strips once + primitive guess · <b>Trans</b> → {0} · double-tap <b>+</b> · hold <b>−</b> · <b>Scale</b> / <b>pinch</b></size>");
         string line3 = string.Format(line3Fmt, names[paramIndex]);
-        string line4Fmt = LocalizationManager.Get("graph.line4",
-            "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>");
-        string line4 = string.Format(line4Fmt,
-            plot.transA.ToString("0.##"),
-            plot.transK.ToString("0.##"),
-            plot.transC.ToString("0.##"),
-            plot.transD.ToString("0.##"),
-            plot.xStart.ToString("0.##"),
-            plot.xEnd.ToString("0.##"));
+        float th0 = plot.transK * (plot.xStart - plot.transD);
+        float th1 = plot.transK * (plot.xEnd - plot.transD);
+        string line4Fmt = polar
+            ? LocalizationManager.Get("graph.polar.line4",
+                "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;θ∈[{4},{5}]</color></size>")
+            : LocalizationManager.Get("graph.line4",
+                "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>");
+        string line4 = polar
+            ? string.Format(line4Fmt,
+                plot.transA.ToString("0.##"),
+                plot.transK.ToString("0.##"),
+                plot.transC.ToString("0.##"),
+                plot.transD.ToString("0.##"),
+                Mathf.Min(th0, th1).ToString("0.##"),
+                Mathf.Max(th0, th1).ToString("0.##"))
+            : string.Format(line4Fmt,
+                plot.transA.ToString("0.##"),
+                plot.transK.ToString("0.##"),
+                plot.transC.ToString("0.##"),
+                plot.transD.ToString("0.##"),
+                plot.xStart.ToString("0.##"),
+                plot.xEnd.ToString("0.##"));
 
         hint.richText = true;
         hint.alignment = TextAlignmentOptions.Center;
-        hint.text = line1 + "\n" + line2 + "\n" + line3 + "\n" + line4;
+        hint.text = line2 + "\n" + line3 + "\n" + line4;
         LocalizationManager.ApplyTextDirection(hint);
     }
 }

@@ -1,8 +1,8 @@
 # Deutsch
-ui.choose_stage=Graph-Phase wählen
+ui.choose_stage=Level wählen
 ui.math_tips=Mathe-Tipps & Kurzinfos
 ui.back_menu=Zum Menü
-ui.graphic_calculator_mode=Grafikrechner-Modus
+ui.graphing_calculator_mode=Grafikrechner
 ui.loading=Laden…
 ui.language=Sprache
 ui.tap_change_language=Tippen zum Wechseln
@@ -28,11 +28,9 @@ graph.param_k=k (horizontaler Maßstab)
 graph.param_c=C (vertikale Verschiebung)
 graph.param_d=D (horizontale Verschiebung)
 graph.calculator_intro=<b>Grafikrechner-Modus</b>\n<size=88%>Geben Sie fast beliebiges <b>f(u)</b> ein (Variable <b>x</b> in Ihrer Formel); <b>Trans</b> stellt A, k, C, D ein; <b>Maßstab</b> und <b>Pinch</b> zoomen das Fenster.</size>
-footer.proprietary=© 2022-2026 · Proprietär · Alle Rechte vorbehalten · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=Stolze Absolventen der <b>Garth Webb Secondary School</b>, Oakville.
-footer.support=Vier Jahre Entwicklung — wenn Ihnen diese Arbeit etwas bedeutet, unterstützen Sie das Projekt. Danke.
-footer.unity=Erstellt mit <b>Unity</b>. Unity ist eine Marke der Unity Technologies.
+menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
+menu.support_contact=<size=32><color=#94a3b8>Support:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
 level.0=Einstieg: Erste Prinzipien
 level.1=Steigung der Parabel
 level.2=Sinuswellen
@@ -68,11 +66,19 @@ level.31=BC: Kubik & Wendepunkt (Skizze)
 level.32=BC: b^x & d/dx b^x
 level.33=Kreis: (x−h)² + (y−k)² = R²
 level.34=Luftfahrt: Auftrieb C_L(α) linear + Strömungsabriss
-level.35=Luftfahrt: parabolische Widerstandspolare C_D(C_L)
+level.35=Luftfahrt: Widerstandspolare (profil-, induziert, gesamt)
 level.36=Luftfahrt: isotherme Atmosphäre ρ(h)
 level.37=Luftfahrt: Phugoid / gedämpfte Nick-Hubbewegung
 level.38=Luftfahrt: newtonsch Cp ~ sin²α
 level.39=Luftfahrt: Strouhal / Wirbelabwurf-Ton
 level.40=Luftfahrt: Wiedereintritts-Hülle (ρV Erwärmung)
-level.41=Wettkampf: ln, Krümmung & Schranken
-level.42=BOSS: Mandelbrot-Escapeschnitt (Fraktal)
+level.41=Wirtschaft: Dotcom-Blase & Crash (stilisierter Index)
+level.42=Wirtschaft: Krise 2008 & Erholung (stilisierter Index)
+level.43=BOSS: Mandelbrot-Escapeschnitt (Fraktal)
+level.44=Physik C: Thermodynamik (adiabater P–V-Verlauf, γ aus N)
+level.45=BOSS: Goldener-Spiralen-Logarithmus (Polar)
+level.46=Transformationen: Fourier — sinc-Spektrum
+level.47=Transformationen: Laplace — exponentieller Abfall
+level.48=BOSS: Mandelbrot — Finale (Fraktal-Escape-Schnitt)
+level.49=BOSS: Lorenz-Attraktor — Finale (seltsamer Attraktor)
+level.50=Physik C: Feder–Masse SHM (Hooke, ungedämpft)

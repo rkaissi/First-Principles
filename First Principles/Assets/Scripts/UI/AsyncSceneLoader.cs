@@ -10,18 +10,20 @@ public static class AsyncSceneLoader
         if (string.IsNullOrEmpty(sceneName))
             yield break;
 
-        var op = SceneManager.LoadSceneAsync(sceneName);
+        var op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         if (op == null)
         {
-            Debug.LogError($"AsyncSceneLoader: LoadSceneAsync failed for '{sceneName}'.");
+            Debug.LogError($"AsyncSceneLoader: LoadSceneAsync failed for '{sceneName}'. Is it in Build Settings?");
             yield break;
         }
 
-        op.allowSceneActivation = false;
-        while (op.progress < 0.9f)
-            yield return null;
-
+        // Explicit: some Editor/player paths leave activation false if touched elsewhere.
         op.allowSceneActivation = true;
+
+        // Do not use allowSceneActivation = false + 0.9 progress gate: on some Unity versions / loads
+        // progress may never reach 0.9, leaving an indefinite "loading" screen (e.g. Level select → Menu).
+        yield return null;
+
         while (!op.isDone)
             yield return null;
     }

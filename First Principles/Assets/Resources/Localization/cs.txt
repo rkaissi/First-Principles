@@ -1,0 +1,104 @@
+# Czech (cs) — First Principles UI strings
+
+ui.choose_stage=Vyberte úroveň
+ui.level_select.back_categories=Všechny kategorie
+level_select.cat.core=Základy a řady
+level_select.cat.integration=Mult proměnné a integrály
+level_select.cat.engineering=Inženýrství
+level_select.cat.ap_bc=AP Calculus BC a fyzika C
+level_select.cat.aerospace=Letectví a kosmonautika
+level_select.cat.finale=Pokročilé a boss
+level_select.cat.transforms=Transformace
+level_select.cat.final_boss=Finální boss
+level_select.cat.spring_physics=Pružina a SHM
+ui.math_tips=Tipy k matematice
+ui.back_menu=Zpět do menu
+ui.graphing_calculator_mode=Grafická kalkulačka
+ui.loading=Načítání…
+ui.language=Jazyk
+ui.tap_change_language=Klepněte pro změnu
+ui.stage_intro_hint=Klepněte kamkoli pro pokračování
+ui.close=Zavřít
+ui.math_concepts=Matematické pojmy
+ui.jump=Skok
+ui.move=Pohyb
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(klávesnice: šipky / Mezerník)</color></size>
+hud.stage=FÁZE
+controls.mobile=<color=#7a8399>Pohyb</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>klepnutí</color></b>  <size=90%><color=#5c6577>(klávesnice: šipky / Mezerník)</color></size>
+controls.desktop=<color=#7a8399>Pohyb</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>Mezerník</color></b>
+controls.calculator=<color=#7a8399>Grafická kalkulačka</color>  <b>Zadejte f(u)</b>  ·  <b>Trans</b>  ·  <b>Měřítko</b>  ·  <b>Špetka</b>  ·  <b>Zpět</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) pro x>0 · min(x,3)...
+graph.status_enter=Enter / klepněte mimo pro graf
+graph.status_graphed=<color=#8fd9b3>Vykresleno</color>
+graph.line1=<b>Režim grafické kalkulačky</b>
+graph.line2=<size=88%><color=#c4d0e8>Napište <b>f(u)</b> níže (proměnná <b>x</b> v poli = vnitřní u). Pak:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · dvojité klepnutí <b>+</b> · podržte <b>−</b> · <b>Měřítko</b> přiblížení / podržte oddálení · <b>špetka</b> dvěma prsty</size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x v [{4},{5}]</color></size>
+graph.param_a=A (svislé měřítko)
+graph.param_k=k (vodorovné měřítko)
+graph.param_c=C (svislý posun)
+graph.param_d=D (vodorovný posun)
+graph.calculator_intro=<b>Režim grafické kalkulačky</b>\n<size=88%>Zadejte téměř libovolné <b>f(u)</b> (proměnná <b>x</b> ve vzorci); <b>Trans</b> upravuje A, k, C, D; <b>Měřítko</b> a <b>špetka</b> mění okno.</size>
+aerospace.story_drag_polar_preamble=<b><color=#c4b5fd>Připomínka poláru odporu</color></b> (každá úroveň <b>Aerospace</b>)\n<size=92%><b>Parazitní odpor (nulová vztlak)</b> — tření povrchu, tvarový odpor a interference shrnuté jako <b>C<sub>D0</sub></b> v parabolickém modelu (zhruba <i>ne</i> ta část, která roste se vztlakem).\n<b>Indukovaný odpor</b> — cena vztlaku: vírové stopy přidávají ~ <b>K C<sub>L</sub>²</b> (vyšší C<sub>L</sub> / ostřejší zatáčky → víc indukovaného).\n<b>Celková polára</b> — <b>C<sub>D</sub> = C<sub>D0</sub> + K C<sub>L</sub>²</b>: parabola nahoru v C<sub>L</sub>; <b>C<sub>L</sub></b> s minimálním odporem leží mezi „moc pomalu / vysoké α“ a „moc rychle / nízké α“.</size>
+menu.tutorial_button=Jak hrát
+menu.tutorial_title=Jak hrát
+menu.tutorial_body=<b>Cíl</b>\nPohybujte se po grafu, používejte plošiny (zelené), vyhněte se červeným nástrahám a dostaňte se ke světlému východu vpravo.\n\n<b>Ovládání</b>\n• <b>Pohyb</b> — šipky / WASD nebo tlačítka na obrazovce.\n• <b>Skok</b> — Mezerník (nebo skok na mobilu). Skákáte z pevných plošin.\n\n<b>Dvě křivky</b>\n• <color=#c4b5fd>Hlavní křivka</color> — funkce, po níž chodíte.\n• <color=#fdba74>Derivace f′</color> — informace o sklonu; druhá čára.\n\n<b>Skok ve vzduchu na derivaci</b>\nKdyž jste <b>ve vzduchu</b> a postava se překrývá s <b>křivkou derivace</b>, stiskněte znovu <b>Skok</b> pro extra odraz.\n\n<size=94%><color=#a8b2d1>Čára derivace se při doteku rozsvítí. Máte <b>jeden</b> bonusový skok při každém lehkém doteku, dokud křivku neopustíte nebo nepřistanete. Na telefonu můžete cítit krátkou vibraci při doteku f′; na PC zní zvuk, pokud vibrace není k dispozici.</color></size>\n\n<b>Výběr úrovně</b>\n<size=94%>Úrovně jsou ve skupinách (Základy, Inženýrství, AP Calculus, Aerospace …). Klepněte na <b>Jak hrát</b> pro nápovědu. Vyberte skupinu a pak úroveň.</size>
+menu.player_icon_title=Ikona hráče
+menu.player_icon_set=Nastavit ikonu hráče
+menu.player_icon_hint=Klepněte na symbol — je to váš avatar v úrovních.
+menu.player_icon_done=Hotovo
+menu.version_line=<b>First Principles</b> <color=#555555>(verze 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
+menu.support_contact=<size=32><color=#94a3b8>Podpora:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
+level.0=First Principles — úvod
+level.1=Sklon paraboly
+level.2=Vlny sinu
+level.3=Stíny kosinu
+level.4=Dráha s absolutní hodnotou
+level.5=Maclaurin: e^x
+level.6=Maclaurin: sin(x)
+level.7=Řada: geometrický zbytek
+level.8=Řez sedlem (multivar)
+level.9=Řez paraboloidem (multivar)
+level.10=Plocha pod křivkou
+level.11=Riemann: levé konce
+level.12=Riemann: pravé konce
+level.13=Riemann: střed intervalu
+level.14=Inženýrství: tlumené kmitání
+level.15=Inženýrství: řetězovka (cosh)
+level.16=Inženýrství: usměrněné AC (|sin|)
+level.17=BC: arctan a obrácené goniometrické
+level.18=BC: logistický růst (dP/dt = kP(1−P/L))
+level.19=Polární: kardioida r ~ 1+cos θ
+level.20=Polární: růže r ~ cos(nθ)
+level.21=BC: sinh x a hyperbolické funkce
+level.22=Fyzika C: exponenciální útlum (τ, RC)
+level.23=Fyzika C: moment hybnosti a L = Iω
+level.24=Fyzika C: výška projektilu y(t)
+level.25=BC: Maclaurin cos(x)
+level.26=BC: ln x a ∫ dx/x
+level.27=BC: √x a definiční obor / špička
+level.28=BC: tan x mezi asymptotami
+level.29=BC: e^{kx} a y′ = ky
+level.30=BC: fáze a SHM (výměna energie)
+level.31=BC: kubická a inflexe (náčrt)
+level.32=BC: b^x a d/dx b^x
+level.33=Kružnice: (x−h)² + (y−k)² = R²
+level.34=Aerospace: vztlak C_L(α) lineární + vývrt
+level.35=Aerospace: polára odporu (parazitní, indukovaná, celková)
+level.36=Aerospace: isotermická atmosféra ρ(h)
+level.37=Aerospace: fugoid / tlumený režim výška–klopení
+level.38=Aerospace: Newtonovské Cp ~ sin²α
+level.39=Aerospace: Strouhal / tón von Kármána
+level.40=Aerospace: obal útlumu při vstupu (ρV teplo)
+level.41=Ekonomika: bublina dot-com a pád (stylizovaný index)
+level.42=Ekonomika: krize 2008 a oživení (stylizovaný index)
+level.43=BOSS: řez úniku Mandelbrota (fraktálová nálada)
+level.44=Fyzika C: termodynamika (adiabatické P–V, γ z N)
+level.45=BOSS: zlatá spirála (logaritmická polární)
+level.46=Transformace: Fourier — sinc (spektrum)
+level.47=Transformace: Laplace — exponenciální pokles
+level.48=BOSS: Mandelbrot — finále (fraktálový únikový řez)
+level.49=BOSS: Lorenzův motýl — finále (podivný atraktor)
+level.50=Fyzika C: pružina–hmota SHM (Hookeův zákon, bez tlumení)

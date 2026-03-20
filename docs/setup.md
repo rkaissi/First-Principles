@@ -40,20 +40,22 @@ In **Unity Hub** → **Add** → choose:
 
 You should see `Assets`, `Packages`, and `ProjectSettings` at the root of the added project.
 
-## Typography (Outfit)
+## Typography (Quicksand + multilingual fallbacks)
 
-UI copy uses the **Outfit** font (Google Fonts, SIL OFL 1.1 — `Assets/Fonts/Outfit-OFL.txt`) through **TextMesh Pro**.
+UI copy uses **Quicksand** (Google Fonts, SIL OFL 1.1 — `Assets/Fonts/LICENSE-Quicksand-OFL.txt`) as the primary TextMesh Pro face. **Arabic, Hindi, Urdu, Bengali, and CJK** still render through **Noto** + **Nanum Gothic** (나눔고딕) at runtime (`TmpGlobalFallbackBootstrap` loads TTFs from `Assets/Resources/Fonts/`).
 
-1. Open the project in the Unity **Editor** (other Unity instances must **not** have the same project open).
-2. Menu: **First Principles → Fonts → Apply Outfit for all TextMesh Pro**.
+1. Open the project in the Unity **Editor** (close any other Unity instance using the same project).
+2. Menu: **First Principles → Fonts → Apply Quicksand for all TextMesh Pro (recommended UI)**.
 
-This generates `Assets/Fonts/Outfit SDF.asset` if needed, sets it as **TMP Settings → Default Font Asset**, adds **Liberation Sans** as a fallback for rare glyphs, and assigns Outfit on all **TextMeshPro** / **TextMeshProUGUI** under `Assets/Scenes` and `Assets` prefabs.
+This generates `Assets/Fonts/Quicksand SDF.asset` if needed, sets it as **TMP Settings → Default Font Asset**, keeps **Liberation Sans** as a fallback slot, and assigns Quicksand on all **TextMeshPro** / **TextMeshProUGUI** under `Assets/Scenes` and `Assets` prefabs.
 
-CLI (optional, project closed in the Editor):
+CLI (optional, project **closed** in the Editor):
 
 ```bash
-Unity -batchmode -quit -projectPath "/path/to/First Principles" -executeMethod OutfitFontProjectSetup.GenerateAndApplyAllBatch
+"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -quit -projectPath "/path/to/First Principles" -executeMethod QuicksandFontProjectSetup.GenerateAndApplyAllBatch
 ```
+
+Alternate looks: **Apply Inter for all TextMesh Pro** (`InterFontProjectSetup.GenerateAndApplyAllBatch`), or **Apply Outfit** (`OutfitFontProjectSetup.GenerateAndApplyAllBatch`).
 
 **Common mistake:** adding only `First-Principles` (parent) will not load the Unity project correctly.
 

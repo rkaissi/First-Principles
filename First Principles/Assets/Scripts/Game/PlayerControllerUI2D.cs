@@ -21,9 +21,26 @@ public class PlayerControllerUI2D : MonoBehaviour
     [SerializeField] private float gravityGridPerSec2 = 20f;
     [SerializeField] private float jumpVelocityGridPerSec = 9f;
 
+    [Header("f′ line — air jump")]
+    [Tooltip("Grid-space proximity to f′ (player center vs polyline). Wider = easier to register a 'hit'.")]
+    [SerializeField] private float derivativeTouchRadiusGrid = 0.58f;
+    [Tooltip("Upward impulse when you press jump while airborne and overlapping f′ (once per approach until you leave the band).")]
+    [SerializeField] private float doubleJumpVelocityMultiplier = 0.9f;
+    [SerializeField] private float derivativeHighlightLerpSpeed = 7f;
+    [Tooltip("First frame the avatar enters the f′ band (not every frame while sliding). On mobile, vibration replaces sound.")]
+    [SerializeField] private bool derivativeHitHaptic = true;
+    [Tooltip("Short click when haptic is unavailable (PC / editor / haptic off). Ignored on mobile when haptic is on.")]
+    [SerializeField] private bool derivativeHitSound = true;
+    [SerializeField] private AudioClip derivativeLineHitClip;
+    [SerializeField] [Range(0f, 1f)] private float derivativeLineHitVolume = 0.65f;
+    [Tooltip("Brief cool tint on the graph backdrop (Game scene → Grid Background) when you graze f′ — mobile & desktop.")]
+    [SerializeField] private bool derivativeHitBackgroundTint = true;
+    [SerializeField] private float derivativeHitBackgroundTintSeconds = 0.32f;
+    [SerializeField] private Color derivativeHitBackgroundTintDelta = new Color(0.048f, 0.06f, 0.1f, 0f);
+
     [Header("Player Size (Grid Units)")]
-    [SerializeField] private float playerWidthGrid = 0.6f;
-    [SerializeField] private float playerHeightGrid = 0.9f;
+    [SerializeField] private float playerWidthGrid = 0.78f;
+    [SerializeField] private float playerHeightGrid = 1.12f;
 
     private RectTransform playerRect;
     private Image playerImage;
@@ -43,7 +60,48 @@ public class PlayerControllerUI2D : MonoBehaviour
     private Action deathCallback;
     private Action finishCallback;
 
+    /// <summary>When true (e.g. stage intro overlay), physics/input integration is skipped so the avatar stays frozen.</summary>
+    private bool inputLocked;
+
+    private DerivRendererUI derivativeLineRenderer;
+    private bool wasTouchingDerivativeLine;
+    /// <summary>True after last call to <see cref="UpdateDerivativeTouchAndHighlight"/> this frame.</summary>
+    private bool touchingDerivativeNow;
+    /// <summary>After using f′ air jump, stay true until you leave the band or land (prevents spam while sliding on the line).</summary>
+    private bool derivativeAirJumpConsumedThisBand;
+    /// <summary>Fresh level entry: first grounded jump uses <see cref="jumpVelocityGridPerSec"/>×1.5 once.</summary>
+    private bool strongFirstGroundJumpPending;
+    private float derivativeHighlightSmoothed;
+    private AudioSource derivativeHitAudio;
+
+    private Image gridBackgroundImage;
+    private Color gridBackgroundRestColor;
+    private float derivativeBgTintPhase;
+
+    const string GridBackgroundObjectName = "Grid Background";
+
     public Vector2 PlayerCenterGrid => posGrid;
+
+    /// <summary>Root <see cref="RectTransform"/> for the avatar (grid-anchored). For screen-space UI positioning.</summary>
+    public RectTransform PlayerVisualRect => playerRect;
+
+    public void BindDerivativeRenderer(DerivRendererUI derivativeRenderer)
+    {
+        derivativeLineRenderer = derivativeRenderer;
+        derivativeHighlightSmoothed = 0f;
+        wasTouchingDerivativeLine = false;
+        touchingDerivativeNow = false;
+        derivativeAirJumpConsumedThisBand = false;
+        if (derivativeLineRenderer != null)
+            derivativeLineRenderer.playerProximityHighlight = 0f;
+    }
+
+    public void SetInputLocked(bool locked)
+    {
+        inputLocked = locked;
+        if (locked)
+            velGrid = Vector2.zero;
+    }
 
     public void BindVisual(RectTransform rect, Image img)
     {
@@ -72,7 +130,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         this.world = world;
     }
 
-    public void ResetToSpawn(GraphWorld world)
+    public void ResetToSpawn(GraphWorld world, bool grantStrongFirstGroundJump = false)
     {
         if (world == null)
             return;
@@ -81,12 +139,25 @@ public class PlayerControllerUI2D : MonoBehaviour
         isDead = false;
         isFinished = false;
         grounded = false;
+        strongFirstGroundJumpPending = grantStrongFirstGroundJump;
 
-        float halfW = playerWidthGrid / 2f;
         float halfH = playerHeightGrid / 2f;
 
         posGrid = new Vector2(world.spawnXGrid, world.spawnYTopGrid + halfH + 0.01f);
         velGrid = Vector2.zero;
+
+        wasTouchingDerivativeLine = false;
+        touchingDerivativeNow = false;
+        derivativeAirJumpConsumedThisBand = false;
+        derivativeHighlightSmoothed = 0f;
+        if (derivativeLineRenderer != null)
+        {
+            derivativeLineRenderer.playerProximityHighlight = 0f;
+            derivativeLineRenderer.RefreshHighlightGeometry();
+        }
+
+        derivativeBgTintPhase = 0f;
+        RefreshGridBackgroundCacheAndRestoreColor();
 
         ApplyVisualPosition();
     }
@@ -110,6 +181,9 @@ public class PlayerControllerUI2D : MonoBehaviour
         if (isDead || isFinished)
             return;
 
+        if (inputLocked)
+            return;
+
         float dt = Time.deltaTime;
 
         // Movement: keyboard (arrows / WASD), gamepad stick, then on-screen touch bridge.
@@ -119,14 +193,33 @@ public class PlayerControllerUI2D : MonoBehaviour
 
         velGrid.x = inputX * moveSpeedGridPerSec;
 
+        if (grounded)
+            derivativeAirJumpConsumedThisBand = false;
+
+        UpdateDerivativeTouchAndHighlight(dt);
+
         bool jumpPressed = ReadJumpPressed();
         if (!jumpPressed)
             jumpPressed = MobileInputBridge.ConsumeJump();
 
-        if (grounded && jumpPressed)
+        if (jumpPressed)
         {
-            velGrid.y = jumpVelocityGridPerSec;
-            grounded = false;
+            if (grounded)
+            {
+                float jv = jumpVelocityGridPerSec;
+                if (strongFirstGroundJumpPending)
+                {
+                    jv *= 1.5f;
+                    strongFirstGroundJumpPending = false;
+                }
+                velGrid.y = jv;
+                grounded = false;
+            }
+            else if (CanUseDerivativeAirJump())
+            {
+                velGrid.y = jumpVelocityGridPerSec * doubleJumpVelocityMultiplier;
+                derivativeAirJumpConsumedThisBand = true;
+            }
         }
 
         // Gravity.
@@ -162,7 +255,173 @@ public class PlayerControllerUI2D : MonoBehaviour
         }
 
         posGrid = nextPos;
+
+        ClampHorizontalToPlayBounds();
+
+        TickDerivativeBackgroundTint(dt);
+
         ApplyVisualPosition();
+    }
+
+    /// <summary>Hard horizontal limits so the avatar stays over the padded playfield (screen/safe + touch bar).</summary>
+    private void ClampHorizontalToPlayBounds()
+    {
+        if (world == null || !world.hasPlayBounds)
+            return;
+
+        float halfW = playerWidthGrid * 0.5f;
+        posGrid.x = Mathf.Clamp(posGrid.x, world.playBounds.XMin + halfW, world.playBounds.XMax - halfW);
+    }
+
+    /// <summary>Air jump only while overlapping f′ and not already used until you leave the band.</summary>
+    private bool CanUseDerivativeAirJump()
+    {
+        return touchingDerivativeNow && !derivativeAirJumpConsumedThisBand;
+    }
+
+    /// <summary>
+    /// f′ proximity: highlight, hit feedback, and <see cref="touchingDerivativeNow"/> for air jump.
+    /// </summary>
+    private void UpdateDerivativeTouchAndHighlight(float dt)
+    {
+        bool touching = false;
+        if (derivativeLineRenderer != null)
+        {
+            var pts = derivativeLineRenderer.points;
+            if (pts != null && pts.Count >= 2 && derivativeTouchRadiusGrid > 0.01f)
+                touching = MinDistanceToPolylineSq(posGrid, pts) <= derivativeTouchRadiusGrid * derivativeTouchRadiusGrid;
+        }
+
+        // Leave f′ → can earn another air jump on the next approach while aloft.
+        if (!touching)
+            derivativeAirJumpConsumedThisBand = false;
+
+        if (touching && !wasTouchingDerivativeLine)
+        {
+            PlayDerivativeLineHitFeedback();
+            PulseDerivativeBackgroundTint();
+        }
+
+        wasTouchingDerivativeLine = touching;
+        touchingDerivativeNow = touching;
+
+        if (derivativeLineRenderer != null)
+        {
+            float targetHl = touching ? 1f : 0f;
+            derivativeHighlightSmoothed = Mathf.MoveTowards(
+                derivativeHighlightSmoothed,
+                targetHl,
+                derivativeHighlightLerpSpeed * dt);
+            derivativeLineRenderer.playerProximityHighlight = derivativeHighlightSmoothed;
+            derivativeLineRenderer.RefreshHighlightGeometry();
+        }
+    }
+
+    /// <summary>One-shot when the circle first crosses into the f′ proximity band.</summary>
+    private void PlayDerivativeLineHitFeedback()
+    {
+        bool usedHaptic = derivativeHitHaptic && Application.isMobilePlatform;
+        if (usedHaptic)
+            Handheld.Vibrate();
+
+        // Sound only where vibration isn’t used (no haptic on this platform/path).
+        if (usedHaptic)
+            return;
+
+        if (!derivativeHitSound || derivativeLineHitClip == null)
+            return;
+
+        if (derivativeHitAudio == null)
+        {
+            derivativeHitAudio       = GetComponent<AudioSource>();
+            if (derivativeHitAudio == null)
+                derivativeHitAudio = gameObject.AddComponent<AudioSource>();
+            derivativeHitAudio.playOnAwake = false;
+            derivativeHitAudio.spatialBlend = 0f;
+            derivativeHitAudio.loop = false;
+        }
+
+        derivativeHitAudio.PlayOneShot(derivativeLineHitClip, derivativeLineHitVolume);
+    }
+
+    private void EnsureGridBackgroundImage()
+    {
+        if (gridBackgroundImage != null)
+            return;
+        var go = GameObject.Find(GridBackgroundObjectName);
+        if (go == null)
+            return;
+        gridBackgroundImage = go.GetComponent<Image>();
+        if (gridBackgroundImage != null)
+            gridBackgroundRestColor = gridBackgroundImage.color;
+    }
+
+    private void RefreshGridBackgroundCacheAndRestoreColor()
+    {
+        if (gridBackgroundImage == null)
+            EnsureGridBackgroundImage();
+        if (gridBackgroundImage == null)
+            return;
+        gridBackgroundRestColor = gridBackgroundImage.color;
+        gridBackgroundImage.color = gridBackgroundRestColor;
+    }
+
+    private void PulseDerivativeBackgroundTint()
+    {
+        if (!derivativeHitBackgroundTint || derivativeHitBackgroundTintSeconds < 1e-4f)
+            return;
+        EnsureGridBackgroundImage();
+        if (gridBackgroundImage == null)
+            return;
+        if (derivativeBgTintPhase <= 0.01f)
+            gridBackgroundRestColor = gridBackgroundImage.color;
+        derivativeBgTintPhase = 1f;
+    }
+
+    private void TickDerivativeBackgroundTint(float dt)
+    {
+        if (!derivativeHitBackgroundTint || gridBackgroundImage == null)
+            return;
+        if (derivativeBgTintPhase <= 0f)
+            return;
+
+        float dur = Mathf.Max(0.04f, derivativeHitBackgroundTintSeconds);
+        derivativeBgTintPhase = Mathf.Max(0f, derivativeBgTintPhase - dt / dur);
+        Color peak = gridBackgroundRestColor + derivativeHitBackgroundTintDelta;
+        peak.r = Mathf.Clamp01(peak.r);
+        peak.g = Mathf.Clamp01(peak.g);
+        peak.b = Mathf.Clamp01(peak.b);
+        peak.a = gridBackgroundRestColor.a;
+        Color c = Color.Lerp(gridBackgroundRestColor, peak, derivativeBgTintPhase);
+        c.a = gridBackgroundRestColor.a;
+        gridBackgroundImage.color = c;
+
+        if (derivativeBgTintPhase <= 0f)
+            gridBackgroundImage.color = gridBackgroundRestColor;
+    }
+
+    private static float MinDistanceToPolylineSq(Vector2 p, List<Vector2> pts)
+    {
+        float best = float.PositiveInfinity;
+        for (int i = 0; i < pts.Count - 1; i++)
+        {
+            float d = PointToSegmentDistanceSq(p, pts[i], pts[i + 1]);
+            if (d < best)
+                best = d;
+        }
+
+        return best;
+    }
+
+    private static float PointToSegmentDistanceSq(Vector2 p, Vector2 a, Vector2 b)
+    {
+        Vector2 ab = b - a;
+        float den = ab.sqrMagnitude;
+        if (den < 1e-10f)
+            return (p - a).sqrMagnitude;
+        float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / den);
+        Vector2 proj = a + t * ab;
+        return (p - proj).sqrMagnitude;
     }
 
     private static float ReadHorizontalInput()

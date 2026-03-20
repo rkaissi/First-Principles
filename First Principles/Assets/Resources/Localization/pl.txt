@@ -1,0 +1,104 @@
+# Polish (pl) — First Principles UI strings
+
+ui.choose_stage=Wybierz poziom
+ui.level_select.back_categories=Wszystkie kategorie
+level_select.cat.core=Podstawy i szeregi
+level_select.cat.integration=Zmienne wielowymiarowe i całki
+level_select.cat.engineering=Inżynieria
+level_select.cat.ap_bc=AP Calculus BC i Fizyka C
+level_select.cat.aerospace=Lotnictwo i kosmonautyka
+level_select.cat.finale=Zaawansowane i boss
+level_select.cat.transforms=Transformaty
+level_select.cat.final_boss=Finałowy boss
+level_select.cat.spring_physics=Sprężyna i SHM
+ui.math_tips=Wskazówki matematyczne
+ui.back_menu=Powrót do menu
+ui.graphing_calculator_mode=Kalkulator graficzny
+ui.loading=Wczytywanie…
+ui.language=Język
+ui.tap_change_language=Dotknij, aby zmienić
+ui.stage_intro_hint=Dotknij w dowolnym miejscu, aby kontynuować
+ui.close=Zamknij
+ui.math_concepts=Pojęcia matematyczne
+ui.jump=Skok
+ui.move=Ruch
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(klawiatura: strzałki / Spacja)</color></size>
+hud.stage=ETAP
+controls.mobile=<color=#7a8399>Ruch</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>dotknij</color></b>  <size=90%><color=#5c6577>(klawiatura: strzałki / Spacja)</color></size>
+controls.desktop=<color=#7a8399>Ruch</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>Spacja</color></b>
+controls.calculator=<color=#7a8399>Kalkulator graficzny</color>  <b>Wpisz f(u)</b>  ·  <b>Trans</b>  ·  <b>Skala</b>  ·  <b>Szczyp</b>  ·  <b>Wstecz</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) dla x>0 · min(x,3)...
+graph.status_enter=Enter / dotknij poza pole, aby narysować
+graph.status_graphed=<color=#8fd9b3>Narysowano</color>
+graph.line1=<b>Tryb kalkulatora graficznego</b>
+graph.line2=<size=88%><color=#c4d0e8>Wpisz <b>f(u)</b> poniżej (zmienna <b>x</b> w polu = wewnętrzne u). Potem:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · podwójne dotknięcie <b>+</b> · przytrzymaj <b>−</b> · <b>Skala</b> przybliż / przytrzymaj oddal · <b>szczyp</b> dwoma palcami</size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x w [{4},{5}]</color></size>
+graph.param_a=A (skala pionowa)
+graph.param_k=k (skala pozioma)
+graph.param_c=C (przesunięcie pionowe)
+graph.param_d=D (przesunięcie poziome)
+graph.calculator_intro=<b>Tryb kalkulatora graficznego</b>\n<size=88%>Wpisz prawie dowolne <b>f(u)</b> (zmienna <b>x</b> we wzorze); <b>Trans</b> ustawia A, k, C, D; <b>Skala</b> i <b>szczyp</b> zmieniają okno.</size>
+aerospace.story_drag_polar_preamble=<b><color=#c4b5fd>Przypomnienie polary oporu</color></b> (każdy poziom <b>Aerospace</b>)\n<size=92%><b>Opór pasożytniczy (przy znikomej sile nośnej)</b> — tarcie powierzchni, opór kształtu i interferencja w <b>C<sub>D0</sub></b> modelu parabolicznego (z grubsza <i>nie</i> część rosnąca z siłą nośną).\n<b>Opór indukowany</b> — cena generowania siły nośnej: wiry z końcówek skrzydła dają ~ <b>K C<sub>L</sub>²</b> (wyższe C<sub>L</sub> / ostrzejsze zakręty → więcej indukcji).\n<b>Polara całkowita</b> — <b>C<sub>D</sub> = C<sub>D0</sub> + K C<sub>L</sub>²</b>: parabola w górę w C<sub>L</sub>; <b>C<sub>L</sub></b> przy min. oporze między „za wolno / duże α” a „za szybko / małe α”.</size>
+menu.tutorial_button=Jak grać
+menu.tutorial_title=Jak grać
+menu.tutorial_body=<b>Cel</b>\nIdź wzdłuż wykresu, używaj platform (zielonych), unikaj czerwonych zagrożeń i dotrzyj do jasnego wyjścia po prawej.\n\n<b>Sterowanie</b>\n• <b>Ruch</b> — strzałki / WASD lub przyciski na ekranie.\n• <b>Skok</b> — Spacja (lub skok na telefonie). Skaczesz z twardych platform.\n\n<b>Dwie krzywe</b>\n• <color=#c4b5fd>Główna krzywa</color> — funkcja, po której idziesz.\n• <color=#fdba74>Pochodna f′</color> — nachylenie; druga linia.\n\n<b>Skok w powietrzu na pochodnej</b>\nGdy jesteś <b>w powietrzu</b> i postać nakłada się na <b>krzywą pochodnej</b>, naciśnij ponownie <b>Skok</b>.\n\n<size=94%><color=#a8b2d1>Linia pochodnej jaśnieje przy dotyku. Masz <b>jeden</b> bonusowy skok za każdym razem, aż opuścisz krzywą lub wylądujesz. Na telefonie możliwa jest krótka wibracja; na PC dźwięk, gdy brak wibracji.</color></size>\n\n<b>Wybór poziomu</b>\n<size=94%>Poziomy są w grupach (Podstawy, Inżynieria, AP Calculus, Aerospace …). Dotknij <b>Jak grać</b>, by ponownie otworzyć pomoc.</size>
+menu.player_icon_title=Ikona gracza
+menu.player_icon_set=Ustaw ikonę gracza
+menu.player_icon_hint=Dotknij symbolu — to twój awatar w poziomach.
+menu.player_icon_done=Gotowe
+menu.version_line=<b>First Principles</b> <color=#555555>(wersja 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × GameGenesis (Rayan Kaissi)</size>
+menu.support_contact=<size=32><color=#94a3b8>Wsparcie:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
+level.0=First Principles — wstęp
+level.1=Nachylenie paraboli
+level.2=Fale sinusa
+level.3=Cienie cosinusa
+level.4=Ścieżka z wartością bezwzględną
+level.5=Maclaurin: e^x
+level.6=Maclaurin: sin(x)
+level.7=Szereg: ogon geometryczny
+level.8=Przekrój siodła (wielowymiarowy)
+level.9=Przekrój paraboloidy (wielowymiarowy)
+level.10=Pole pod krzywą
+level.11=Riemann: lewe końce
+level.12=Riemann: prawe końce
+level.13=Riemann: punkt środkowy
+level.14=Inżynieria: tłumione drgania
+level.15=Inżynieria: krzywa łańcuchowa (cosh)
+level.16=Inżynieria: prostowane AC (|sin|)
+level.17=BC: arctan i funkcje odwrotne
+level.18=BC: wzrost logistyczny (dP/dt = kP(1−P/L))
+level.19=Biegunowe: kardioida r ~ 1+cos θ
+level.20=Biegunowe: róża r ~ cos(nθ)
+level.21=BC: sinh x i hiperboliczne
+level.22=Fizyka C: zanik wykładniczy (τ, RC)
+level.23=Fizyka C: moment pędu i L = Iω
+level.24=Fizyka C: wysokość pocisku y(t)
+level.25=BC: Maclaurin cos(x)
+level.26=BC: ln x i ∫ dx/x
+level.27=BC: √x i dziedzina / punkt zwrotny
+level.28=BC: tan x między asymptotami
+level.29=BC: e^{kx} i y′ = ky
+level.30=BC: faza i drgania harmoniczne (wymiana energii)
+level.31=BC: sześcienny i punkt przegięcia
+level.32=BC: b^x i d/dx b^x
+level.33=Okrąg: (x−h)² + (y−k)² = R²
+level.34=Aerospace: siła nośna C_L(α) liniowa + przeciągnięcie
+level.35=Aerospace: polara oporu (pasożytniczy, indukowany, całkowity)
+level.36=Aerospace: atmosfera izotermiczna ρ(h)
+level.37=Aerospace: fugoide / stłumiony tryb przechylenia
+level.38=Aerospace: newtonowskie Cp ~ sin²α
+level.39=Aerospace: Strouhal / ton wirów
+level.40=Aerospace: obwiednia zaniku przy wejściu (ρV ciepło)
+level.41=Ekonomia: bańka dot-com i krach (stylizowany indeks)
+level.42=Ekonomia: kryzys 2008 i odbicie (stylizowany indeks)
+level.43=BOSS: przekrój ucieczki Mandelbrota (nastrój fraktalny)
+level.44=Fizyka C: termodynamika (adiabatyczny P–V, γ z N)
+level.45=BOSS: spirala złotego podziału (logarytmiczna, biegunowa)
+level.46=Transformaty: Fourier — sinc (widmo)
+level.47=Transformaty: Laplace — wykładniczy zanik
+level.48=BOSS: Mandelbrot — finał (fraktalny przekrój ucieczki)
+level.49=BOSS: motyl Lorenza — finał (dziwny atraktor)
+level.50=Fizyka C: sprężyna–masa SHM (prawo Hooka, nietłumione)

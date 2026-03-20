@@ -1,0 +1,46 @@
+# Level stories (cs) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>Derivace</b></color> = směrnice tečny: jak rychle roste nebo klesá <b>f(x)</b>.\n\nZlatá stezka = cesta ; ledová modrá = f'(x) tvoří <i>kde je pevnina</i>. Kde |f'| stačí, jsou plošiny ; jinak prázdno.\n\n<size=88%><color=#94a3b8><b>První principy:</b> shleď analogie až k faktům, pak znovu skládej. <b>f</b> modeluje výsledek ; <b>f'</b> citlivost.</color></size>
+story.1=Poutník jde tam, kde je svah jemný. Je‑li derivace záporná, zem se mění v trhlinu.
+story.2=Křivka stoupá a klesá jako dech. Derivace ukáže, kde přistát.
+story.3=Kosinus skrývá význam ve znaménku derivace. „Pop“ znamená nebezpečí.
+story.4=Absolutní hodnota ohýbá graf. Ve vrcholu se derivace překlopí i podlaha.
+story.5=<color=#86efac>Taylorovy polynomy</color> aproximují hladké funkce. <b>Maclaurin</b> v <b>0</b>.\n\nZde částečný součet <b>e^u</b>.
+story.6=<color=#7dd3fc>Liché mocniny</color> střídají znaménko — DNA Maclaurina pro <b>sin(u)</b>.\n\nUříznutá věž k sinusovce.
+story.7=<color=#f5d0fe>Geometrická řada</color> skládá mocniny <b>u</b>. V poloměru se zbytek zmenšuje.\n\nDerivace konečného součtu přetváří terén.
+story.8=Přemýšlejte <b>z = x² − y₀²</b> — <color=#38bdf8>řez</color> sedlem.\n\nDerivace podle x vypráví multivariabilní příběh v 1D.
+story.9=Nyní <b>z = x² + y₀²</b> — <color=#fde047>paraboloid</color>. Konstantní y₀ = miska.\n\nŘez ukáže sklon.
+story.10=<color=#fde047>Určitý integrál</color> hromadí míru změny ⇒ <b>plocha pod křivkou</b>.\n\nSloupce = <b>Riemann</b> f(x*)·Δx → ∫f.\n\n<size=92%><color=#a8b2d1>Stín aproximuje ; běžíte po hladké křivce.</color></size>
+story.11=<b>Riemann vlevo:</b> výška <b>f(xᵢ)</b> — <color=#f87171>levý konec</color>. Rostoucí f ⇒ <b>podhad</b>.\n\n<size=92%><color=#a8b2d1>Nízké opatrné schody.</color></size>
+story.12=<b>Riemann vpravo:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>pravý konec</color> ⇒ <b>náhorš</b> při rostoucím f.\n\n<size=92%><color=#a8b2d1>Zrcadlo levého pravidla.</color></size>
+story.13=<b>Střed intervalu:</b> <color=#86efac>symetrický</color> vzorek, často přesnější.\n\n<size=92%><color=#a8b2d1>Schody uprostřed každého pásu.</color></size>
+story.14=<b>Tlumené kmitání</b> — pružiny, obvody. Obálka <color=#38bdf9>decimuje</color> exp×sin.\n\n<size=92%><color=#a8b2d1>Derivace zase vybírá bezpečné sloupce.</color></size>
+story.15=Zavěšený řetěz ⇒ <b>řetězovka (catenary)</b>, model <color=#fde047>cosh</color>.\n\n<size=92%><color=#a8b2d1>Hi statiky, ne balistická parabola.</color></size>
+story.16=<b>|sin(x)|</b> <color=#f0abfc>usměrněný</color> sinus. Hrany v nulách.\n\n<size=92%><color=#a8b2d1>Od trigonometrie k prostým průběhům výkonu.</color></size>
+story.17=<b>BC — inverzní.</b> <color=#38bdf8>Arctan</color>, derivace 1/(1+x²).\n\n<size=92%><color=#a8b2d1>Vodorovné asymptoty = limity.</color></size>
+story.18=<b>Logistika:</b> dP/dt = kP(1−P/L). Nejprve skoro exp, pak ohyb k <color=#86efac>L</color>.\n\n<size=92%><color=#a8b2d1>Inflexe = max. růst.</color></size>
+story.19=<b>Póly</b> <color=#fde047>(r,θ)</color>. <b>Kardioida</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>Plocha ½∫r² dθ.</color></size>
+story.20=<b>Růže</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>Pop kde r prudce mění.</color></size>
+story.21=<b>sinh, cosh</b> — hiperbolické identity, ODE.\n\n<size=92%><color=#a8b2d1>sinh lichý od 0.</color></size>
+story.22=<b>Fyzika C</b> Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>Derivace teče k nule.</color></size>
+story.23=<b>Rotace</b> <color=#7dd3fc>L = Iω</color>, τ = dL/dt.\n\n<size=92%><color=#a8b2d1>Energie jako u pružiny.</color></size>
+story.24=<b>Projektil y(t)</b> parabola v <color=#fde047>čase</color>. Vrchol při v=0.\n\n<size=92%><color=#a8b2d1>Řetězec y,v,a.</color></size>
+story.25=<b>Maclaurin cos</b> sudé mocniny.\n\n<size=92%><color=#a8b2d1>Více členů ⇒ lepší u 0.</color></size>
+story.26=<b>ln x</b> a ∫dx/x.\n\n<size=92%><color=#a8b2d1>Kladný sklon s vzdáleností klesá.</color></size>
+story.27=<b>√x</b> singularity sklonu u 0⁺.\n\n<size=92%><color=#a8b2d1>Hra vyhlazuje ; analýza varuje na hranici.</color></size>
+story.28=<b>tan x</b> mezi asymptotami.\n\n<size=92%><color=#a8b2d1>Trigo BC.</color></size>
+story.29=<b>y′=ky</b> ⇒ Ce^{kx}.\n\n<size=92%><color=#a8b2d1>Míra úměrná stavu.</color></size>
+story.30=<b>Fáze / SHM</b>.\n\n<size=92%><color=#a8b2d1>Derivace náskok 90° (až na konstanty).</color></size>
+story.31=<b>Kubická</b> — kritické body, <color=#fca5a5>inflexe</color>.\n\n<size=92%><color=#a8b2d1>Typický profil hora–údolí.</color></size>
+story.32=<b>b^x</b> s faktorem ln b.\n\n<size=92%><color=#a8b2d1>Most k základu e.</color></size>
+story.33=<b>Kružnice</b> — horní půlkruh y = k+√(⋯).\n\n<size=92%><color=#a8b2d1>Implicitní a parametrická forma AP.</color></size>
+story.34=<b>Vztlak C_L(α)</b> lineární + <b>vývrt</b>.\n\n<size=92%><color=#a8b2d1>Didaktický profil.</color></size>
+story.35=<b>Polára odporu</b> C_D = C_D0 + K C_L².\n\n<size=92%><color=#a8b2d1>Nejlepší L/D u optimálního C_L.</color></size>
+story.36=<b>Izoterm. atmosféra</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>Dynamický tlak ∝ ρ.</color></size>
+story.37=<b>Fugoid / krátká perioda</b> tlumená karikatura.\n\n<size=92%><color=#a8b2d1>Ovládání o hodně bohatší.</color></size>
+story.38=<b>Newton ~ sin²α</b> návětrná strana.\n\n<size=92%><color=#a8b2d1>Výukový model, ne CFD.</color></size>
+story.39=<b>Strouhal</b> víry.\n\n<size=92%><color=#a8b2d1>Frekvence ⋍ St·U/D.</color></size>
+story.40=<b>Návrat do atmosféry</b> kvalitativní uvolnění.\n\n<size=92%><color=#a8b2d1>Žádný kvant. memo.</color></size>
+story.41=<b>Dot-com bublina</b> — stylizovaná indexová trajektorie (ne skutečná S&amp;P data).\n\n<size=92%><color=#a8b2d1>Náběh, propad, pomalá obnova — alegorie.</color></size>
+story.42=<b>Krize 2008</b> — hypotéky, kredit, jen kvalitativní křivka.\n\n<size=92%><color=#a8b2d1>Nejsou stažená tržní data.</color></size>
+story.43=<b>Mandelbrot</b> rovina c, čas úniku, řez při pevném Re.\n\n<size=92%><color=#a8b2d1>Hranice Juliova množiny ; přiblížení jiný engine.</color></size>

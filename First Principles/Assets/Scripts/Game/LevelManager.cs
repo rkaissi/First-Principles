@@ -16,8 +16,8 @@ using UnityEngine.UI;
 //   2. BuildSampleLevels() populates `levels`. CRITICAL: index order must match
 //      GameLevelCatalog.DisplayNames (level select uses the same indices).
 //   3. LoadLevel(i) → ApplyLevelTheme(def) pushes params into FunctionPlotter and HUD
-//      state, then LoadWorldAfterThemeChange waits a frame so LineRenderer points exist,
-//      then regenerates obstacles + Riemann mesh and resets the player.
+//      state, then LoadLevelFullRoutine: world build → optional StageIntroOverlay roleplay
+//      “page” → story banner fade (player can move during fade).
 //   4. Update() advances nextStageIndex when PlayerCenterGrid.x crosses
 //      stageTriggerXGrid[k], firing DerivativePopAnimator.
 // Dependencies: Cartesian plane RectTransform, Canvas with CanvasSafeAreaBootstrap for mobile.
@@ -71,8 +71,32 @@ public class LevelManager : MonoBehaviour
 
     private bool isRestarting;
     private Coroutine storyFadeRoutine;
+    private Coroutine levelFlowRoutine;
+    /// <summary>After death-restart, skip the full-screen roleplay card for the same stage.</summary>
+    private bool skipNextStageIntro;
 
-    /// <summary>Graphic calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
+    /// <summary>After death-restart, skip the spawn spotlight so restarts stay snappy.</summary>
+    private bool skipSpawnSpotlight;
+
+    [Header("Spawn spotlight")]
+    [Tooltip("Total time from level ready until controls unlock from spotlight (fade in + hold + fade out).")]
+    [SerializeField] private float spawnSpotlightTotalSeconds = 1.5f;
+
+    [Tooltip("Optional; if null, loads Resources/UI_SpotlightDim then Shader.Find.")]
+    [SerializeField] private Shader spawnSpotlightShader;
+
+    private GameObject spawnSpotlightRoot;
+    private Material spawnSpotlightMaterial;
+    private RectTransform spawnSpotlightRect;
+
+    private GameObject stageIntroRoot;
+    private CanvasGroup stageIntroCanvasGroup;
+    private TextMeshProUGUI stageIntroTitle;
+    private TextMeshProUGUI stageIntroBody;
+    private TextMeshProUGUI stageIntroHint;
+    private bool stageIntroSkipRequested;
+
+    /// <summary>Graphing calculator mode: transforms, scale zoom, pinch — no platformer.</summary>
     private bool graphCalculatorMode;
 
     private void Awake()
@@ -99,7 +123,6 @@ public class LevelManager : MonoBehaviour
     {
         RefreshControlsHintLocalized();
         RefreshMathConceptsLabelLocalized();
-        RefreshSceneFooterLocalized();
         RefreshStageHudLocalizedForce();
 
         if (graphCalculatorMode)
@@ -116,7 +139,7 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode)
         {
             controlsHintText.text = LocalizationManager.Get("controls.calculator",
-                "<color=#7a8399>Graphic calculator</color>  <b>Type f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
+                "<color=#7a8399>Graphing calculator</color>  <b>Type f(u)</b>  ·  <b>Deriv</b>  ·  <b>∫</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>Pinch</b>  ·  <b>Back</b>");
         }
         else if (DeviceLayout.PreferOnScreenGameControls)
         {
@@ -144,18 +167,6 @@ public class LevelManager : MonoBehaviour
         LocalizationManager.ApplyTextDirection(tmp);
     }
 
-    private void RefreshSceneFooterLocalized()
-    {
-        var go = GameObject.Find("SceneCreditsFooter");
-        if (go == null)
-            return;
-        var tmp = go.GetComponent<TextMeshProUGUI>();
-        if (tmp == null)
-            return;
-        tmp.text = SceneCreditsFooter.BuildCompactRichText();
-        LocalizationManager.ApplyTextDirection(tmp);
-    }
-
     private void RefreshStageHudLocalizedForce()
     {
         lastStageHudKey = int.MinValue;
@@ -170,17 +181,27 @@ public class LevelManager : MonoBehaviour
         if (graphCalculatorMode || def == null)
         {
             storyText.text = TmpLatex.Process(LocalizationManager.Get("graph.calculator_intro",
-                "<b>Graphic calculator mode</b>\n" +
+                "<b>Graphing calculator mode</b>\n" +
                 "<size=88%>Type almost any <b>f(u)</b> in the field (variable <b>x</b> in your formula); <b>Trans</b> adjusts A, k, C, D; <b>Scale</b> &amp; <b>pinch</b> zoom the window.</size>"));
-            storyText.isRightToLeftText = false;
+            LocalizationManager.ApplyTextDirection(storyText);
             return;
         }
 
         string title = LocalizationManager.GetWithFallback($"level.{currentLevelIndex}", def.levelName);
         string story = LocalizationManager.GetWithFallback($"story.{currentLevelIndex}", def.storyText);
+        if (GameLevelCatalog.IsAerospaceLevel(currentLevelIndex))
+        {
+            string dragPreamble = LocalizationManager.Get("aerospace.story_drag_polar_preamble",
+                "<b><color=#c4b5fd>Drag polar refresher</color></b> (every <b>Aerospace</b> stage)\n" +
+                "<size=92%><b>Parasitic (zero-lift) drag</b> — skin friction, form drag, interference lumped as <b>C<sub>D0</sub></b> in the parabolic model (roughly <i>not</i> the part that grows with lift).\n" +
+                "<b>Induced drag</b> — the cost of making lift: trailing vortices add ~ <b>K C<sub>L</sub>²</b> (higher C<sub>L</sub> / tighter turns → more induced).\n" +
+                "<b>Overall drag polar</b> — <b>C<sub>D</sub> = C<sub>D0</sub> + K C<sub>L</sub>²</b>: an upward-opening parabola in C<sub>L</sub>; min-drag <b>C<sub>L</sub></b> sits between “too slow / high α” and “too fast / low α” for real missions.</size>");
+            story = $"{dragPreamble}\n\n{story}";
+        }
+
         storyText.text = TmpLatex.Process($"<b>{title}</b>\n{story}");
-        // Long level copy is often mixed Latin/math; keep LTR unless you add full `story.N` translations in RTL locales.
-        storyText.isRightToLeftText = false;
+        // Use RTL for Arabic / Urdu; Latin-heavy mixed math still renders with TMP bidi when possible.
+        LocalizationManager.ApplyTextDirection(storyText);
     }
 
     private void Start()
@@ -205,7 +226,7 @@ public class LevelManager : MonoBehaviour
     private void SetupReferences()
     {
         functionPlotter = FindAnyObjectByType<FunctionPlotter>();
-        curveRenderer = FindAnyObjectByType<LineRendererUI>();
+        curveRenderer = LineRendererUI.FindPrimaryCurve();
         derivRenderer = FindAnyObjectByType<DerivRendererUI>();
         gridRenderer = FindAnyObjectByType<GridRendererUI>();
 
@@ -243,10 +264,44 @@ public class LevelManager : MonoBehaviour
         // Wire callbacks.
         playerController.SetDeathCallback(RestartCurrentLevel);
         playerController.SetFinishCallback(AdvanceLevel);
+        if (derivRenderer != null)
+            playerController.BindDerivativeRenderer(derivRenderer);
+        ConfigureGameBackButtonDestination();
     }
 
     /// <summary>
-    /// Free graphing workspace (graphic calculator mode).
+    /// Graphing calculator is entered from the main menu only — back returns to <b>Menu</b>.
+    /// Levels use back to <b>LevelSelect</b> (scene default is replaced here for clarity).
+    /// </summary>
+    private void ConfigureGameBackButtonDestination()
+    {
+        var backGo = GameObject.Find("BackButton");
+        if (backGo == null)
+            return;
+        var btn = backGo.GetComponent<Button>();
+        if (btn == null)
+            return;
+
+        btn.onClick.RemoveAllListeners();
+        var fader = FindAnyObjectByType<SceneFader>();
+        if (graphCalculatorMode)
+        {
+            if (fader != null)
+                btn.onClick.AddListener(fader.LoadMenu);
+            else
+                btn.onClick.AddListener(() => SceneManager.LoadScene("Menu"));
+        }
+        else
+        {
+            if (fader != null)
+                btn.onClick.AddListener(fader.LoadLevelSelect);
+            else
+                btn.onClick.AddListener(() => SceneManager.LoadScene("LevelSelect"));
+        }
+    }
+
+    /// <summary>
+    /// Free graphing workspace (graphing calculator mode).
     /// Legacy <c>TransButton</c> / <c>ScaleButton</c> are shown; pinch zoom applies on the graph window.
     /// </summary>
     private void EnterGraphCalculatorMode()
@@ -284,11 +339,18 @@ public class LevelManager : MonoBehaviour
             storyFadeRoutine = null;
         }
 
+        if (levelFlowRoutine != null)
+        {
+            StopCoroutine(levelFlowRoutine);
+            levelFlowRoutine = null;
+        }
+
         if (storyText != null)
         {
             storyText.gameObject.SetActive(true);
             RefreshStoryBannerForCurrentMode(null);
             storyText.color = new Color(1f, 1f, 1f, 0.94f);
+            storyText.fontStyle = FontStyles.Bold;
         }
 
         if (stageHudText != null && stageHudText.transform.parent != null)
@@ -306,6 +368,8 @@ public class LevelManager : MonoBehaviour
         functionPlotter.step = 0.06f;
         functionPlotter.SetEquationExtraSuffix("");
         functionPlotter.SetCustomExpression("x^2");
+        functionPlotter.autoScaleVertical = false;
+        functionPlotter.autoScaleHorizontal = false;
 
         if (curveRenderer != null)
         {
@@ -320,6 +384,7 @@ public class LevelManager : MonoBehaviour
             derivRenderer.enabled = false;
         }
 
+        EnsureRiemannRenderer();
         if (riemannRenderer != null)
             riemannRenderer.ClearStrips();
 
@@ -329,7 +394,11 @@ public class LevelManager : MonoBehaviour
         float bridgeControls = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
         float transRowBottom = bridgeControls + 74f;
 
-        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, FindPrimaryEquationTmp(), transRowBottom + 110f, 108f);
+        var equationStyleRef = FindPrimaryEquationTmp();
+        if (equationStyleRef != null)
+            equationStyleRef.fontStyle = FontStyles.Bold;
+
+        GraphCalculatorEquationPanel.Ensure(hintParent, functionPlotter, equationStyleRef, transRowBottom + 110f, 108f);
 
         var transGo = GameObject.Find("TransButton");
         var scaleGo = GameObject.Find("ScaleButton");
@@ -351,18 +420,38 @@ public class LevelManager : MonoBehaviour
             bool tablet = DeviceLayout.IsTabletLike();
             float up = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset + 312f : 318f;
             hrt.anchoredPosition = new Vector2(0f, up);
-            hrt.sizeDelta = new Vector2(tablet ? 1000f : 920f, tablet ? 128f : 118f);
+            hrt.sizeDelta = new Vector2(tablet ? 1040f : 960f, tablet ? 144f : 132f);
 
             paramHint = hintGo.AddComponent<TextMeshProUGUI>();
             paramHint.richText = true;
             paramHint.textWrappingMode = TextWrappingModes.Normal;
-            paramHint.fontSize = tablet ? 26 : 23;
+            paramHint.overflowMode = TextOverflowModes.Overflow;
+            paramHint.fontSize = UiTypography.Scale(tablet ? 31 : 27);
             paramHint.alignment = TextAlignmentOptions.Top;
             paramHint.color = new Color(0.9f, 0.93f, 0.98f, 0.96f);
             ApplyPrimaryUiTypography(paramHint, FindPrimaryEquationTmp(), outlineWidth: 0.12f, outlineAlpha: 0.45f);
+            paramHint.fontStyle = FontStyles.Bold;
         }
         else if (GameObject.Find("GraphicCalculatorParamHint") != null)
+        {
             paramHint = GameObject.Find("GraphicCalculatorParamHint").GetComponent<TextMeshProUGUI>();
+            if (paramHint != null)
+            {
+                var eqRef = FindPrimaryEquationTmp();
+                if (eqRef != null && eqRef.font != null)
+                {
+                    paramHint.font = eqRef.font;
+                    if (eqRef.fontSharedMaterial != null)
+                        paramHint.fontSharedMaterial = eqRef.fontSharedMaterial;
+                }
+                else
+                    UiTypography.ApplyDefaultFontAsset(paramHint);
+                paramHint.fontStyle = FontStyles.Bold;
+            }
+        }
+
+        ApplyGraphCalculatorControlButtonTypography(transGo);
+        ApplyGraphCalculatorControlButtonTypography(scaleGo);
 
         foreach (var oldT in GetComponents<GraphCalculatorToolbar>())
             Destroy(oldT);
@@ -378,7 +467,32 @@ public class LevelManager : MonoBehaviour
         var pinch = gameObject.AddComponent<GraphPinchZoom>();
         pinch.Setup(functionPlotter);
 
+        var calcAnalysis = GetComponent<GraphCalculatorAnalysisControls>();
+        if (calcAnalysis == null)
+            calcAnalysis = gameObject.AddComponent<GraphCalculatorAnalysisControls>();
+        calcAnalysis.Configure(functionPlotter, riemannRenderer, curveRenderer, equationStyleRef, transRowBottom);
+
         RefreshControlsHintLocalized();
+    }
+
+    /// <summary>Trans / Scale labels use the project TMP default font and bold weight in calculator mode.</summary>
+    private static void ApplyGraphCalculatorControlButtonTypography(GameObject buttonRoot)
+    {
+        if (buttonRoot == null)
+            return;
+        var eqRef = FindPrimaryEquationTmp();
+        foreach (var tmp in buttonRoot.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            if (eqRef != null && eqRef.font != null)
+            {
+                tmp.font = eqRef.font;
+                if (eqRef.fontSharedMaterial != null)
+                    tmp.fontSharedMaterial = eqRef.fontSharedMaterial;
+            }
+            else
+                UiTypography.ApplyDefaultFontAsset(tmp);
+            tmp.fontStyle = FontStyles.Bold;
+        }
     }
 
     private static void LayoutCalculatorToolButtons(GameObject transGo, GameObject scaleGo, float anchoredBottomY)
@@ -452,10 +566,33 @@ public class LevelManager : MonoBehaviour
         rect.pivot = new Vector2(0, 0);
 
         var img = playerGo.AddComponent<Image>();
-        img.sprite = RuntimeUiPolish.SoftCharacterBlob != null ? RuntimeUiPolish.SoftCharacterBlob : TryGetSquareSprite();
-        img.color = RuntimeUiPolish.PlayerBody;
+        img.sprite = TryGetSquareSprite();
+        img.color = Color.clear;
         img.type = Image.Type.Simple;
-        RuntimeUiPolish.ApplyDropShadow(rect, new Vector2(1f, -2f), 0.35f);
+        img.raycastTarget = false;
+
+        var glyphGo = new GameObject("Glyph");
+        var glyphRt = glyphGo.AddComponent<RectTransform>();
+        glyphRt.SetParent(rect, false);
+        glyphRt.anchorMin = Vector2.zero;
+        glyphRt.anchorMax = Vector2.one;
+        glyphRt.offsetMin = Vector2.zero;
+        glyphRt.offsetMax = Vector2.zero;
+        var glyphTmp = glyphGo.AddComponent<TextMeshProUGUI>();
+        glyphTmp.text = PlayerGlyphSettings.GetSelectedGlyph();
+        glyphTmp.alignment = TextAlignmentOptions.Center;
+        glyphTmp.enableAutoSizing = true;
+        glyphTmp.fontSizeMin = 22;
+        glyphTmp.fontSizeMax = 512;
+        glyphTmp.color = RuntimeUiPolish.PlayerBody;
+        glyphTmp.richText = false;
+        glyphTmp.raycastTarget = false;
+        ApplyPrimaryUiTypography(glyphTmp, FindPrimaryEquationTmp(), outlineWidth: 0.18f, outlineAlpha: 0.42f);
+        // ApplyPrimaryUiTypography copies reference fontStyle; keep the player glyph visibly bold/thick.
+        glyphTmp.fontStyle = FontStyles.Bold;
+        // Slight rim so the bright fill still separates from lime/purple graph lines.
+        glyphTmp.outlineWidth = 0.22f;
+        glyphTmp.outlineColor = new Color(0.04f, 0.06f, 0.12f, 0.40f);
 
         playerController = playerGo.AddComponent<PlayerControllerUI2D>();
         playerController.BindVisual(rect, img);
@@ -484,10 +621,10 @@ public class LevelManager : MonoBehaviour
 
         var tmp = storyGo.AddComponent<TextMeshProUGUI>();
         tmp.text = "";
-        tmp.fontSize = 38;
+        tmp.fontSize = UiTypography.Scale(38);
         tmp.enableAutoSizing = true;
-        tmp.fontSizeMin = 22;
-        tmp.fontSizeMax = 42;
+        tmp.fontSizeMin = UiTypography.Scale(22);
+        tmp.fontSizeMax = UiTypography.Scale(42);
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.richText = true;
         tmp.textWrappingMode = TextWrappingModes.Normal;
@@ -537,7 +674,7 @@ public class LevelManager : MonoBehaviour
             panelRt.pivot = new Vector2(0f, 1f);
             float topPad = DeviceLayout.PreferOnScreenGameControls ? 12f : 20f;
             panelRt.anchoredPosition = new Vector2(18f, -topPad);
-            panelRt.sizeDelta = new Vector2(380f, 80f);
+            panelRt.sizeDelta = new Vector2(440f, 88f);
             RuntimeUiPolish.ApplyDropShadow(panelRt, new Vector2(2f, -3f), 0.26f);
 
             var panelBg = panelGo.AddComponent<Image>();
@@ -572,11 +709,12 @@ public class LevelManager : MonoBehaviour
 
             var tmp = textGo.AddComponent<TextMeshProUGUI>();
             tmp.richText = true;
-            tmp.textWrappingMode = TextWrappingModes.NoWrap;
-            tmp.fontSize = 28;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.overflowMode = TextOverflowModes.Overflow;
+            tmp.fontSize = UiTypography.Scale(28);
             tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = 18;
-            tmp.fontSizeMax = 30;
+            tmp.fontSizeMin = UiTypography.Scale(16);
+            tmp.fontSizeMax = UiTypography.Scale(30);
             tmp.alignment = TextAlignmentOptions.MidlineLeft;
             tmp.color = new Color(0.94f, 0.95f, 0.98f, 1f);
             tmp.characterSpacing = 0.35f;
@@ -622,7 +760,8 @@ public class LevelManager : MonoBehaviour
                 var tmp = textGo.AddComponent<TextMeshProUGUI>();
                 tmp.richText = true;
                 tmp.textWrappingMode = TextWrappingModes.Normal;
-                tmp.fontSize = 24;
+                tmp.overflowMode = TextOverflowModes.Overflow;
+                tmp.fontSize = UiTypography.Scale(24);
                 tmp.alignment = TextAlignmentOptions.Midline;
                 tmp.color = new Color(0.82f, 0.85f, 0.92f, 0.92f);
                 tmp.characterSpacing = 0.25f;
@@ -631,8 +770,6 @@ public class LevelManager : MonoBehaviour
             }
 
             RefreshControlsHintLocalized();
-
-            CreateSceneCreditsFooterStrip(canvas, equationStyle);
         }
     }
 
@@ -654,7 +791,7 @@ public class LevelManager : MonoBehaviour
         rt.anchorMax = new Vector2(1f, 1f);
         rt.pivot = new Vector2(1f, 1f);
         rt.anchoredPosition = new Vector2(-18f, -topPad);
-        rt.sizeDelta = new Vector2(tablet ? 248f : 220f, tablet ? 52f : 48f);
+        rt.sizeDelta = new Vector2(tablet ? 292f : 262f, tablet ? 60f : 56f);
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
@@ -673,47 +810,19 @@ public class LevelManager : MonoBehaviour
         trt.SetParent(go.transform, false);
         trt.anchorMin = Vector2.zero;
         trt.anchorMax = Vector2.one;
-        trt.offsetMin = new Vector2(8f, 4f);
-        trt.offsetMax = new Vector2(-8f, -4f);
+        trt.offsetMin = new Vector2(12f, 6f);
+        trt.offsetMax = new Vector2(-12f, -6f);
 
         var tmp = textGo.AddComponent<TextMeshProUGUI>();
         tmp.text = LocalizationManager.Get("ui.math_concepts", "Math concepts");
-        tmp.fontSize = tablet ? 24 : 21;
+        tmp.fontSize = UiTypography.Scale(tablet ? 30 : 27);
+        tmp.fontStyle = FontStyles.Bold;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = new Color(0.92f, 0.97f, 1f, 1f);
         tmp.raycastTarget = false;
         ApplyPrimaryUiTypography(tmp, equationStyle, outlineWidth: 0.14f, outlineAlpha: 0.48f);
+        tmp.fontStyle = FontStyles.Bold;
         LocalizationManager.ApplyTextDirection(tmp);
-    }
-
-    private void CreateSceneCreditsFooterStrip(Canvas canvas, TextMeshProUGUI equationStyle)
-    {
-        if (canvas == null || GameObject.Find("SceneCreditsFooter") != null)
-            return;
-
-        bool tabletUi = DeviceLayout.IsTabletLike();
-        var footerGo = new GameObject("SceneCreditsFooter");
-        var footerRt = footerGo.AddComponent<RectTransform>();
-        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
-        footerRt.SetParent(safe != null ? safe : canvas.transform, false);
-        footerRt.anchorMin = new Vector2(0.5f, 0f);
-        footerRt.anchorMax = new Vector2(0.5f, 0f);
-        footerRt.pivot = new Vector2(0.5f, 0f);
-        float controlsUp = DeviceLayout.PreferOnScreenGameControls ? DeviceLayout.TouchHintVerticalOffset : 22f;
-        float barH = tabletUi ? 60f : 56f;
-        footerRt.anchoredPosition = new Vector2(0f, controlsUp + barH + 12f);
-        footerRt.sizeDelta = new Vector2(tabletUi ? 960f : 880f, 74f);
-
-        var ftmp = footerGo.AddComponent<TextMeshProUGUI>();
-        ftmp.text = SceneCreditsFooter.BuildCompactRichText();
-        ftmp.richText = true;
-        ftmp.textWrappingMode = TextWrappingModes.Normal;
-        ftmp.fontSize = tabletUi ? 16 : 14;
-        ftmp.alignment = TextAlignmentOptions.Bottom;
-        ftmp.color = new Color(0.88f, 0.89f, 0.92f, 0.9f);
-        ftmp.raycastTarget = false;
-        ApplyPrimaryUiTypography(ftmp, equationStyle, outlineWidth: 0.1f, outlineAlpha: 0.45f);
-        LocalizationManager.ApplyTextDirection(ftmp);
     }
 
     /// <summary>The big equation label in <c>Game</c> — used as the typography reference for all gameplay HUD copy.</summary>
@@ -756,7 +865,7 @@ public class LevelManager : MonoBehaviour
     {
         string stageWord = LocalizationManager.Get("hud.stage", "STAGE");
         return
-            $"<color=#9aa3b8><size=78%>{stageWord}</size></color>\n" +
+            $"<color=#9aa3b8><size=78%><b>{stageWord}</b></size></color>\n" +
             $"<b><color=#f2f4ff>{stage}</color></b><color=#5c6578> / </color><b><color=#e8ebf7>{total}</color></b>";
     }
 
@@ -826,29 +935,65 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Finds or creates <see cref="RiemannStripRendererUI"/> under the cartesian plane, sibling-ordered under the main curve line.
+    /// Finds or creates <see cref="RiemannStripRendererUI"/> under the same parent as the main curve
+    /// (matches <see cref="LineRendererUI"/> rect + draw order so strips align with the graph).
     /// </summary>
     private void EnsureRiemannRenderer()
     {
         if (riemannRenderer == null)
             riemannRenderer = FindAnyObjectByType<RiemannStripRendererUI>();
 
+        if (riemannRenderer != null && curveRenderer != null)
+        {
+            var curveLineRt = curveRenderer.GetComponent<RectTransform>();
+            Transform lineParent = curveLineRt != null ? curveLineRt.parent : null;
+            if (lineParent != null && riemannRenderer.transform.parent != lineParent)
+            {
+                riemannRenderer.transform.SetParent(lineParent, false);
+                var riemannRt = riemannRenderer.GetComponent<RectTransform>();
+                if (curveLineRt != null && riemannRt != null)
+                {
+                    riemannRt.anchorMin = curveLineRt.anchorMin;
+                    riemannRt.anchorMax = curveLineRt.anchorMax;
+                    riemannRt.pivot = curveLineRt.pivot;
+                    riemannRt.anchoredPosition = curveLineRt.anchoredPosition;
+                    riemannRt.sizeDelta = curveLineRt.sizeDelta;
+                    riemannRt.localScale = curveLineRt.localScale;
+                }
+                riemannRenderer.transform.SetSiblingIndex(0);
+            }
+        }
+
         if (riemannRenderer != null || curveRenderer == null || cartesianPlaneRect == null)
             return;
 
         var go = new GameObject("RiemannStrips");
-        go.transform.SetParent(cartesianPlaneRect, false);
-        var rt = go.AddComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
+        RectTransform curveRt = curveRenderer.GetComponent<RectTransform>();
+        Transform parentT = curveRt != null && curveRt.parent != null ? curveRt.parent : cartesianPlaneRect;
+        go.transform.SetParent(parentT, false);
+        var stripsRt = go.AddComponent<RectTransform>();
+        if (curveRt != null)
+        {
+            stripsRt.anchorMin = curveRt.anchorMin;
+            stripsRt.anchorMax = curveRt.anchorMax;
+            stripsRt.pivot = curveRt.pivot;
+            stripsRt.anchoredPosition = curveRt.anchoredPosition;
+            stripsRt.sizeDelta = curveRt.sizeDelta;
+            stripsRt.localScale = curveRt.localScale;
+        }
+        else
+        {
+            stripsRt.anchorMin = Vector2.zero;
+            stripsRt.anchorMax = Vector2.one;
+            stripsRt.offsetMin = Vector2.zero;
+            stripsRt.offsetMax = Vector2.zero;
+        }
 
         riemannRenderer = go.AddComponent<RiemannStripRendererUI>();
         riemannRenderer.raycastTarget = false;
 
-        int lineIdx = curveRenderer.transform.GetSiblingIndex();
-        go.transform.SetSiblingIndex(lineIdx);
+        // Draw before the Function / derivative lines (same parent as curve).
+        go.transform.SetSiblingIndex(0);
     }
 
     /// <summary>
@@ -1124,7 +1269,8 @@ public class LevelManager : MonoBehaviour
             riemannRectCount: 14,
             showRiemannVisualization: true,
             useRiemannStairPlatforms: true,
-            riemannFillColor: new Color(0.95f, 0.35f, 0.4f, 0.32f)
+            riemannFillColor: new Color(0.95f, 0.35f, 0.4f, 0.32f),
+            riemannPlatformCoverage: 0.58f
         ));
 
         var riemannRightColors = new[]
@@ -1159,7 +1305,8 @@ public class LevelManager : MonoBehaviour
             riemannRectCount: 14,
             showRiemannVisualization: true,
             useRiemannStairPlatforms: true,
-            riemannFillColor: new Color(0.25f, 0.55f, 0.95f, 0.3f)
+            riemannFillColor: new Color(0.25f, 0.55f, 0.95f, 0.3f),
+            riemannPlatformCoverage: 0.58f
         ));
 
         var riemannMidColors = new[]
@@ -1194,7 +1341,8 @@ public class LevelManager : MonoBehaviour
             riemannRectCount: 14,
             showRiemannVisualization: true,
             useRiemannStairPlatforms: true,
-            riemannFillColor: new Color(0.45f, 0.85f, 0.55f, 0.28f)
+            riemannFillColor: new Color(0.45f, 0.85f, 0.55f, 0.28f),
+            riemannPlatformCoverage: 0.58f
         ));
 
         var engDampColors = new[]
@@ -1346,7 +1494,7 @@ public class LevelManager : MonoBehaviour
             baseN: 2,
             story:
                 "<b>Polar coordinates</b>: describe points by <color=#fde047>(r, θ)</color> instead of (x, y). A <b>cardioid</b> has the family flavor r ~ 1 + cos θ — a heartbeat‑shaped loop.\n\n" +
-                "Here the horizontal axis stands in for θ and the vertical for r(θ) (same trick AP uses when you first graph polar equations before converting to x = r cos θ, y = r sin θ).\n\n" +
+                "The big equation shows <b>r(θ)</b> with a <b>θ</b> window — an <b>r-vs-θ</b> plot (AP-style), not <b>y</b> versus Cartesian <b>x</b> on the labels. Later you convert to the plane with <b>x = r cos θ</b>, <b>y = r sin θ</b>.\n\n" +
                 "<size=92%><color=#a8b2d1>Area in polar uses ½∫ r² dθ; tangent slope needs dr/dθ.</color></size>",
             derivativePopTriggerCountOverride: 3,
             applyGridTheming: true,
@@ -1687,9 +1835,15 @@ public class LevelManager : MonoBehaviour
             storyPauseSecondsOverride: 2.65f
         ));
 
+        var dragPolarOverlays = new[]
+        {
+            new Color(0.55f, 0.68f, 0.9f, 0.95f),
+            new Color(0.98f, 0.5f, 0.55f, 0.9f)
+        };
+
         levels.Add(MakeLevel(
             GameLevelCatalog.DisplayNames[35],
-            FunctionType.Power,
+            FunctionType.AeroDragPolarTriple,
             curveColor: new Color(0.75f, 0.55f, 1f, 1f),
             derivativeColor: new Color(1f, 0.72f, 0.35f, 1f),
             transA: 0.072f,
@@ -1699,14 +1853,15 @@ public class LevelManager : MonoBehaviour
             power: 2,
             baseN: 2,
             story:
-                "<b>Drag polar</b> — aircraft guys write <color=#c4b5fd>C_D = C_{D0} + K C_L²</color> (parabolic drag polar) to mash profile + induced drag into one quadratic in lift coefficient.\n\n" +
-                "Min drag at a certain C_L sets best glide / L/D intuition; integrating under such curves feeds range & endurance estimates (Breguet‑style reasoning in the big books).\n\n" +
-                "<size=92%><color=#a8b2d1>Here u plays the role of C_L on the horizontal axis — walk the bowl of extra drag as you leave the sweet spot.</color></size>",
+                "<b>Drag polar — three traces at once</b> — the graph shows <color=#93c5fd><b>parasitic (zero‑lift / profile) drag</b></color> as a flat baseline, <color=#fb7185><b>induced drag</b></color> as the bowl that grows with |C_L|, and <color=#c4b5fd><b>total C_D</b></color> as their sum (walk the thick total — same parabola as before).\n\n" +
+                "Classic identity: <color=#c4b5fd>C_D = C_{D0} + K C_L²</color>; min‑drag C_L is where the marginal induced penalty balances mission speed/α choices.\n\n" +
+                "<size=92%><color=#a8b2d1>Horizontal axis: u ~ C_L. Purple = C_D,tot (platforms); blue = C_D,par; coral = C_D,ind alone (from zero lift).</color></size>",
             derivativePopTriggerCountOverride: 3,
             applyGridTheming: true,
             gridCenter: new Color(0.35f, 0.25f, 0.5f, 0.36f),
             gridOutside: new Color(0.25f, 0.18f, 0.36f, 0.1f),
-            storyPauseSecondsOverride: 2.55f
+            storyPauseSecondsOverride: 2.65f,
+            dragPolarOverlayColors: dragPolarOverlays
         ));
 
         levels.Add(MakeLevel(
@@ -1827,52 +1982,263 @@ public class LevelManager : MonoBehaviour
             storyPauseSecondsOverride: 2.65f
         ));
 
-        // Competition math (41) + Mandelbrot boss (42) — keep order aligned with GameLevelCatalog.
+        // Economics (41–42) + Mandelbrot (43) + thermo (44) + golden spiral (45); Transforms (46–47); Mandelbrot encore finale (48).
         levels.Add(MakeLevel(
             GameLevelCatalog.DisplayNames[41],
-            FunctionType.NaturalLog,
-            curveColor: new Color(0.42f, 0.88f, 0.96f, 1f),
-            derivativeColor: new Color(0.98f, 0.62f, 0.32f, 1f),
-            transA: 0.58f,
-            transK: 0.26f,
-            transC: -1.92f,
-            transD: -1.85f,
+            FunctionType.EconomyDotcomBubbleStylized,
+            curveColor: new Color(0.14f, 0.58f, 0.34f, 1f),
+            derivativeColor: new Color(0.98f, 0.72f, 0.28f, 1f),
+            transA: 2.35f,
+            transK: 0.118f,
+            transC: -2.38f,
+            transD: 0f,
             power: 2,
             baseN: 2,
             story:
-                "<b>Competition mathematics</b> — contests like <color=#7dd3fc>AMC / AIME</color> and proof‑style olympiads reward <i>structure</i>: symmetry, bounding, and knowing when a function is <b>concave or convex</b>.\n\n" +
-                "The natural log is <color=#fdba74>concave on (0,∞)</color> — **chords lie below the graph**, tangents lie above on one side — a factory of **linear bounds** (tangents & secants) used in inequalities and “prove bound” problems.\n\n" +
-                "<size=92%><color=#a8b2d1>Your feet follow \\(\\ln\\) on a shifted domain; the derivative plot mirrors \\(1/x\\) behavior — the same reciprocal intuition behind many integral estimates. Not affiliated with MAA or any contest body.</color></size>",
+                "<b>Dot‑com bubble — stylized chart walk</b> — equity indices like the broad <color=#86efac>S&amp;P 500</color> (or the racier <color=#7dd3fc>Nasdaq Composite</color>) climbed through the late 1990s, then <color=#fca5a5>gapped down</color> as the 2000–02 tech hangover unwound years of euphoria.\n\n" +
+                "This path is a <b>smooth teaching silhouette</b> — not downloaded tick data — but it catches the storytelling shape: **grind, parabolic enthusiasm, air pocket, slow rebuild**. Slopes and concavity still read like real market moods.\n\n" +
+                "<size=92%><color=#a8b2d1>Educational allegory only; not investment advice or a replica of any index.</color></size>",
             derivativePopTriggerCountOverride: 4,
             applyGridTheming: true,
-            gridCenter: new Color(0.14f, 0.38f, 0.46f, 0.38f),
-            gridOutside: new Color(0.1f, 0.26f, 0.32f, 0.11f),
-            storyPauseSecondsOverride: 2.85f
+            gridCenter: new Color(0.18f, 0.32f, 0.22f, 0.38f),
+            gridOutside: new Color(0.12f, 0.22f, 0.15f, 0.11f),
+            storyPauseSecondsOverride: 2.95f,
+            graphStep: 0.09f
         ));
 
         levels.Add(MakeLevel(
             GameLevelCatalog.DisplayNames[42],
+            FunctionType.EconomySubprime2008Stylized,
+            curveColor: new Color(0.72f, 0.22f, 0.2f, 1f),
+            derivativeColor: new Color(0.52f, 0.78f, 0.95f, 1f),
+            transA: 2.5f,
+            transK: 0.115f,
+            transC: -2.42f,
+            transD: 0f,
+            power: 2,
+            baseN: 2,
+            story:
+                "<b>Global financial crisis — stylized stress curve</b> — US <color=#fde047>housing & mortgage</color> risk, structured credit losses, and institutional fragility fed a <color=#fca5a5>violent repricing</color> in 2007–09 that spilled across banks, money markets, and real economies (familiar names in history books: Lehman’s collapse in Sept 2008 as a flashpoint).\n\n" +
+                "Again: <b>no real GSPC series here</b> — just a qualitative spline with a **crest near complacency**, a **cliff**, and a **long crawl** that matches how people <i>remember</i> the V‑shock conversation.\n\n" +
+                "<size=92%><color=#a8b2d1>Simplified drama for calculus class; markets are vastly richer than one line.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.36f, 0.14f, 0.12f, 0.36f),
+            gridOutside: new Color(0.26f, 0.1f, 0.09f, 0.1f),
+            storyPauseSecondsOverride: 3.05f,
+            graphStep: 0.09f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[43],
             FunctionType.MandelbrotEscapeImSlice,
             curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
             derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),
             transA: -0.743643887f,
-            transK: 0.092f,
+            transK: 0.088f,
             transC: -2.18f,
             transD: 0f,
-            power: 28,
-            baseN: 22,
+            power: 80,
+            baseN: 26,
             story:
-                "<b>Final stage — Mandelbrot set</b> — each column fixes <color=#86efac>Re(c)</color> and sweeps an imaginary slice; graph height tracks <color=#a7f3d0>escape iterations</color> (how long z²+c stays bounded before |z| blows up).\n\n" +
-                "The boundary you know from posters is wildly intricate; here you get a **fast teaching slice** (low max-iter, wide steps) — still true Mandelbrot math.\n\n" +
-                "<size=92%><color=#a8b2d1>The iteration uses <b>|Im(c)|</b> so each sample matches its mirror across the real axis (escape time equals that of the complex conjugate). Low max-iter + wide graph step keep CPU tiny.</color></size>",
+                "<b>Final stage — Mandelbrot set</b> — the <color=#a8b2d1>backdrop</color> is the classic <b>c-plane</b> (Re horizontal, Im vertical) colored by <color=#a7f3d0>smooth escape time</color>; the bright line marks your fixed <color=#86efac>Re(c)</color>. The green curve is the same slice as before: height vs <color=#86efac>Im(c)</color>.\n\n" +
+                "The cardioid and bulbs are the boundary where Julia sets disconnect; zooming that coastline reveals endless filaments (true deep zoom needs a different engine, but the map is real Mandelbrot math).\n\n" +
+                "<size=92%><color=#a8b2d1>Slice iteration uses <b>|Im(c)|</b> (conjugate symmetry). Curve uses fractional escape counts so steps look less “flat” than raw integers.</color></size>",
             derivativePopTriggerCountOverride: 4,
             applyGridTheming: true,
             gridCenter: new Color(0.12f, 0.32f, 0.48f, 0.4f),
             gridOutside: new Color(0.08f, 0.18f, 0.28f, 0.12f),
             storyPauseSecondsOverride: 2.9f,
-            graphStep: 0.38f,
+            graphStep: 0.14f,
             levelXStart: -16f,
             levelXEnd: 16f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[44],
+            FunctionType.ThermoAdiabaticPV,
+            curveColor: new Color(0.98f, 0.52f, 0.28f, 1f),
+            derivativeColor: new Color(0.45f, 0.82f, 0.98f, 1f),
+            transA: 9.5f,
+            transK: 0.38f,
+            transC: -2.35f,
+            transD: -16f,
+            power: 2,
+            baseN: 140,
+            story:
+                "<b>Thermodynamics — reversible adiabatic path</b> — for an ideal gas, <color=#fdba74>quasi-static adiabats</color> obey <b>PV<sup>γ</sup> = constant</b> (no heat exchange, work comes only from internal energy bookkeeping).\n\n" +
+                "Here the horizontal walk is a scaled <color=#7dd3fc>“volume-like”</color> coordinate; height tracks <b>pressure mood</b> as P ∝ V<sup>−γ</sup>. We set <b>N = 140</b> so γ ≈ 1.40 — a familiar air/diatomic story problem vibe, not a lab instrument.\n\n" +
+                "<size=92%><color=#a8b2d1>Teaching sketch only: real pistons have losses, gradients, and non-equilibrium corners — but the slope story you feel underfoot is still γ.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.38f, 0.18f, 0.1f, 0.36f),
+            gridOutside: new Color(0.22f, 0.1f, 0.06f, 0.1f),
+            storyPauseSecondsOverride: 2.85f,
+            graphStep: 0.11f,
+            levelXStart: -14f,
+            levelXEnd: 14f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[45],
+            FunctionType.PolarGoldenLogSpiral,
+            curveColor: new Color(0.99f, 0.86f, 0.38f, 1f),
+            derivativeColor: new Color(0.62f, 0.42f, 0.98f, 1f),
+            transA: 2.15f,
+            transK: 1f,
+            transC: -3.08f,
+            transD: 0f,
+            power: 1,
+            baseN: 105,
+            story:
+                "<b>Secret boss — golden spiral</b> — nature’s favorite growth curve is a <color=#fbbf24>logarithmic spiral</color>: each time angle θ advances steadily, radius scales by a fixed factor tied to the <color=#fde68a>golden ratio φ = (1+√5)/2</color>.\n\n" +
+                "Fibonacci rectangles, nautilus moods, and phyllotaxis in sunflowers all whisper the same proportion — here you walk the graph as <b>r(θ) ∝ φ^{kθ}</b> on a polar-style readout (horizontal = θ, vertical = r).\n\n" +
+                "<size=92%><color=#a8b2d1>Exact classical spirals use arc-length subtleties; this stage is the clean calculus headline: exponential growth in φ as you turn.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.42f, 0.34f, 0.14f, 0.38f),
+            gridOutside: new Color(0.22f, 0.17f, 0.08f, 0.12f),
+            storyPauseSecondsOverride: 2.95f,
+            graphStep: 0.075f,
+            levelXStart: -11.5f,
+            levelXEnd: 13.5f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[46],
+            FunctionType.TransformFourierSinc,
+            curveColor: new Color(0.42f, 0.78f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.55f, 0.85f, 1f),
+            transA: 2.8f,
+            transK: 0.95f,
+            transC: -1.35f,
+            transD: 0f,
+            power: 1,
+            baseN: 2,
+            story:
+                "<b>Fourier transform — sinc glimpse</b> — a sharp pulse in time smears into a tall <color=#7dd3fc>sinc</color> in frequency: the side lobes are the price of band-limiting dreams.\n\n" +
+                "Here the horizontal axis is an angular-frequency style <i>u</i>; height follows <b>sin(u)/u</b> (normalized to 1 at the origin). It is the magnitude mood of a rectangular window — not a full FFT engine, but the canonical homework picture.\n\n" +
+                "<size=92%><color=#a8b2d1>Real transforms add phase; this stage is the clean symmetric <b>even sinc</b> silhouette.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.12f, 0.22f, 0.38f, 0.38f),
+            gridOutside: new Color(0.08f, 0.14f, 0.22f, 0.11f),
+            storyPauseSecondsOverride: 2.85f,
+            graphStep: 0.085f,
+            levelXStart: -18f,
+            levelXEnd: 18f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[47],
+            FunctionType.TransformLaplaceCausalDecay,
+            curveColor: new Color(0.55f, 0.95f, 0.65f, 1f),
+            derivativeColor: new Color(0.98f, 0.72f, 0.38f, 1f),
+            transA: 3.4f,
+            transK: 0.72f,
+            transC: -2.55f,
+            transD: -6f,
+            power: 1,
+            baseN: 125,
+            story:
+                "<b>Laplace transform — causal exponential</b> — for <b>t ≥ 0</b>, the table favorite <color=#86efac>f(t) = e<sup>−at</sup></color> is the polite ancestor of every damped pole in your s-domain algebra.\n\n" +
+                "We plot that decay with <b>N = 125</b> so the rate is about <b>a ≈ 1.25</b>: horizontal axis as time after the jump, vertical as amplitude.\n\n" +
+                "<size=92%><color=#a8b2d1>Heaviside <b>H(t)</b> hides the past: nothing before <b>t = 0</b>. The transform pairs it with <b>1/(s+a)</b> in your cheat sheet dreams.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.14f, 0.28f, 0.18f, 0.36f),
+            gridOutside: new Color(0.08f, 0.18f, 0.1f, 0.1f),
+            storyPauseSecondsOverride: 2.8f,
+            graphStep: 0.08f,
+            levelXStart: -6f,
+            levelXEnd: 14f
+        ));
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[48],
+            FunctionType.MandelbrotEscapeImSlice,
+            curveColor: new Color(0.25f, 0.98f, 0.62f, 1f),
+            derivativeColor: new Color(0.98f, 0.38f, 0.82f, 1f),
+            transA: -0.743643887f,
+            transK: 0.088f,
+            transC: -2.18f,
+            transD: 0f,
+            power: 80,
+            baseN: 26,
+            story:
+                "<b>True finale — Mandelbrot encore</b> — the <color=#a8b2d1>backdrop</color> is again the classic <b>c-plane</b> (Re horizontal, Im vertical) colored by <color=#a7f3d0>smooth escape time</color>; your path follows the same slice: height vs <color=#86efac>Im(c)</color> at fixed <color=#86efac>Re(c)</color>.\n\n" +
+                "This is the <b>final boss gate</b>: every step still reads Julia–Mandelbrot folklore — bulbs, filaments, and the cardioid where behavior flips.\n\n" +
+                "<size=92%><color=#a8b2d1>Same slice recipe as the mid-finale: fractional escape counts + <b>|Im|</b> symmetry. Welcome back to the boundary.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.12f, 0.32f, 0.48f, 0.4f),
+            gridOutside: new Color(0.08f, 0.18f, 0.28f, 0.12f),
+            storyPauseSecondsOverride: 2.95f,
+            graphStep: 0.14f,
+            levelXStart: -16f,
+            levelXEnd: 16f
+        ));
+
+        float lorenzBossX0 = -14f;
+        float lorenzBossX1 = 14f;
+        float lorenzBossK = LorenzAttractorSamples.TimeMax / Mathf.Max(lorenzBossX1 - lorenzBossX0, 0.01f);
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[49],
+            FunctionType.ChaosLorenzButterflyX,
+            curveColor: new Color(0.42f, 0.86f, 1f, 1f),
+            derivativeColor: new Color(1f, 0.52f, 0.88f, 1f),
+            transA: 6.85f,
+            transK: lorenzBossK,
+            transC: 0f,
+            transD: lorenzBossX0,
+            power: 1,
+            baseN: 2,
+            story:
+                "<b>True finale — Lorenz butterfly</b> — the <color=#a8b2d1>horizontal axis</color> is a long stretch of <color=#86efac>simulation time</color>; height tracks the classic Lorenz <color=#7dd3fc>x(t)</color> with σ=10, ρ=28, β=8/3.\n\n" +
+                "Watch how the attractor <b>keeps retuning</b>: the same law, sensitive dependence, a path that never quite repeats — the <color=#fda4af>butterfly effect</color> made legible as motion.\n\n" +
+                "<size=92%><color=#a8b2d1>Normalized after burn-in so the wings fill your grid; the curve scrolls through phase so the stage feels alive.</color></size>",
+            derivativePopTriggerCountOverride: 4,
+            applyGridTheming: true,
+            gridCenter: new Color(0.1f, 0.18f, 0.34f, 0.42f),
+            gridOutside: new Color(0.07f, 0.12f, 0.22f, 0.12f),
+            storyPauseSecondsOverride: 3.05f,
+            graphStep: 0.11f,
+            levelXStart: lorenzBossX0,
+            levelXEnd: lorenzBossX1
+        ));
+
+        var springMassColors = new[]
+        {
+            new Color(0.42f, 0.95f, 0.68f, 1f),
+            new Color(1f, 0.52f, 0.42f, 1f),
+            new Color(0.58f, 0.78f, 1f, 1f)
+        };
+
+        levels.Add(MakeLevel(
+            GameLevelCatalog.DisplayNames[50],
+            FunctionType.SpringMassUndamped,
+            curveColor: new Color(0.38f, 0.92f, 0.74f, 1f),
+            derivativeColor: new Color(1f, 0.48f, 0.52f, 1f),
+            transA: 1.08f,
+            transK: 0.9f,
+            transC: -2.08f,
+            transD: 0f,
+            power: 14,
+            baseN: 2,
+            story:
+                "<b>Spring–mass without damping</b> — Hooke’s law says the restoring force points toward equilibrium: <color=#86efac><b>F = −k x</b></color> for displacement from rest.\n\n" +
+                "For a block on a frictionless horizontal surface, Newton gives <color=#7dd3fc>m ẍ = −k x</color>, so <color=#fde047>x(t) = A cos(ωt) + x₀</color> with <color=#a5b4fc>ω = √(k/m)</color> — simple harmonic motion.\n\n" +
+                "<size=92%><color=#a8b2d1>Horizontal axis here is a time-like <i>t</i> (via <b>u = k(x−D)</b>); height is position. Compare with <b>Engineering: damped oscillation</b> — same spring intuition with friction draining energy.</color></size>",
+            derivativePopTriggerCountOverride: 3,
+            applyGridTheming: true,
+            gridCenter: new Color(0.14f, 0.36f, 0.32f, 0.38f),
+            gridOutside: new Color(0.1f, 0.26f, 0.24f, 0.11f),
+            levelStageColors: springMassColors,
+            storyPauseSecondsOverride: 2.75f,
+            graphStep: 0.085f,
+            levelXStart: -14f,
+            levelXEnd: 14f
         ));
     }
 
@@ -1905,7 +2271,9 @@ public class LevelManager : MonoBehaviour
         Color? riemannFillColor = null,
         float graphStep = 0f,
         float? levelXStart = null,
-        float? levelXEnd = null)
+        float? levelXEnd = null,
+        Color[] dragPolarOverlayColors = null,
+        float? riemannPlatformCoverage = null)
     {
         var def = ScriptableObject.CreateInstance<LevelDefinition>();
         def.levelName = name;
@@ -1965,6 +2333,17 @@ public class LevelManager : MonoBehaviour
         def.useRiemannStairPlatforms = useRiemannStairPlatforms;
         if (riemannFillColor.HasValue)
             def.riemannFillColor = riemannFillColor.Value;
+        if (riemannPlatformCoverage.HasValue)
+            def.riemannPlatformCoverage = Mathf.Clamp(riemannPlatformCoverage.Value, 0.22f, 1f);
+
+        if (dragPolarOverlayColors != null && dragPolarOverlayColors.Length >= 2)
+        {
+            def.dragPolarOverlayColors = new List<Color>
+            {
+                dragPolarOverlayColors[0],
+                dragPolarOverlayColors[1]
+            };
+        }
 
         return def;
     }
@@ -1983,7 +2362,10 @@ public class LevelManager : MonoBehaviour
         var def = levels[currentLevelIndex];
         ApplyLevelTheme(def);
         RefreshStageHud();
-        StartCoroutine(LoadWorldAfterThemeChange(def));
+
+        if (levelFlowRoutine != null)
+            StopCoroutine(levelFlowRoutine);
+        levelFlowRoutine = StartCoroutine(LoadLevelFullRoutine(def));
     }
 
     /// <summary>
@@ -1996,6 +2378,10 @@ public class LevelManager : MonoBehaviour
         functionPlotter.xStart = def.xStart;
         functionPlotter.xEnd = def.xEnd;
         functionPlotter.step = def.step;
+        functionPlotter.autoScaleVertical = def.autoFitGraphVertical;
+        functionPlotter.verticalFillFraction = def.graphVerticalFillFraction;
+        functionPlotter.autoScaleHorizontal = def.autoFitGraphHorizontal;
+        functionPlotter.horizontalFillFraction = def.graphHorizontalFillFraction;
 
         functionPlotter.transA = def.transA;
         functionPlotter.transK = def.transK;
@@ -2020,6 +2406,19 @@ public class LevelManager : MonoBehaviour
 
         curveRenderer.color = def.curveColor;
         derivRenderer.color = def.derivativeColor;
+
+        if (def.functionType == FunctionType.AeroDragPolarTriple)
+        {
+            Color oc0 = new Color(0.55f, 0.68f, 0.9f, 0.95f);
+            Color oc1 = new Color(0.98f, 0.5f, 0.55f, 0.9f);
+            if (def.dragPolarOverlayColors != null && def.dragPolarOverlayColors.Count >= 2)
+            {
+                oc0 = def.dragPolarOverlayColors[0];
+                oc1 = def.dragPolarOverlayColors[1];
+            }
+
+            functionPlotter.ConfigureDragPolarOverlayColors(oc0, oc1);
+        }
 
         int popN = def.derivativePopTriggerCount > 0 ? def.derivativePopTriggerCount : defaultStageCount;
         var fromDef = def.stageDerivativePopColors;
@@ -2068,21 +2467,367 @@ public class LevelManager : MonoBehaviour
             gridRenderer.enabled = true;
         }
 
-        // Story.
+        // Story + roleplay intro run from <see cref="LoadLevelFullRoutine"/> after the world is built.
+    }
+
+    /// <summary>
+    /// Builds platforms after plot refresh; then optional roleplay “page”, then the ordinary story banner fade.
+    /// </summary>
+    private IEnumerator LoadLevelFullRoutine(LevelDefinition def)
+    {
+        if (playerController != null)
+            playerController.SetInputLocked(true);
+
+        bool grantStrongFirstJump = !graphCalculatorMode && !skipSpawnSpotlight;
+        yield return LoadWorldAfterThemeChange(def, grantStrongFirstJump);
+
+        bool showIntro = !skipNextStageIntro
+                         && !graphCalculatorMode
+                         && currentLevelIndex >= 0
+                         && currentLevelIndex < StageRoleplayLibrary.Count;
+
+        skipNextStageIntro = false;
+
+        bool runSpawnSpotlight = !graphCalculatorMode && !skipSpawnSpotlight;
+        skipSpawnSpotlight = false;
+
+        if (showIntro)
+            yield return RunEnumerated(RunStageIntroCoroutine(def));
+
+        if (runSpawnSpotlight && playerController != null)
+            yield return RunEnumerated(RunSpawnSpotlightRoutine());
+
+        // Match original behaviour: player can move while the top story banner fades.
+        if (playerController != null)
+            playerController.SetInputLocked(false);
+
         if (storyText != null)
         {
             RefreshStoryBannerForCurrentMode(def);
-            if (storyFadeRoutine != null)
-                StopCoroutine(storyFadeRoutine);
-            storyFadeRoutine = StartCoroutine(FadeStoryTextRoutine());
+            yield return RunEnumerated(FadeStoryTextRoutine());
         }
+
+        levelFlowRoutine = null;
+    }
+
+    /// <summary>Runs a child iterator inside this MonoBehaviour coroutine without starting a nested Unity coroutine.</summary>
+    private static IEnumerator RunEnumerated(IEnumerator inner)
+    {
+        if (inner == null)
+            yield break;
+
+        while (inner.MoveNext())
+            yield return inner.Current;
+    }
+
+    /// <summary>
+    /// Fullscreen dim with a soft hole on the player — runs while input is still locked (after optional roleplay card).
+    /// </summary>
+    private IEnumerator RunSpawnSpotlightRoutine()
+    {
+        var canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null || playerController == null)
+            yield break;
+
+        EnsureSpawnSpotlightOverlay(canvas);
+        if (spawnSpotlightRoot == null || spawnSpotlightMaterial == null || spawnSpotlightRect == null)
+            yield break;
+
+        var playerRt = playerController.PlayerVisualRect;
+        if (playerRt == null)
+            yield break;
+
+        float total = Mathf.Max(0.35f, spawnSpotlightTotalSeconds);
+        float fadeIn = Mathf.Min(0.22f, total * 0.12f);
+        float fadeOut = Mathf.Min(0.22f, total * 0.12f);
+        float hold = Mathf.Max(0.1f, total - fadeIn - fadeOut);
+        const float maxAlpha = 0.84f;
+
+        spawnSpotlightMaterial.SetFloat("_SpotRadius", 0.19f);
+        spawnSpotlightMaterial.SetFloat("_SpotSoft", 0.11f);
+
+        spawnSpotlightRoot.SetActive(true);
+        spawnSpotlightRoot.transform.SetAsLastSibling();
+
+        float t = 0f;
+        while (t < fadeIn)
+        {
+            t += Time.unscaledDeltaTime;
+            float a = Mathf.Clamp01(t / fadeIn) * maxAlpha;
+            spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, a));
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, maxAlpha));
+
+        t = 0f;
+        while (t < hold)
+        {
+            t += Time.unscaledDeltaTime;
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < fadeOut)
+        {
+            t += Time.unscaledDeltaTime;
+            float a = Mathf.Lerp(maxAlpha, 0f, Mathf.Clamp01(t / fadeOut));
+            spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, a));
+            UpdateSpawnSpotlightHole(spawnSpotlightRect, playerRt, spawnSpotlightMaterial);
+            yield return null;
+        }
+
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, 0f));
+        spawnSpotlightRoot.SetActive(false);
+    }
+
+    private void EnsureSpawnSpotlightOverlay(Canvas canvas)
+    {
+        if (spawnSpotlightRoot != null)
+            return;
+
+        Shader sh = spawnSpotlightShader;
+        if (sh == null)
+            sh = Resources.Load<Shader>("UI_SpotlightDim");
+        if (sh == null)
+            sh = Shader.Find("UI/SpotlightDim");
+        if (sh == null)
+        {
+            Debug.LogWarning("LevelManager: Shader UI/SpotlightDim not found — ensure Assets/Resources/UI_SpotlightDim.shader exists or assign spawnSpotlightShader.");
+            return;
+        }
+
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        Transform parent = safe != null ? safe : canvas.transform;
+
+        spawnSpotlightRoot = new GameObject("SpawnSpotlightOverlay", typeof(RectTransform));
+        spawnSpotlightRect = spawnSpotlightRoot.GetComponent<RectTransform>();
+        spawnSpotlightRect.SetParent(parent, false);
+        spawnSpotlightRect.anchorMin = Vector2.zero;
+        spawnSpotlightRect.anchorMax = Vector2.one;
+        spawnSpotlightRect.offsetMin = Vector2.zero;
+        spawnSpotlightRect.offsetMax = Vector2.zero;
+
+        var img = spawnSpotlightRoot.AddComponent<Image>();
+        img.raycastTarget = false;
+        img.color = Color.white;
+        img.sprite = TryGetSquareSprite();
+
+        spawnSpotlightMaterial = new Material(sh);
+        img.material = spawnSpotlightMaterial;
+        spawnSpotlightMaterial.SetColor("_DimColor", new Color(0f, 0f, 0f, 0f));
+
+        spawnSpotlightRoot.SetActive(false);
+    }
+
+    private static void UpdateSpawnSpotlightHole(RectTransform overlayRt, RectTransform playerRt, Material mat)
+    {
+        if (overlayRt == null || playerRt == null || mat == null)
+            return;
+
+        float aspect = overlayRt.rect.width / Mathf.Max(overlayRt.rect.height, 1e-4f);
+        mat.SetFloat("_Aspect", aspect);
+
+        // Same Canvas tree: world → overlay-local avoids Overlay vs Camera camera-null pitfalls.
+        Vector3 world = playerRt.TransformPoint(playerRt.rect.center);
+        Vector3 local = overlayRt.InverseTransformPoint(world);
+
+        Rect r = overlayRt.rect;
+        float u = Mathf.InverseLerp(r.xMin, r.xMax, local.x);
+        float v = Mathf.InverseLerp(r.yMin, r.yMax, local.y);
+        mat.SetVector("_SpotCenter", new Vector4(u, v, 0f, 0f));
+    }
+
+    private IEnumerator RunStageIntroCoroutine(LevelDefinition def)
+    {
+        EnsureStageIntroOverlay();
+        if (stageIntroRoot == null || stageIntroCanvasGroup == null)
+            yield break;
+
+        stageIntroSkipRequested = false;
+
+        string title = LocalizationManager.GetWithFallback($"level.{currentLevelIndex}", def.levelName);
+        stageIntroTitle.text = title;
+        stageIntroBody.text = TmpLatex.Process(StageRoleplayLibrary.GetRoleplayText(currentLevelIndex));
+        LocalizationManager.ApplyTextDirection(stageIntroTitle);
+        LocalizationManager.ApplyTextDirection(stageIntroBody);
+        stageIntroHint.text = LocalizationManager.Get("ui.stage_intro_hint", "Tap anywhere to continue");
+        LocalizationManager.ApplyTextDirection(stageIntroHint);
+
+        stageIntroRoot.SetActive(true);
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroCanvasGroup.interactable = false;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        float fadeIn = 0.38f;
+        float t = 0f;
+        while (t < fadeIn)
+        {
+            t += Time.unscaledDeltaTime;
+            stageIntroCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, t / fadeIn);
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.alpha = 1f;
+        stageIntroCanvasGroup.interactable = true;
+        stageIntroCanvasGroup.blocksRaycasts = true;
+
+        const float maxWait = 6f;
+        const float minBeforeSkip = 0.42f;
+        float waited = 0f;
+        while (waited < maxWait)
+        {
+            waited += Time.unscaledDeltaTime;
+            if (stageIntroSkipRequested && waited >= minBeforeSkip)
+                break;
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.interactable = false;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        float fadeOut = 0.32f;
+        t = 0f;
+        while (t < fadeOut)
+        {
+            t += Time.unscaledDeltaTime;
+            stageIntroCanvasGroup.alpha = Mathf.SmoothStep(1f, 0f, t / fadeOut);
+            yield return null;
+        }
+
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroRoot.SetActive(false);
+    }
+
+    private void EnsureStageIntroOverlay()
+    {
+        if (stageIntroRoot != null)
+            return;
+
+        var canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+
+        var safe = MobileUiRoots.GetSafeContentParent(canvas.transform);
+        var parent = safe != null ? safe : canvas.transform;
+        bool stageIntroTablet = DeviceLayout.IsTabletLike();
+
+        stageIntroRoot = new GameObject("StageIntroOverlay");
+        var rootRt = stageIntroRoot.AddComponent<RectTransform>();
+        rootRt.SetParent(parent, false);
+        rootRt.SetAsLastSibling();
+        rootRt.anchorMin = Vector2.zero;
+        rootRt.anchorMax = Vector2.one;
+        rootRt.offsetMin = Vector2.zero;
+        rootRt.offsetMax = Vector2.zero;
+
+        stageIntroCanvasGroup = stageIntroRoot.AddComponent<CanvasGroup>();
+        stageIntroCanvasGroup.alpha = 0f;
+        stageIntroCanvasGroup.blocksRaycasts = false;
+
+        var dimGo = new GameObject("Dim");
+        var dimRt = dimGo.AddComponent<RectTransform>();
+        dimRt.SetParent(rootRt, false);
+        dimRt.anchorMin = Vector2.zero;
+        dimRt.anchorMax = Vector2.one;
+        dimRt.offsetMin = Vector2.zero;
+        dimRt.offsetMax = Vector2.zero;
+        var dimImg = dimGo.AddComponent<Image>();
+        dimImg.color = new Color(0.04f, 0.05f, 0.08f, 0.88f);
+        dimImg.raycastTarget = false;
+
+        var panelGo = new GameObject("Panel");
+        var panelRt = panelGo.AddComponent<RectTransform>();
+        panelRt.SetParent(rootRt, false);
+        panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRt.pivot = new Vector2(0.5f, 0.5f);
+        panelRt.sizeDelta = new Vector2(Mathf.Min(760f, Screen.width * 0.9f), Mathf.Min(520f, Screen.height * 0.72f));
+        var panelImg = panelGo.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(panelImg);
+        panelImg.color = new Color(0.1f, 0.11f, 0.15f, 0.97f);
+        panelImg.raycastTarget = false;
+        RuntimeUiPolish.ApplyDropShadow(panelRt, new Vector2(2f, -4f), 0.35f);
+
+        var titleGo = new GameObject("Title");
+        var titleRt = titleGo.AddComponent<RectTransform>();
+        titleRt.SetParent(panelRt, false);
+        titleRt.anchorMin = new Vector2(0f, 1f);
+        titleRt.anchorMax = new Vector2(1f, 1f);
+        titleRt.pivot = new Vector2(0.5f, 1f);
+        titleRt.offsetMin = new Vector2(22f, -120f);
+        titleRt.offsetMax = new Vector2(-22f, -16f);
+        stageIntroTitle = titleGo.AddComponent<TextMeshProUGUI>();
+        stageIntroTitle.fontSize = UiTypography.Scale(30);
+        stageIntroTitle.fontStyle = FontStyles.Bold;
+        stageIntroTitle.alignment = TextAlignmentOptions.Top;
+        stageIntroTitle.color = RuntimeUiPolish.TitleIvory;
+        stageIntroTitle.richText = true;
+        stageIntroTitle.textWrappingMode = TextWrappingModes.Normal;
+        stageIntroTitle.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroTitle, FindPrimaryEquationTmp(), outlineWidth: 0.1f, outlineAlpha: 0.4f);
+
+        var bodyGo = new GameObject("Body");
+        var bodyRt = bodyGo.AddComponent<RectTransform>();
+        bodyRt.SetParent(panelRt, false);
+        bodyRt.anchorMin = new Vector2(0f, 0.22f);
+        bodyRt.anchorMax = new Vector2(1f, 1f);
+        bodyRt.offsetMin = new Vector2(22f, 8f);
+        bodyRt.offsetMax = new Vector2(-22f, -132f);
+        stageIntroBody = bodyGo.AddComponent<TextMeshProUGUI>();
+        stageIntroBody.fontSize = UiTypography.Scale(23);
+        stageIntroBody.alignment = TextAlignmentOptions.Top;
+        stageIntroBody.color = new Color(0.92f, 0.93f, 0.96f, 1f);
+        stageIntroBody.richText = true;
+        stageIntroBody.textWrappingMode = TextWrappingModes.Normal;
+        stageIntroBody.lineSpacing = 2f;
+        stageIntroBody.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroBody, FindPrimaryEquationTmp(), outlineWidth: 0.08f, outlineAlpha: 0.35f);
+
+        var hintGo = new GameObject("Hint");
+        var hintRt = hintGo.AddComponent<RectTransform>();
+        hintRt.SetParent(panelRt, false);
+        hintRt.anchorMin = new Vector2(0f, 0f);
+        hintRt.anchorMax = new Vector2(1f, 0f);
+        hintRt.pivot = new Vector2(0.5f, 0f);
+        hintRt.offsetMin = new Vector2(16f, 12f);
+        hintRt.offsetMax = new Vector2(-16f, 88f);
+        stageIntroHint = hintGo.AddComponent<TextMeshProUGUI>();
+        stageIntroHint.fontSize = UiTypography.Scale(stageIntroTablet ? 26 : 23);
+        stageIntroHint.alignment = TextAlignmentOptions.Bottom;
+        stageIntroHint.color = new Color(0.75f, 0.8f, 0.95f, 0.85f);
+        stageIntroHint.fontStyle = FontStyles.Italic;
+        stageIntroHint.richText = true;
+        stageIntroHint.raycastTarget = false;
+        ApplyPrimaryUiTypography(stageIntroHint, FindPrimaryEquationTmp(), outlineWidth: 0.06f, outlineAlpha: 0.3f);
+        stageIntroHint.fontStyle = FontStyles.Italic;
+
+        var tapGo = new GameObject("TapToContinue");
+        var tapRt = tapGo.AddComponent<RectTransform>();
+        tapRt.SetParent(rootRt, false);
+        tapRt.SetAsLastSibling();
+        tapRt.anchorMin = Vector2.zero;
+        tapRt.anchorMax = Vector2.one;
+        tapRt.offsetMin = Vector2.zero;
+        tapRt.offsetMax = Vector2.zero;
+        var tapImg = tapGo.AddComponent<Image>();
+        tapImg.color = new Color(0f, 0f, 0f, 0.001f);
+        tapImg.raycastTarget = true;
+        var tapBtn = tapGo.AddComponent<Button>();
+        tapBtn.targetGraphic = tapImg;
+        tapBtn.transition = Selectable.Transition.None;
+        tapBtn.onClick.AddListener(() => stageIntroSkipRequested = true);
+
+        stageIntroRoot.SetActive(false);
     }
 
     /// <summary>
     /// After theme swap, FunctionPlotter.Update repopulates points; we defer one frame so
     /// <see cref="LineRendererUI.points"/> / derivative lists are current before sampling columns.
     /// </summary>
-    private IEnumerator LoadWorldAfterThemeChange(LevelDefinition def)
+    private IEnumerator LoadWorldAfterThemeChange(LevelDefinition def, bool grantStrongFirstGroundJump)
     {
         // Wait for the plot to regenerate points with the new parameters.
         yield return null;
@@ -2099,14 +2844,27 @@ public class LevelManager : MonoBehaviour
 
         EnsureRiemannRenderer();
         if (riemannRenderer != null)
+        {
+            bool riemannBackdrop = def.riemannRectCount > 0
+                && (def.showRiemannVisualization
+                    || (def.useRiemannStairPlatforms && def.riemannRule != RiemannRule.None));
+            if (riemannBackdrop)
+                riemannRenderer.transform.SetSiblingIndex(0);
             riemannRenderer.Rebuild(def, functionPlotter);
+        }
 
         var curvePoints = curveRenderer.points;
         var derivPoints = derivRenderer.points;
 
-        var world = obstacleGenerator.GenerateWorld(def, curvePoints, derivPoints, functionPlotter);
+        var playBounds = GameplayPlayBounds.Compute(cartesianPlaneRect, gridSize);
+        var world = obstacleGenerator.GenerateWorld(def, curvePoints, derivPoints, functionPlotter, playBounds);
+        if (world.hasPlayBounds)
+            playerController.SetDeathMinYGrid(world.playBounds.YMin - 0.4f);
+        else
+            playerController.SetDeathMinYGrid(deathMinYGrid);
+
         playerController.SetWorld(world);
-        playerController.ResetToSpawn(world);
+        playerController.ResetToSpawn(world, grantStrongFirstGroundJump);
     }
 
     private IEnumerator FadeStoryTextRoutine()
@@ -2179,6 +2937,8 @@ public class LevelManager : MonoBehaviour
     {
         isRestarting = true;
         yield return new WaitForSeconds(restartDelaySeconds);
+        skipNextStageIntro = true;
+        skipSpawnSpotlight = true;
         LoadLevel(currentLevelIndex);
     }
 

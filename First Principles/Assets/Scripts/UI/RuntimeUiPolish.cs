@@ -46,7 +46,12 @@ public static class RuntimeUiPolish
     public static readonly Color AccentCoral = new Color(0.95f, 0.42f, 0.38f, 0.98f);
     public static readonly Color AccentJump = new Color(0.22f, 0.48f, 0.42f, 0.94f);
     public static readonly Color TitleIvory = new Color(0.94f, 0.95f, 0.98f, 1f);
-    public static readonly Color PlayerBody = new Color(1f, 0.62f, 0.48f, 1f);
+    /// <summary>Graph player glyph fill — high luminance for readability on busy curves.</summary>
+    public static readonly Color PlayerBody = new Color(1f, 0.98f, 0.94f, 1f);
+
+    /// <summary>Lightens an accent (menu chip, etc.) so the math glyph pops on top.</summary>
+    public static Color BrightenPlayerAccent(Color accent, float towardWhite = 0.42f) =>
+        Color.Lerp(accent, Color.white, Mathf.Clamp01(towardWhite));
 
     public static void ApplyDropShadow(RectTransform target, Vector2? distance = null, float alpha = 0.28f)
     {

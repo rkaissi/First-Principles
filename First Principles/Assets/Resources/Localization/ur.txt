@@ -1,0 +1,86 @@
+# اردو — First Principles
+ui.choose_stage=لیول منتخب کریں
+ui.math_tips=ریاضی کے نکات و اقتباسات
+ui.back_menu=مینو پر واپس
+ui.graphing_calculator_mode=گرافنگ کیلکولیٹر
+ui.loading=لوڈ ہو رہا ہے…
+ui.language=زبان
+ui.tap_change_language=تبدیل کرنے کے لیے تھپتھپائیں
+ui.stage_intro_hint=جاری رکھنے کے لیے کہیں بھی تھپتھپائیں
+ui.close=بند کریں
+ui.math_concepts=ریاضی کے تصورات
+ui.jump=چھلانگ
+ui.move=حرکت
+ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(کی بورڈ: تیر / اسپیس)</color></size>
+hud.stage=اسٹیج
+controls.mobile=<color=#7a8399>حرکت</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>چھلانگ</color>  <b><color=#ffd978>تھپتھی</color></b>  <size=90%><color=#5c6577>(کی بورڈ: تیر / اسپیس)</color></size>
+controls.desktop=<color=#7a8399>حرکت</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>چھلانگ</color>  <b><color=#ffd978>اسپیس</color></b>
+controls.calculator=<color=#7a8399>گرافنگ کیلکولیٹر</color>  <b>f(u) لکھیں</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>پنچ</b>  ·  <b>واپس</b>
+graph.label_fu=f(u) =
+graph.placeholder=x^2 + sin(x) · ln(x) جب x>0 · min(x,3)...
+graph.status_enter=Enter / گراف کے لیے باہر تھپتھپائیں
+graph.status_graphed=<color=#8fd9b3>گراف مکمل</color>
+graph.line1=<b>گرافنگ کیلکولیٹر موڈ</b>
+graph.line2=<size=88%><color=#c4d0e8><b>f(u)</b> نیچے لکھیں (باکس میں متغیر <b>x</b> = اندرونی u)۔ پھر:</color></size>
+graph.line3=<size=92%><b>Trans</b> → {0} · <b>+</b> پر ڈبل-تھپتھی · <b>−</b> دبائے رکھیں · <b>Scale</b> زوم اندر / باہر دبائے رکھیں · دو انگلیوں سے <b>پنچ</b></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
+graph.param_a=A (عمودی پیمانہ)
+graph.param_k=k (افقی پیمانہ)
+graph.param_c=C (عمودی بِدائل)
+graph.param_d=D (افقی بِدائل)
+graph.calculator_intro=<b>گرافنگ کیلکولیٹر موڈ</b>\n<size=88%>تقریباً کوئی بھی <b>f(u)</b> خانے میں لکھیں (فارمولے میں <b>x</b>)؛ <b>Trans</b> سے A, k, C, D؛ <b>Scale</b> و <b>پنچ</b> سے کھڑکی زوم۔</size>
+aerospace.story_drag_polar_preamble=<b><color=#c4b5fd>ڈریگ پولر یاد دہانی</color></b> (ہر <b>ایرواسپیس</b> اسٹیج)\n<size=92%><b>پیراسیٹک (صفر-لفٹ) ڈریگ</b> — رگڑ، شکل، مداخلت کو ماڈل میں <b>C<sub>D0</sub></b> میں سمیٹا جاتا ہے (لفٹ کے ساتھ نہيں بڑھنے والا حصہ)۔\n<b>انڈیوسڈ ڈریگ</b> — لفٹ بنانے کی قیمت: ~ <b>K C<sub>L</sub>²</b>۔\n<b>کل ڈریگ پولر</b> — <b>C<sub>D</sub> = C<sub>D0</sub> + K C<sub>L</sub>²</b>۔</size>
+menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × Rayan Kaissi (GameGenesis)</size>
+menu.support_contact=<size=32><color=#94a3b8>معاونت:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
+level.0=ابتدائی اصول: تعارف
+level.1=پارابولا کی ڈھلوان
+level.2=جیا کی لہریں
+level.3=کوجیا کے سائے
+level.4=مطلق راستہ
+level.5=میکلارن: e^x
+level.6=میکلارن: sin(x)
+level.7=سلسلہ: جیومیٹرک دم
+level.8=گیٹھ کاٹ (کثیر متغیر)
+level.9=پیرابولائڈ کاٹ (کثیر متغیر)
+level.10=منحنی کے نیچے رقبہ
+level.11=ریمان: بائیں اختتام
+level.12=ریمان: دائیں اختتام
+level.13=ریمان: وسطی نقطہ
+level.14=انجینئرنگ: ڈیمپ شدہ حرکت
+level.15=انجینئرنگ: کیٹنری (cosh)
+level.16=انجینئرنگ: ریکٹی فائیڈ AC (|sin|)
+level.17=BC: ارکٹین اور معکوس مثلثیات
+level.18=BC: لاجسٹک نمو
+level.19=قطبی: کارڈیائڈ r ~ 1+cos θ
+level.20=قطبی: گلاب r ~ cos(nθ)
+level.21=BC: سنھ x و حدافی
+level.22=طبیعیات C: اسی زوال (τ، RC)
+level.23=طبیعیات C: زاویائی مع량 و L = Iω
+level.24=طبیعیات C: Projectile اونچائی y(t)
+level.25=BC: میکلارن cos(x)
+level.26=BC: ln x و ∫ dx/x
+level.27=BC: √x و دائرہ / نوک
+level.28=BC: tan x — اسمپٹوٹس کے درمیان
+level.29=BC: e^{kx} و y′ = ky
+level.30=BC: مرحلہ اور SHM
+level.31=BC: مکعب اور انفلیکشن
+level.32=BC: b^x و d/dx b^x
+level.33=دائرہ: (x−h)² + (y−k)² = R²
+level.34=ایرواسپیس: لفٹ C_L(α) + اسٹال
+level.35=ایرواسپیس: ڈریگ پولر (پیراسٹک، انڈیوسڈ، کل)
+level.36=ایرواسپیس: ہمحرارتی فضا ρ(h)
+level.37=ایرواسپیس: فیگوئڈ / ڈیمپڈ موڈ
+level.38=ایرواسپیس: نیوٹنی Cp ~ sin²α
+level.39=ایرواسپیس: اسٹروہل / وورٹیکس شیڈنگ
+level.40=ایرواسپیس: دوبارہ دخول زوال
+level.41=معیشت: ڈاٹ کام ببل اور حادثہ (اسٹائل شدہ انڈیکس)
+level.42=معیشت: 2008 بحران اور بحالی (اسٹائل شدہ انڈیکس)
+level.43=بوس: مینڈلبرو فرکٹل سلائس
+level.44=فزکس C: تھرموڈائنانمکس (ایڈیابیٹک P–V، γ از N)
+level.45=بوس: سنہری تناسب سنئلی (لوگ قطبی)
+level.46=تبدیل: فوریے — سینک سپیکٹرم
+level.47=تبدیل: لاپلاس — نماتی زوال
+level.48=بوس: مینڈلبرو — اختتام (فرکٹل فرار سلائس)
+level.49=بوس: لورینز تیتلی — اختتام (عجیب اٹریکٹر)
+level.50=فزکس C: سپرنگ–عنصر جرم SHM (ہوک کا قانون، ڈیمپنگ کے بغیر)

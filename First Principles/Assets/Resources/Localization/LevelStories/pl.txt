@@ -1,0 +1,46 @@
+# Level stories (pl) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>Pochodna</b></color> = nachylenie stycznej: jak szybko rośnie lub spada <b>f(x)</b>.\n\nZłota ścieżka = droga ; lodowy błękit = f'(x) kształtuje <i>gdzie jest grunt</i>. Gdy |f'| wystarcza — platformy ; inaczej pustka.\n\n<size=88%><color=#94a3b8><b>Pierwsze zasady:</b> zdejmuj analogie aż do faktów, potem buduj. <b>f</b> modeluje wynik ; <b>f'</b> wrażliwość.</color></size>
+story.1=Wędrowiec idzie tam, gdzie stok jest łagodny. Gdy pochodna jest ujemna, grunt staje się szczeliną.
+story.2=Krzywa wznosi i opada jak oddech. Pochodna mówi, gdzie wylądować.
+story.3=Kosinus kryje sens w znaku swojej pochodnej. „Pop” to sygnał niebezpieczeństwa.
+story.4=Wartość bezwzględna zagina wykres. W wierzchołku zmienia się pochodna i podłoga.
+story.5=<color=#86efac>Wielomiany Taylora</color> przybliżają gładkie funkcje. <b>Maclaurin</b> wokół <b>0</b>.\n\nTu suma częściowa <b>e^u</b>.
+story.6=<color=#7dd3fc>Potęgi nieparzyste</color> naprzemiennie zmieniają znak — DNA Maclaurina dla <b>sin(u)</b>.\n\nUcięta wieża ku fali sinusoidalnej.
+story.7=<color=#f5d0fe>Szereg geometryczny</color> układa potęgi <b>u</b>. W promieniu ogon maleje.\n\nPochodna skończonej sumy zmienia ukształtowanie terenu.
+story.8=Pomyśl <b>z = x² − y₀²</b> — <color=#38bdf8>przekrój</color> siodła.\n\nPochodna po x opowiada multizmienną historię w 1D.
+story.9=Teraz <b>z = x² + y₀²</b> — <color=#fde047>paraboloida</color>. Stałe y₀ = czara.\n\nPrzekrój pokazuje nachylenie, gdy biegniesz.
+story.10=<color=#fde047>Całka oznaczona</color> sumuje stopę zmian ⇒ <b>pole pod krzywą</b>.\n\nSłupki = <b>Riemann</b> f(x*)·Δx → ∫f.\n\n<size=92%><color=#a8b2d1>Cień przybliża ; idziesz po gładkim wykresie.</color></size>
+story.11=<b>Riemann lewy:</b> wysokość <b>f(xᵢ)</b> — <color=#f87171>lewy koniec</color>. Rosnące f ⇒ <b>niedoszacowanie</b>.\n\n<size=92%><color=#a8b2d1>Niskie ostrożne schody.</color></size>
+story.12=<b>Riemann prawy:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>prawy</color> ⇒ <b>przeszacowanie</b> przy rosnącym f.\n\n<size=92%><color=#a8b2d1>Lustro lewego przypadku.</color></size>
+story.13=<b>Środek:</b> środek podprzedziału — <color=#86efac>symetryczny</color>, często celniejszy.\n\n<size=92%><color=#a8b2d1>Schody w centrum każdego pasa.</color></size>
+story.14=<b>Tłumione drgania</b> — sprężyny, obwody. Obwiednia <color=#38bdf9>gaśnie</color> jak exp×sin.\n\n<size=92%><color=#a8b2d1>Pochodna wciąż wybiera bezpieczne filary.</color></size>
+story.15=Wiszący łańcuch ⇒ <b>łańcuchowa (catenary)</b>, model <color=#fde047>cosh</color>.\n\n<size=92%><color=#a8b2d1>Nie parabola balistyczna — hiperbolika w statyce.</color></size>
+story.16=<b>|sin(x)|</b> sinus <color=#f0abfc>prostowany</color>. Narożniki przy zerach.\n\n<size=92%><color=#a8b2d1>Od trygonometrii do przebiegów mocy.</color></size>
+story.17=<b>BC — odwrotne.</b> <color=#38bdf8>Arctan</color>, pochodna 1/(1+x²).\n\n<size=92%><color=#a8b2d1>Poziome asymptoty = granice.</color></size>
+story.18=<b>Logistyczny:</b> dP/dt = kP(1−P/L). Początek jak exp, potem zgięcie ku <color=#86efac>L</color>.\n\n<size=92%><color=#a8b2d1>Punkt przegięcia = max. wzrost.</color></size>
+story.19=<b>Biegunowe</b> <color=#fde047>(r,θ)</color>. <b>Kardioida</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>Pole ½∫r² dθ.</color></size>
+story.20=<b>Róża</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>Pop gdy r gwałtownie się zmienia.</color></size>
+story.21=<b>sinh, cosh</b> — tożsamości hiperboliczne, EDO.\n\n<size=92%><color=#a8b2d1>sinh nieparzysty od 0.</color></size>
+story.22=<b>Fizyka C</b> Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>Pochodna płynie ku zeru.</color></size>
+story.23=<b>Obrót</b> <color=#7dd3fc>L = Iω</color>, τ = dL/dt.\n\n<size=92%><color=#a8b2d1>Wymiana energii jak przy sprężynie.</color></size>
+story.24=<b>Pocisk y(t)</b> parabola w <color=#fde047>czasie</color>. Szczyt przy v=0.\n\n<size=92%><color=#a8b2d1>Łańcuch y,v,a.</color></size>
+story.25=<b>Maclaurin cos</b> parzyste potęgi.\n\n<size=92%><color=#a8b2d1>Więcej wyrazów ⇒ lepiej blisko 0.</color></size>
+story.26=<b>ln x</b> i ∫dx/x.\n\n<size=92%><color=#a8b2d1>Dodatnie nachylenie maleje wraz z x.</color></size>
+story.27=<b>√x</b> osobliwość nachylenia przy 0⁺.\n\n<size=92%><color=#a8b2d1>Gra wygładza ; analiza ostrzega na brzegu.</color></size>
+story.28=<b>tan x</b> między asymptotami.\n\n<size=92%><color=#a8b2d1>Trygonometria BC.</color></size>
+story.29=<b>y′=ky</b> ⇒ Ce^{kx}.\n\n<size=92%><color=#a8b2d1>Szybkość proporcjonalna do stanu.</color></size>
+story.30=<b>Faza / SHM</b>.\n\n<size=92%><color=#a8b2d1>Pochodna wyprzedza o 90° (do stałych).</color></size>
+story.31=<b>Sześcienny</b> — ekstrema, <color=#fca5a5>przegięcie</color>.\n\n<size=92%><color=#a8b2d1>Typowy profil góra–dolina.</color></size>
+story.32=<b>b^x</b> ze współczynnikiem ln b.\n\n<size=92%><color=#a8b2d1>Most do podstawy e.</color></size>
+story.33=<b>Okrąg</b> — górny półokrąg y = k+√(⋯).\n\n<size=92%><color=#a8b2d1>Postać uwikłana i parametryczna AP.</color></size>
+story.34=<b>Siła nośna C_L(α)</b> liniowa + <b>przeciągnięcie</b>.\n\n<size=92%><color=#a8b2d1>Model dydaktyczny.</color></size>
+story.35=<b>Polara oporu</b> C_D = C_D0 + K C_L².\n\n<size=92%><color=#a8b2d1>Najlepsze L/D przy optymalnym C_L.</color></size>
+story.36=<b>Atm izotermiczna</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>Ciśnienie dynamiczne ∝ ρ.</color></size>
+story.37=<b>Fugoide / krótki okres</b> tłumiona karykatura.\n\n<size=92%><color=#a8b2d1>Prawdziwa sterowność bogatsza.</color></size>
+story.38=<b>Newton ~ sin²α</b> strona nawietrzna.\n\n<size=92%><color=#a8b2d1>Model dydaktyczny, nie CFD.</color></size>
+story.39=<b>Strouhal</b> wir.\n\n<size=92%><color=#a8b2d1>Częstotliwość ⋍ St·U/D.</color></size>
+story.40=<b>Powrót atmosferyczny</b> jakościowy relaks zagrożenia cieplnego.\n\n<size=92%><color=#a8b2d1>Nie ilościowa notka.</color></size>
+story.41=<b>Bańka dot-com</b> — stylizowana ścieżka indeksu (nie prawdziwe S&amp;P).\n\n<size=92%><color=#a8b2d1>Wzrost, krach, wolne odbicie — alegoria dydaktyczna.</color></size>
+story.42=<b>Kryzys 2008</b> — hipoteki, kredyt, tylko jakościowa krzywa.\n\n<size=92%><color=#a8b2d1>To nie są pobrane dane rynkowe.</color></size>
+story.43=<b>Mandelbrot</b> płaszczyzna c, czas ucieczki, przekrój przy stałym Re.\n\n<size=92%><color=#a8b2d1>Granica zbioru Julii ; głęboki zoom — inny silnik.</color></size>

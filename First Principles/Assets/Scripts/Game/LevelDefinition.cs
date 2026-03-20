@@ -26,6 +26,20 @@ public class LevelDefinition : ScriptableObject
     [Header("Graph Parameters (FunctionPlotter)")]
     public FunctionType functionType = FunctionType.Power;
 
+    [Tooltip("Fit f(x) and f′(x) vertically so the curve uses most of the grid (exaggerates flat graphs). Off for graphing calculator mode.")]
+    public bool autoFitGraphVertical = true;
+
+    [Tooltip("Target fraction of half the grid height (from center line) used by the curve band (after padding).")]
+    [Range(0.38f, 0.92f)]
+    public float graphVerticalFillFraction = 0.74f;
+
+    [Tooltip("Fit the sampled x window horizontally so the domain uses most of the grid (wide but flat domains read clearly). Off for graphing calculator mode.")]
+    public bool autoFitGraphHorizontal = true;
+
+    [Tooltip("Target fraction of half the grid width (from center line) used by [xStart,xEnd] (after padding).")]
+    [Range(0.38f, 0.92f)]
+    public float graphHorizontalFillFraction = 0.74f;
+
     public float xStart = -20f;
     public float xEnd = 20f;
     public float step = 0.1f;
@@ -61,6 +75,9 @@ public class LevelDefinition : ScriptableObject
     [Tooltip("Optional per-stage pop colors (if empty, derivativeColor will be used).")]
     public List<Color> stageDerivativePopColors = new List<Color>();
 
+    [Tooltip("For AeroDragPolarTriple: overlay colors [parasitic C_D,par line, induced C_D,ind curve]. Total uses curveColor.")]
+    public List<Color> dragPolarOverlayColors = new List<Color>();
+
     [Tooltip("X trigger positions (grid units, relative to left edge of the graph) where we pop the derivative.")]
     public List<float> stageTriggerX = new List<float>();
 
@@ -87,6 +104,10 @@ public class LevelDefinition : ScriptableObject
 
     [Tooltip("Platforms are flat per subinterval at the Riemann sample height (step terrain under the curve).")]
     public bool useRiemannStairPlatforms = false;
+
+    [Tooltip("When stair platforms are on: each tread covers this fraction of its subinterval width (rest is air). Lower = wider gaps, more jumps.")]
+    [Range(0.22f, 1f)]
+    public float riemannPlatformCoverage = 0.62f;
 
     public Color riemannFillColor = new Color(0.25f, 0.55f, 0.95f, 0.32f);
 

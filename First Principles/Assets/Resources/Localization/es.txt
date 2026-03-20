@@ -1,8 +1,8 @@
 # Español
-ui.choose_stage=Elige una fase del gráfico
+ui.choose_stage=Seleccionar nivel
 ui.math_tips=Consejos y fórmulas
 ui.back_menu=Volver al menú
-ui.graphic_calculator_mode=Modo calculadora gráfica
+ui.graphing_calculator_mode=Calculadora gráfica
 ui.loading=Cargando…
 ui.language=Idioma
 ui.tap_change_language=Toca para cambiar
@@ -28,11 +28,9 @@ graph.param_k=k (escala horizontal)
 graph.param_c=C (desplazamiento vertical)
 graph.param_d=D (desplazamiento horizontal)
 graph.calculator_intro=<b>Modo calculadora gráfica</b>\n<size=88%>Escribe casi cualquier <b>f(u)</b> (variable <b>x</b> en tu fórmula); <b>Trans</b> ajusta A, k, C, D; <b>Escala</b> y <b>pellizco</b> hacen zoom en la ventana.</size>
-footer.proprietary=© 2022-2026 · Propietario · Todos los derechos reservados · First Principles
-footer.attribution=<b><link="https://game-genesis.itch.io"><color=#8b9dc9>GAME GENESIS</color></link></b> (<link="https://github.com/rkaissi/"><color=#8b9dc9>Rayan Kaissi</color></link>) × <b><link="https://orchaerospace.com"><color=#8b9dc9>ORCH AEROSPACE</color></link></b> (<link="https://github.com/wonmor/"><color=#8b9dc9>John Wonmo Seong</color></link>)
-footer.school=Orgullosos graduados de <b>Garth Webb Secondary School</b>, Oakville.
-footer.support=Cuatro años de desarrollo — si valoras este trabajo, apoya el proyecto. Gracias.
-footer.unity=Hecho con <b>Unity</b>. Unity es una marca registrada de Unity Technologies.
+menu.version_line=<b>First Principles</b> <color=#555555>(version 1.0)</color>
+menu.credits_line=<size=34>John Seong (Orch Aerospace) × Rayan Kaissi (GameGenesis)</size>
+menu.support_contact=<size=32><color=#94a3b8>Soporte:</color> <color=#c4d0e8>contact@orchestrsim.com</color></size>
 level.0=Introducción: primeros principios
 level.1=Pendiente de la parábola
 level.2=Ondas del seno
@@ -68,11 +66,19 @@ level.31=BC: cúbica e inflexión (boceto)
 level.32=BC: b^x y d/dx b^x
 level.33=Círculo: (x−h)² + (y−k)² = R²
 level.34=Aero: sustentación C_L(α) lineal + pérdida
-level.35=Aero: polar parabólica C⁠_D(C_L)
+level.35=Aero: polar de arrastre (parásita, inducida, total)
 level.36=Aero: atmósfera isoterma ρ(h)
 level.37=Aero: fugoide / cabeceo–heave amortiguado
 level.38=Aero: newtoniano Cp ~ sin²α
 level.39=Aero: Strouhal / tono de vórtices
 level.40=Aero: envolvente de reentrada (calor ρV)
-level.41=Competición: ln, concavidad y cotas
-level.42=JEFE: corte de escape Mandelbrot (fractal)
+level.41=Economía: burbuja dotcom y crash (índice estilizado)
+level.42=Economía: crisis 2008 y recuperación (índice estilizado)
+level.43=JEFE: corte de escape Mandelbrot (fractal)
+level.44=Física C: termodinámica (P–V adiabático, γ desde N)
+level.45=JEFE: espiral áurea (polar logarítmica)
+level.46=Transformadas: Fourier — sinc (espectro)
+level.47=Transformadas: Laplace — decaimiento exponencial
+level.48=JEFE: Mandelbrot — final (corte de escape fractal)
+level.49=JEFE: mariposa de Lorenz — final (atractor extraño)
+level.50=Física C: resorte–masa SHM (ley de Hooke, sin amortiguación)

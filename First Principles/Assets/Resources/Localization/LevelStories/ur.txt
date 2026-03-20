@@ -1,0 +1,46 @@
+# Level stories (ur) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>مشتق</b></color> = مماس کی ڈھلوان — <b>f(x)</b> کتنی تیزی سے بدلتا ہے۔\n\nسنہرا راستہ؛ برف نیلا f'(x) <i>فرش کہاں تھامتا ہے</i>۔ |f'| بڑا ⇒ پلیٹ فارم؛ ورنہ خلا۔\n\n<size=88%><color=#94a3b8><b>اول اصول:</b> مماثلت ہٹا کر حقیقت پر دوبارہ تعمیر۔ <b>f</b> نتیجہ؛ <b>f'</b> ان پٹ حساسیت۔</color></size>
+story.1=مسافر نرم ڈھلوان پر چلتا ہے۔ مشتق منفی ہوتے فرش درز بن جاتا ہے۔
+story.2=منحنی سانس کی طرح۔ مشتق بتاتا ہے کہاں اترنا ہے۔
+story.3=کوسائن معنی مشتق کے اشارے میں چھپاتا ہے۔ پوپ خطرہ۔
+story.4=مطلق قیمت منحنی ایک راستے میں موڑتی ہے۔ چوٹی پر مشتق پلٹتا ہے — فرش بھی۔
+story.5=<color=#86efac>ٹیلر کثیر رکنی</color> ہموار فنکشن کے قریب۔ <b>میکلارن</b> <b>0</b> پر ٹیلر۔\n\nیہاں <b>e^u</b> جزوی مجموعہ۔
+story.6=<color=#7dd3fc>طاق طاقتیں</color> نشان بدلتی ہیں — <b>sin(u)</b> کی میکلارن شناخت۔\n\nکاٹا ٹاور سائن لہر کی طرف۔
+story.7=<color=#f5d0fe>جومیٹرک سیریز</color> <b>u</b> کی طاقٹیں۔ ریڈیئس میں دم گھٹتا ہے۔\n\nمحدود مجموعے کا مشقق منظر بدلتا ہے۔
+story.8=<b>z = x² − y₀²</b> — زن کی <color=#38bdf8>سلائس</color> (saddle)۔\n\nx پر مشتق کثیر متغیر کو ایک جہتی حرکت میں پڑھتا ہے۔
+story.9=اب <b>z = x² + y₀²</b> — <color=#fde047>بیضوی تھری ڈی قطع مکافئ</color>۔ مستقل y₀ پر کٹورے جیسا قطع۔\n\ngradient اوپر چڑھتا ہے؛ سلائس ڈھلوان دکھاتا ہے۔
+story.10=<color=#fde047>محدود انٹیگرل</color> شرح جمع = <b>کل</b> — منحنی کے نیچے رقبہ۔\n\nنیلے ستون <b>ریمان</b> ∫f کی طرف۔\n\n<size=92%><color=#a8b2d1>راستہ ہموار گراف؛ شیڈنگ قریبی انٹیگرل۔</color></size>
+story.11=<b>بائیں ریمان:</b> <b>f(xᵢ)</b> — <color=#f87171>بایاں کنارہ</color>۔ بڑھتے f پر <b>کم</b> تخمینہ۔\n\n<size=92%><color=#a8b2d1>احتیاطی سیڑھیاں۔</color></size>
+story.12=<b>دائاں ریمان:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>دایاں</color>۔ بڑھتے f پر <b>زیادہ</b>۔\n\n<size=92%><color=#a8b2d1>بائیں کا آئینہ۔</color></size>
+story.13=<b>وسط:</b> <color=#86efac>مرکز</color> پر نمونہ۔ اکثر قریب۔\n\n<size=92%><color=#a8b2d1>ہر پٹی کے بیچ سیڑھی۔</color></size>
+story.14=<b>ڈیمپ شدہ ارتعاش</b> — Spring، سرکٹ۔ لفافہ <color=#38bdf9>سکڑتا</color> ہے۔\n\n<size=92%><color=#a8b2d1>مشتق چوٹی کے قریب محفوظ ستون۔</color></size>
+story.15=لٹکی زنجیر ⇒ <b>کیٹنری</b>، اکثر <color=#fde047>cosh</color>۔\n\n<size=92%><color=#a8b2d1>مہراب/تار۔</color></size>
+story.16=<b>|sin(x)|</b> <color=#f0abfc>مکمل لہر دونوں طرف سے دھری ہوئی</color> (rectified)۔\n\n<size=92%><color=#a8b2d1>صفر پر تیز گوشے۔</color></size>
+story.17=<b>BC معکوس Trig</b>۔ <color=#38bdf8>arctan</color>.\n\n<size=92%><color=#a8b2d1>افقی Asymptotes۔</color></size>
+story.18=<b>لاجسٹک:</b> dP/dt = kP(1−P/L)۔ شروع میں تقریباً نمائی نمو، پھر <color=#86efac>L</color> کی طرف موڑ۔\n\n<size=92%><color=#a8b2d1>انفلیکشن پر زیادہ تر نمو۔</color></size>
+story.19=<b>قطبی</b> <color=#fde047>(r,θ)</color>۔ <b>کارڈیائڈ</b>.\n\n<size=92%><color=#a8b2d1>رقبہ ½∫r² dθ۔</color></size>
+story.20=<b>گلاب</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>مشتق پاپ جہاں r تیز بدلے۔</color></size>
+story.21=<b>sinh/cosh</b>.\n\n<size=92%><color=#a8b2d1>sinh مزاحم ساتھی۔</color></size>
+story.22=<b>جسمانیات C:</b> Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>گراف نیچے؛ مشتق صفر کی طرف۔</color></size>
+story.23=<b>گھومنا</b> <color=#7dd3fc>L = Iω</color>.\n\n<size=92%><color=#a8b2d1>چھوٹا SHM جیسا۔</color></size>
+story.24=<b>موزون y(t)</b> — وقت میں <color=#fde047>مکافئ</color>؛ چوٹی پر v=0.\n\n<size=92%><color=#a8b2d1>سلسلہ y، v، a۔</color></size>
+story.25=<b>میکلارن cos</b>.\n\n<size=92%><color=#a8b2d1>زیادہ اصطلاحات 0 قریب بہتر۔</color></size>
+story.26=<b>ln x</b>.\n\n<size=92%><color=#a8b2d1>مثبت ڈھلوان دور ہو کر کم۔</color></size>
+story.27=<b>√x</b> 0⁺ پر ڈھلوان۔\n\n<size=92%><color=#a8b2d1>کھیل ہموار؛ انتباہ سرحد۔</color></size>
+story.28=<b>tan x</b>۔\n\n<size=92%><color=#a8b2d1>BC میں مثلثیات کا ڈھانچہ۔</color></size>
+story.29=<b>y′=ky</b>.\n\n<size=92%><color=#a8b2d1>شرح متناسب۔</color></size>
+story.30=<b>مرحلہ / SHM</b>.\n\n<size=92%><color=#a8b2d1>مشتق تقریباً cos۔</color></size>
+story.31=<b>مکعب</b> — <color=#fca5a5>انفلیکشن</color>.\n\n<size=92%><color=#a8b2d1> پہاڑ وادی نمونہ۔</color></size>
+story.32=<b>b^x</b> کا مشتق (ln b)b^x.\n\n<size=92%><color=#a8b2d1>کسی بھی اڈے کو e سے جوڑتا ہے۔</color></size>
+story.33=<b>دائرہ</b> — اوپری نیم دائرہ۔\n\n<size=92%><color=#a8b2d1>ضمنی اور پیرامیٹرک AP کے مسائل۔</color></size>
+story.34=<b>لفٹ C_L</b> لکیری + <b>اسٹال</b>.\n\n<size=92%><color=#a8b2d1>تدریسی۔</color></size>
+story.35=<b>ڈریگ polar</b>.\n\n<size=92%><color=#a8b2d1>بہترین L/D۔</color></size>
+story.36=<b>موسم</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>دائمی دباؤ ρ۔</color></size>
+story.37=<b>فگوئڈ</b> ڈیمپ کارٹون۔\n\n<size=92%><color=#a8b2d1>اصلی کنٹرول زیادہ۔</color></size>
+story.38=<b>Newtonian</b> تعلیم۔\n\n<size=92%><color=#a8b2d1>CFDنہیں۔</color></size>
+story.39=<b>Strouhal</b>.\n\n<size=92%><color=#a8b2d1>f ≈ St·U/D۔</color></size>
+story.40=<b>دوبارہ دخول</b> نِرم گرم منحنی۔\n\n<size=92%><color=#a8b2d1>مقدار نوٹ نہیں۔</color></size>
+story.41=<b>ڈاٹ کام ببل</b> — اسٹائل شدہ انڈیکس (اصلی S&amp;P نہیں)۔\n\n<size=92%><color=#a8b2d1>چڑھاو، گراو، آہستہ بحالی — تعلیمی شکل۔</color></size>
+story.42=<b>2008 بحران</b> — رہن/کریڈٹ دباؤ، صرف کوالٹیٹیو۔\n\n<size=92%><color=#a8b2d1>حقیقی ڈیٹا نقل نہیں۔</color></size>
+story.43=<b>مینڈلبروٹ</b>۔\n\n<size=92%><color=#a8b2d1>julia سرحد۔</color></size>

@@ -1,0 +1,23 @@
+<b><size=120%>Pojęcia matematyczne — czytnik w grze</size></b>
+<size=92%>Pełny długi artykuł (wszystkie reguły różniczkowania, całki, aerodynamika, przygotowanie do AMC / AP / TMUA itd.) jest w repozytorium obecnie w całości po <b>angielsku</b> — w menu ustaw język na <b>English</b>, aby zobaczyć ten sam tekst w grze, lub otwórz <b>docs/math-concepts.md</b> i powiązane pliki w docs / na GitHub Pages.</size>
+<size=92%>Ten ekran ma ten sam skrót co <b>Wskazówki matematyczne</b> w wyborze poziomu. Zamknij: dotknij tła lub <b>Zamknij</b>.</size>
+
+<b><size=115%>Jak gra uczy rachunku (skrót)</size></b>
+<size=92%>
+• <b>Główna krzywa</b> — na siatce jest \(y = f(x)\). Postać stoi na platformach według kształtu. Etykieta <b>Równanie</b> nazywa regułę.
+
+• <b>Krzywa pochodnej \(f'(x)\)</b> — drugi wykres z <i>numerycznej</i> pochodnej. Na wielu poziomach <b>tam gdzie \(|f'|\) wystarcza, jest grunt</b>; inaczej spadek — logika nachylenia.
+
+• <b>Etap i „pop”</b> — HUD <b>ETAP</b> liczy wątki. Pochodna może zmienić kolor w ustalonym \(x\).
+
+• <b>Sumy Riemanna / pole</b> — niektóre poziomy cieniują prostokąty lub schody lewo/prawo/środek.\n\(\displaystyle \int_a^b f(x)\,dx\) jako granica \(\sum f(x^\ast)\,\Delta x\).
+
+• <b>Tekst fabularny</b> — banner łączy poziom z matematyką.
+
+Pełny glosariusz §1–13, aerospace, „first principles” i mapa egzaminów jest w angielskiej wersji artykułu (język EN w menu) lub w plikach docs.
+</size>
+
+<b><size=110%>Gdzie czytać dalej</size></b>
+<b>docs/math-concepts.md</b>, <b>docs/derivative-rules.md</b>, <b>docs/definite-indefinite-integrals.md</b>, <b>docs/first-principles-business.md</b>, <b>docs/engineering-math.md</b> oraz pliki przygotowawcze AP / AMC / TMUA / MAT.
+
+— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles

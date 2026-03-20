@@ -10,6 +10,25 @@ using UnityEngine;
 /// <summary>
 /// Shared level titles (must match the order built in <see cref="LevelManager"/> sample levels).
 /// </summary>
+/// <summary>Level-select submenu: contiguous level index range (inclusive).</summary>
+public readonly struct LevelSelectCategory
+{
+    public readonly string TitleLocalizationKey;
+    public readonly string DefaultTitle;
+    public readonly int FirstLevelIndex;
+    public readonly int LastLevelIndexInclusive;
+
+    public LevelSelectCategory(string titleLocalizationKey, string defaultTitle, int firstLevelIndex, int lastLevelIndexInclusive)
+    {
+        TitleLocalizationKey = titleLocalizationKey;
+        DefaultTitle = defaultTitle;
+        FirstLevelIndex = firstLevelIndex;
+        LastLevelIndexInclusive = lastLevelIndexInclusive;
+    }
+
+    public int LevelCount => LastLevelIndexInclusive - FirstLevelIndex + 1;
+}
+
 public static class GameLevelCatalog
 {
     /// <summary>Human-readable titles; indices drive LevelSelectController button order.</summary>
@@ -52,17 +71,51 @@ public static class GameLevelCatalog
         "Circle: (x−h)² + (y−k)² = R²",
         // --- Aerospace engineering & aerodynamics (order must match LevelManager.BuildSampleLevels) ---
         "Aerospace: lift C_L(α) linear + stall",
-        "Aerospace: parabolic drag polar C_D(C_L)",
+        "Aerospace: drag polar (parasitic, induced, total)",
         "Aerospace: isothermal atmosphere ρ(h)",
         "Aerospace: phugoid / damped pitch–heave mood",
         "Aerospace: Newtonian Cp ~ sin²α",
         "Aerospace: Strouhal / vortex shedding tone",
         "Aerospace: re-entry decay envelope (ρV heating mood)",
-        "Competition math: ln, concavity & bound tricks",
-        "BOSS: Mandelbrot escape slice (fractal boundary mood)"
+        "Economics: dot-com bubble & crash (stylized index)",
+        "Economics: 2008 crisis & recovery (stylized index)",
+        "BOSS: Mandelbrot escape slice (fractal boundary mood)",
+        "Physics C: thermodynamics (adiabatic P–V, γ from N)",
+        "BOSS: golden ratio spiral (logarithmic polar)",
+        "Transforms: Fourier — sinc spectrum (rect ↔ sinc)",
+        "Transforms: Laplace — causal exponential decay",
+        "BOSS: Mandelbrot — finale (fractal escape slice)",
+        "BOSS: Lorenz butterfly — finale (strange attractor)",
+        "Physics C: spring–mass SHM (Hooke's law, undamped)"
     };
 
     public static int LevelCount => DisplayNames.Length;
+
+    /// <summary>
+    /// Grouped picker on the Level Select scene (indices must match <see cref="DisplayNames"/> / <see cref="LevelManager"/>).
+    /// </summary>
+    public static readonly LevelSelectCategory[] SelectCategories =
+    {
+        new LevelSelectCategory("level_select.cat.core", "Core & series", 0, 8),
+        new LevelSelectCategory("level_select.cat.integration", "Multivar & integration", 9, 13),
+        new LevelSelectCategory("level_select.cat.engineering", "Engineering", 14, 16),
+        new LevelSelectCategory("level_select.cat.ap_bc", "AP Calculus BC & Physics C", 17, 33),
+        new LevelSelectCategory("level_select.cat.aerospace", "Aerospace", 34, 40),
+        new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 45),
+        new LevelSelectCategory("level_select.cat.transforms", "Transforms", 46, 47),
+        new LevelSelectCategory("level_select.cat.final_boss", "Final boss", 48, 49),
+        new LevelSelectCategory("level_select.cat.spring_physics", "Spring & SHM", 50, 50),
+    };
+
+    /// <summary>First index of the contiguous <b>Aerospace:</b> block (must match <see cref="LevelManager"/> sample levels).</summary>
+    public const int AerospaceLevelsBeginIndex = 34;
+
+    /// <summary>Inclusive last index of the Aerospace block (re-entry stage).</summary>
+    public const int AerospaceLevelsEndIndex = 40;
+
+    /// <summary>True for levels whose titles start with <c>Aerospace:</c> in the catalog.</summary>
+    public static bool IsAerospaceLevel(int index) =>
+        index >= AerospaceLevelsBeginIndex && index <= AerospaceLevelsEndIndex;
 
     /// <summary>Localized title for level <paramref name="index"/>; falls back to <see cref="DisplayNames"/>.</summary>
     public static string GetLocalizedDisplayName(int index)

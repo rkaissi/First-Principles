@@ -47,7 +47,7 @@ The **derivative-driven platform rule** in the game is unchanged: where the samp
 
 ## In-game title
 
-Look in level select for **“Competition math: ln, concavity & bound tricks”** (before the **Mandelbrot** boss stage).
+The sample lineup no longer dedicates a level to this ln run — use **any natural-log stage** in your own graphs or study \(\ln\) concavity here; **Mandelbrot** remains the final boss after the **economics** pair in **Advanced & boss**.
 
 ---
 

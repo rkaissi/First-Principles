@@ -1,0 +1,138 @@
+<b><size=120%>Concetti di matematica — lettore in gioco</size></b>
+<size=90%>Il gioco <b>First Principles</b> prende il nome da dichiarazioni pubbliche di <b>Elon Musk</b> su un <b>approccio ai primi principi</b> nel <b>business</b> e nel <b>risolvere problemi nella vita e nel lavoro</b>—poi insegna idee <b>calcolo‑centriche</b> sul grafico come metafora coerente.</size>
+<size=90%>Usa <b>Concetti di matematica</b> mentre giochi, oppure <b>Suggerimenti di matematica</b> nella selezione livelli — le stesse note scorrevoli. Tocca lo sfondo scuro o <b>Chiudi</b> per chiudere.</size>
+
+<b><size=115%>Come questo gioco insegna il calcolo (leggi il grafico mentre giochi)</size></b>
+<size=92%>
+• <b>Curva principale</b> — il percorso spesso sulla griglia cartesiana è \(y = f(x)\) per questo livello. Il personaggio cerca di stare su piattaforme che seguono quella forma. L’etichetta <b>Equazione</b> (se visibile) nomina la regola tracciata.
+
+• <b>Curva derivata \(f'(x)\)</b> — disegnata come secondo grafico; i valori provengono da una derivata <i>numerica</i> (pendenze campeggiate). In molti livelli, <b>dove \(f'\) è abbastanza grande hai terreno solido</b>; dove manca puoi cadere — il platformer è legato alla logica della pendenza.
+
+• <b>Stadi e “pop”</b> — l’HUD <b>Stadio</b> conta i colpi narrativi. Muovendoti a destra, la derivata può fare un <i>pop</i> o ricolorarsi a certi \(x\) (come sipari tra le idee di una lezione).
+
+• <b>Somme di Riemann / area</b> — alcuni livelli ombreggiano rettangoli o costruiscono piattaforme a <i>scala</i> con campioni sinistra‑, destra‑ o punto medio. Questo rappresenta \(\displaystyle \int_a^b f(x)\,dx\) come limite di \(\sum f(x^\ast)\,\Delta x\).
+
+• <b>Testo narrativo</b> — il banner in alto lega ogni livello alla matematica (serie, polari, metafore fisiche, ecc.). Fermati e leggi; poi sfuma così la corsa resta leggibile. Il <b>Primer First Principles</b> spinge anche il pensiero <b>business ai primi principi</b> (ragionare dai fondamenti vs analogia).
+
+Sotto trovi un <b>glossario tematico</b> da scorrere tra una morte e l’altra o dopo un grafico — più una sezione <b>Primi principi (business)</b> prima della preparazione d’esame.
+</size>
+
+<b><size=110%>1. Derivate = pendenza e tasso</size></b>
+La derivata \(f'(x)\) misura quanto ripidamente \(f(x)\) sale o scende. In fisica è spesso un <i>tasso</i>: quanto rapidamente cambia la posizione (velocità), la temperatura lungo una barra, ecc. In questo gioco la derivata aiuta a decidere dove esiste il terreno.
+
+<b><size=120%>──────── Regole di derivazione — il tuo albero abilità ────────</size></b>
+<size=92%>Sono le <b>mosse combo</b> per passare da \(f(x)\) a \(f'(x)\) senza rifare il limite ogni volta. Leggile come <b>perk</b> che mantengono allineate <b>curva principale</b> e <b>HUD della derivata</b>.</size>
+
+<b><size=110%>Regola della potenza — “l’esponente è il moltiplicatore”</size></b>
+Se \(y = x^n\) (sui domini dove è definita), \(\displaystyle \frac{d}{dx}x^n = n x^{\,n-1}\). <i>Feel di gioco:</i> la <b>potenza del livello</b> non è solo decorazione — dice quanto la pendenza <b>accelera</b> lasciando l’origine; il grafico della derivata abbassa l’esponente di uno come una <b>patch di bilanciamento</b> che mantiene lo stesso arco narrativo.
+
+<b><size=110%>Moltiplicatore costante — “buff globale”</size></b>
+\(\displaystyle \frac{d}{dx}[k\,f(x)] = k\,f'(x)\). Allunga il grafico in verticale e <b>ogni pendenza</b> scala allo stesso modo — come un potenziamento che moltiplica salto <i>e</i> ripidità del pericolo insieme.
+
+<b><size=110%>Somma / differenza — “modificatori impilati”</size></b>
+\(\displaystyle \frac{d}{dx}[f(x) \pm g(x)] = f'(x) \pm g'(x)\). Due effetti incollati in una run: leggi la pendenza di ogni pezzo, poi <b>addiziona o sottrai</b> — come sommare due script di piattaforme in uno stage mash‑up.
+
+<b><size=110%>Regola del prodotto — “due contatori contano entrambi”</size></b>
+\(\displaystyle \frac{d}{dx}[u(x)\,v(x)] = u'(x)\,v(x) + u(x)\,v'(x)\). Nessun fattore può restare “AFK”: quando uno è piatto l’altro porta ancora segnale. Pensa a <b>due barre HUD</b> che si ricaricano a vicenda — ottieni \(\,u'v\,\) <i>più</i> \(\,uv'\,\).
+
+<b><size=110%>Regola del quoziente — “corsia sopra vs sotto”</size></b>
+\(\displaystyle \frac{d}{dx}\frac{u(x)}{v(x)} = \frac{u'(x)\,v(x) - u(x)\,v'(x)}{[v(x)]^2}\) (con \(v(x)\neq 0\)). Il numeratore è un <b>nastro di gara</b>: spinta \(u'v\) meno recupero \(uv'\); il denominatore \(v^2\) è lo <b>scudo</b> che eleva al quadrato la pista sotto. Zeri o esplosioni in \(v\) = <b>cambio fase da boss</b> — regola spenta, asintoti/poli avanti.
+
+<b><size=110%>Regola della catena — “stage annidati”</size></b>
+Se \(y = f(g(x))\), allora \(\displaystyle \frac{dy}{dx} = f'(g(x))\cdot g'(x)\). <i>Sensibilità esterna × sensibilità interna.</i> Stessa energia di \(u = k(x-D)\): sposti \(x\), l’<b>interno</b> \(u\) vibra, poi l’<b>esterno</b> \(f\) reagisce. Se la pendenza interna è minuscola, tutto il combo “sfuma” — quel fattore mancante è perché gli errori sulla catena sembrano <b>input lag</b>.
+
+<size=92%>Il gioco traccia comunque \(f'\) con un <b>campionatore numerico</b> negli stage selvaggi, ma queste identità spiegano <i>perché</i> le curve dei libri si chiudono in forme pulite — e cosa AP / TMUA si aspetta prima di schizzare. Approfondimento: <b>docs/derivative-rules.md</b>.</size>
+
+<b><size=120%>──────── Integrali: definiti vs indefiniti — punteggio vs loadout ────────</size></b>
+<size=92%><b>Indefinito</b> \(\displaystyle \int f(x)\,dx\) chiede una <b>primitiva</b> — un’intera <i>famiglia</i> \(F(x)+C\) la cui derivata è \(f\). Pensa a una <b>classe di loadout</b>: build valide diverse per +\(C\) (stesso gameplay a meno di traslazione verticale di \(F\)). <b>Definito</b> \(\displaystyle \int_a^b f(x)\,dx\) è un solo <b>numero</b> (area con segno da \(a\) a \(b\)) — come un <b>punteggio di run</b> su un tratto fisso. Niente “+\(C\)” nella risposta: gli estremi la fissano.</size>
+
+<b><size=110%>TCF — “controllo endgame”</size></b>
+Se \(F' = f\), allora \(\displaystyle \int_a^b f(x)\,dx = F(b)-F(a)\) (ipotesi usuali). Macini una volta la <b>ricetta indefinita</b>, poi sottrai i valori al bordo — barre HP del boss a \(x=b\) meno \(x=a\).
+
+<b><size=110%>Stage Riemann — “secchielli pixel”</size></b>
+I rettangoli (sinistra / destra / punto medio) stimano il punteggio <b>definito</b> prima di \(\Delta x \to 0\). Colonne più larghe = pixel grossi; rifinisci = totale più liscio — stesso ciclo del §8 sotto.
+
+<size=92%>Dettagli: <b>docs/definite-indefinite-integrals.md</b>. (Calcolatrice grafica / dimostrazioni TCF — vedi appunti di corso; qui è il glossario di gioco.)</size>
+
+<b><size=110%>2. Parabola (potenza / quadratica)</size></b>
+Una quadratica \(y = a(x-h)^2+k\) è la forma del moto del proiettile negli schemi ideali e di molti problemi di ottimizzazione (min/max). Un gobbo liscio; la pendenza cambia segno al vertice.
+
+<b><size=110%>3. Seno e coseno = onde e rotazione</size></b>
+Seni e coseni descrivono vibrazioni, segnali AC, suono e tutto ciò che si ripete. Il coseno è un seno sfasato: stessa onda, fase iniziale diversa. I numeri complessi (sotto) rendono più facile risolvere circuiti e vibrazioni.
+
+<b><size=110%>4. Valore assoluto e spigoli</size></b>
+\(|x|\) piega il grafico con un angolo sull’asse. La derivata “salta” lì nella matematica ideale — nei programmi reali campioniamo in modo più liscio, ma l’idea conta: punti non lisci richiedono attenzione in analisi e simulazione.
+
+<b><size=110%>5. Serie di Taylor e Maclaurin</size></b>
+Le funzioni lisce si possono approssimare vicino a un punto con polinomi che hanno derivate coincidenti. Maclaurin = “espandi attorno a \(0\)”. Più termini di solito migliorano il fit vicino; la somma infinita è la serie (dove converge).
+
+<b><size=110%>6. Serie geometrica</size></b>
+Somme \(u^0+u^1+u^2+\cdots\) compaiono in probabilità, segnali e matematica digitale. Quando \(|u|<1\) la coda si riduce e la somma infinita ha forma chiusa; è la stessa atmosfera di stabilità e “le cose si assestano”.
+
+<b><size=110%>7. Sezioni multivariabile</size></b>
+Superfici \(z = f(x,y)\) si tagliano fissando \(y=y_0\) — ottieni una curva 1D in \(x\). Così si ragiona spesso in ingegneria al calcolo in dimensioni maggiori: fissa tutte le variabili tranne una, prendi derivate parziali, gradienti, pendenze direzionali.
+
+<b><size=110%>8. Integrali e area (somme di Riemann)</size></b>
+L’integrale definito \(\displaystyle \int_a^b f(x)\,dx\) è l’area con segno sotto la curva. Le somme di Riemann tagliano \([a,b]\) in rettangoli sottili: scegli altezze campione (sinistra, destra, midpoint), somma \(f(x^\ast)\,\Delta x\). Più rettangoli → più vicini all’integrale vero.
+
+<b><size=110%>9. Matematica d’ingegneria — mentalità da modello</size></b>
+La matematica d’ingegneria sceglie strumenti adatti al mondo: algebra lineare per strutture e reti, numeri complessi / fasori per AC stazionaria, equazioni differenziali per moto e calore, trasformate (Laplace/Fourier) per segnali e controllo. Obiettivo: un <i>modello usabile</i>, poi verifica con la realtà.
+
+<b><size=110%>10. Oscillazione smorzata</size></b>
+Molti sistemi perdono energia oscillando: un decadimento tipo \(e^{-\alpha t}\sin(\omega t)\) è il cartoon dell’idea — inviluppo che si restringe, oscillazione che dura poco. Smorzamento meccanico, circuiti RLC e sistemi di controllo condividono questo linguaggio.
+
+<b><size=110%>11. Catenaria e cosh</size></b>
+Un cavo penzolante sotto il proprio peso forma una catenaria; \(\cosh\) è il coseno iperbolico che modella quella forma ideale (compare anche in PDE iperboliche e relatività). Diversa dalla parabola anche se entrambe sembrano “archi”.
+
+<b><size=110%>12. Seno raddrizzato \(|\sin|\)</size></b>
+La raddrizzatura a onda intera ribalta i lobi negativi verso l’alto — primo passo per avvicinare l’AC a qualcosa di più simile al DC per alimentatori. Spigoli negli zeri ⇒ salti della derivata — promemoria che i circuiti idealizzati partono comunque dal calcolo.
+
+<b><size=110%>13. Cerchio \((x-h)^2 + (y-k)^2 = R^2\)</size></b>
+Un cerchio si scrive di solito in forma implicita. Risolvere per \(y\) dà due rami (\(\pm\sqrt{\cdot}\)). Il livello cerchio del gioco usa il semicerchio <i>superiore</i> così il cammino resta una funzione \(y(x)\) su una corsata. La derivazione implicita dà \(\frac{dy}{dx} = -\frac{x-h}{y-k}\); alle estremità del diametro la tangente è verticale (pendenza esplode).
+
+<b><size=120%>──────── Ingegneria aerospaziale e aerodinamica ────────</size></b>
+<size=92%>I livelli con prefisso <b>Aerospaziale:</b> trasformano la matematica da libro sui velivoli in percorsi su cui correre. Sono <i>modelli giocattolo</i> per la didattica — non CFD, prove di volo o simulazioni da export.</size>
+
+<b><size=118%>Portanza, resistenza, atmosfera</size></b>
+\(C_L(\alpha)\) cresce ~linearmente prima dello <b>stallo</b> (distacco della corrente), poi cala — pendenze e punti di rottura guidano le piattaforme. La <b>polare di resistenza</b> \(C_D = C_{D0} + K C_L^2\) separa <b>resistenza parassita (a portanza zero / di profilo)</b> — \(C_{D0}\): attrito di pelle, forma e interferenza a ~portanza nulla — dalla <b>resistenza indotta</b> — penalità \(\propto C_L^2\) dovuta ai vortici / portanza. La somma vs \(C_L\) è una parabola verso l’alto: il <b>\(C_L\) a resistenza minima</b> imposta la migliore intuizione su \(L/D\) e planata. (I livelli <b>Aerospaziale</b> antepongono questo promemoria al pannello storia.) Atmosfera isoterma: \(\rho(h) \propto e^{-h/H}\) (altezza di scala \(H\)): la densità guida \(q = \tfrac{1}{2}\rho V^2\), Reynolds, calo di spinta.
+
+<b><size=118%>Stabilità, aerodinamica instazionaria, rientro</size></b>
+Le modalità <b>fugoide / breve periodo</b> usano sinusoidi smorzate dalla dinamica linearizzata (autovalori nello spazio di stato). Lo <b>Strouhal</b> lega frequenza a \(U/D\) con tracce tipo seno. Il <b>newtoniano \(\sin^2\alpha\)</b> schizza curve didattiche di pressione sopravento ipersonico. Il <b>decadimento da rientro</b> usa un inviluppo esponenziale per “quanto rapidamente si attenua la minaccia termica” in storie semplificate.
+
+<b><size=90%>Vedi docs/engineering-math.md § Aerospace per una mappa più lunga.</size></b>
+
+<b><size=120%>──────── Primi principi (business) ────────</size></b>
+<size=92%>La cultura startup cita spesso <b>Elon Musk</b> per aver riportato i <b>primi principi</b> in posti come <b>Tesla / SpaceX</b>: smetti di credere che “il mercato prezza sempre così,” e invece <b>disimballi le assunzioni</b> fino a fatti di base (materiali, energia, fisica, costi unitari veri), poi <b>ragioni verso l’alto</b> in un nuovo design. L’idea è più antica di un solo founder — ma l’<i>abitudine</i> combacia con le immagini di questo gioco.</size>
+
+<b><size=118%>Mappa la metafora</size></b>
+• <b>La tua “curva business” mentale</b> è come <b>f(x)</b> — la storia su come l’output si muove con una leva (prezzo, latenza, qualità, throughput).
+• <b>Dove rompe o vola</b> è come <b>f'(x)</b> — <i>sensibilità</i>. Come qui: l’entità della derivata decide se il “pavimento” (il piano) regge davvero.
+• <b>Stadi e pop</b> — taglia la scommessa in atti; ogni rivelazione è una nuova ipotesi. <b>Livelli Riemann / area</b> — molte scelte piccole sommano; raffina la griglia prima di scalare la spesa.
+• <b>Sezioni multivariabile</b> — fissa di proposito le variabili nascoste; una camminata 1D chiara batte un deck 4D confuso.
+
+<b><size=92%>Questo <i>non</i> è consulenza legale, fiscale o d’investimento — un esercizio di pensiero da abbinare a consulenti e dati reali. Approfondimento:</size></b> <b>docs/first-principles-business.md</b> su GitHub Pages.
+
+<b><size=120%>──────── Preparazione esami (percorsi separati) ────────</size></b>
+
+<b><size=118%>Matematica da concorso (lente gara)</size></b>
+Problemi da gare come <b>AMC / AIME</b> premiano spesso <b>stima</b>, <b>simmetria</b> e sapere quando una funzione è <b>concava o convessa</b>. Il log naturale è un classico: \(\ln\) è <i>concavo</i> sul dominio — tangenti/secanti danno stime lineari nelle disuguaglianze. Nel roster di gioco, due livelli <b>Economia</b> usano curve di indice <i>stilizzate</i> (bolla dot‑com; crisi 2008) prima del boss Mandelbrot — non sostituiscono un drill su \(\ln\), ma aggiornano la coda “Avanzati e boss”. <size=90%>Nessuna affiliazione con MAA o enti di gara.</size> → <b>docs/competition-math.md</b>
+
+<b><size=118%>AMC 10 &amp; AMC 12 (MAA, USA)</size></b>
+Entrambi sono sprint <b>a scelta multipla</b> per scuola media/inizio superiori; <b>il calcolo non è richiesto</b>. Idee portanti: algebra furba, funzioni (anche log), geometria analitica, combinatoria &amp; probabilità, aritmetica modulare. Fluidità grafica da questo gioco aiuta <b>intuizione di forma</b>, <b>domini</b> (es. \(\ln\), \(\sqrt{\cdot}\)) e lettura delle opzioni anche risolvendo per algebra. <size=90%>Non affiliato alla MAA — usa materiali AMC ufficiali per problemi veri.</size> → <b>docs/amc-10-12.md</b>
+
+<b><size=118%>TMUA — Test of Mathematics for University Admission (UK)</size></b>
+Due prove <b>a scelta multipla</b>. Il calcolo compare come rapidità su <b>catena/prodotto/quoziente</b>, ragionamento da schizzo con \(f'\) e \(f''\), \(\int\) come area con segno / mood TCF, <b>domini</b> di \(\ln\) e \(\sqrt{\cdot}\), disuguaglianze exp/log, limiti e asintoti. Trappole tipiche: spigoli di \(|x|\), massimi agli estremi, eliminazione “una sola opzione vera”. <size=90%>Nessun quesito riprodotto — materiali TMUA ufficiali.</size> → <b>docs/tmua-calculus.md</b>
+
+<b><size=118%>MAT — Mathematics Admissions Test (Oxford / UK)</size></b>
+Enfasi su <b>ragionamento multi‑step</b> e algebra esatta — ritmo diverso dalla TMUA. Il calcolo sostiene <b>sensibilità al grafico</b>, curve implicite, disuguaglianze e “quante soluzioni?” via monotonia. Il formato evolve; controlla la pagina MAT di Oxford. <size=90%>Nessun quesito riprodotto — usare prove ufficiali.</size> → <b>docs/mat-calculus.md</b>
+
+<b><size=118%>AP Calculus BC (College Board, USA)</size></b>
+Il BC accumula <b>serie & Taylor</b>, moto <b>parametrico / polare / vettoriale</b>, <b>EDO</b> (logistica, separabili) e integrazione più ricca (anche impropri) oltre l’AB. Richiami polari: \(\displaystyle A = \tfrac{1}{2}\int r^2\,d\theta\); lunghezza \(\displaystyle \int \sqrt{r^2+(dr/d\theta)^2}\,d\theta\). In gioco: livelli <b>BC:</b>, <b>Polar:</b>, <b>Circle</b>, più Maclaurin e Riemann. <size=90%>Abbina a Course Description CB e FRQ.</size> → <b>docs/ap-calculus-bc.md</b>
+
+<b><size=118%>AP Physics C (College Board, USA)</size></b>
+Meccanica ed E&amp;M <b>calcolo‑first</b>: \(v = dr/dt\), \(a = dv/dt\), integrali di lavoro, \(\tau = dL/dt\), \(L = I\omega\) su asse fisso, conservazione del momento angolare quando \(\tau_{\mathrm{ext}} = 0\); in E&amp;M flussi e integrali di linea. Motivi nel gioco: <i>decadimento esponenziale \((\tau)\)</i>, <i>parabola del proiettile</i>, <i>rotazione / moto armonico</i>—solo agganci visivi. → <b>docs/ap-physics-c.md</b>
+
+<b><size=110%>Dove leggere di più</size></b>
+<b>docs/math-concepts.md</b> (indice), <b>docs/first-principles-business.md</b> (lente builder popolarizzata da Musk ↔ gioco), <b>docs/competition-math.md</b> &amp; <b>docs/amc-10-12.md</b> (mappa concorsi / MAA), <b>docs/engineering-math.md</b> (circuiti/oscillazioni applicate) e i file d’esame sopra su GitHub Pages.
+
+— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles

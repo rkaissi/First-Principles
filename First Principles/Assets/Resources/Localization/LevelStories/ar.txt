@@ -1,0 +1,46 @@
+# Level stories (ar) — keys story.0 … story.43
+
+story.0=<color=#c4b5fd><b>المشتق</b></color> = ميل المماس — مدى صعود أو هبوط <b>f(x)</b>.\n\nالضيء الذهبي طريقك؛ الأزرق الجليدي هو f'(x) يصوّر <i>أين يثبت الأرض</i>. حيث |f'| كبير تبقى المنصات؛ وإلا يفتح الفراغ.\n\n<size=88%><color=#94a3b8><b>التفكير من المبادئ الأولى:</b> كشف التشبيه حتى الحقائق ثم البناء. <b>f</b> نموذج النتيجة؛ <b>f'</b> حساسية المدخلات.</color></size>
+story.1=مسافر يمشي حيث الميل لطيف. عندما يصبح المشتق سالباً، ينحسر الأرض إلى فجوة.
+story.2=المنحنى يصعد ويهبط كالتنفس. المشتق يحدد أين تهبط: موجب = خطوة آمنة، سالب = قفزة.
+story.3=جيب التمام يخبئ المعنى في إشارة مشتقه. الـ«pop» يعلن الخطر.
+story.4=القيمة المطلقة تطوي المنحنى إلى مسار واحد. عند القمة يقلب المشتق — ويتقلب الأرض.
+story.5=<color=#86efac>حدود تايلور</color> تلتف حول دالة ناعمة. <b>ماكلورين</b> = تايلور عند <b>0</b>.\n\nالمسار هنا مجموع جزئي من <b>e^u</b>.
+story.6=<color=#7dd3fc>قوى فردية لـ u</color> تبدل الإشارات — حمض نووي لـ <b>sin(u)</b>.\n\nبرج تايلور مقطوع نحو الموجة الجيبية.
+story.7=<color=#f5d0fe>متسلسلة هندسية</color> تكدس قوى <b>u</b>. داخل نصف القطر تذوب الذيل.\n\nمشتق المجموع المحدود يغيّر التضاريس.
+story.8=فكّر <b>z = x² − y₀²</b> — <color=#38bdf8>شريحة</color> <i>سرج</i>.\n\nمشتق x يقرأ متعدد المتغيرات بحركة بعد واحد.
+story.9=الآن <b>z = x² + y₀²</b> — <color=#fde047>قطع مكافئ إهليلجي</color>. تثبيت y₀ يعطي وعاءً في مستواك.\n\nالتدرج يصعد؛ الشريحة تبيّن انحدار الجري.
+story.10=<color=#fde047>التكامل المحدود</color> ل معدل غير سالب = <b>كمية متراكمة</b> — مساحة تحت المنحنى.\n\nالأعمدة الزرقاء <b>مجموع ريمان</b> f(x*)·Δx نحو ∫f.\n\n<size=92%><color=#a8b2d1>مسارك على المنحنى الناعم؛ التظليل يقارب التكامل.</color></size>
+story.11=<b>ريمان يساراً:</b> ارتفاع <b>f(xᵢ)</b> — <color=#f87171>اليسار</color>. إذا تزايدت f فالمجموع <b>يقلل</b> تقدير المساحة.\n\n<size=92%><color=#a8b2d1>درج منخفض تحت القطع المكافئ.</color></size>
+story.12=<b>ريمان يميناً:</b> <b>f(xᵢ₊₁)</b> — <color=#38bdf8>يمين</color> ⇒ <b>مزيد تقدير</b> عند التزايد.\n\n<size=92%><color=#a8b2d1>مرآة الحالة اليسرى.</color></size>
+story.13=<b>منتصف:</b> عينة في <color=#86efac>الوسط</color>. مستطيل متماثل؛ غالباً أدق.\n\n<size=92%><color=#a8b2d1>درجات في منتصف كل شريحة.</color></size>
+story.14=<b>اهتزاز مخمّد</b> — نوابض ودوائر. الغلاف <color=#38bdf9>ينكمش</color> أس × جيب.\n\n<size=92%><color=#a8b2d1>المشتق يختار أعمدة آمنة قرب القمم.</color></size>
+story.15=سلسلة معلّقة ⇒ <b>كتيناري</b> غالباً <color=#fde047>cosh</color>. ليست قذيفة.\n\n<size=92%><color=#a8b2d1>قوس وكوابل.</color></size>
+story.16=<b>|sin(x)|</b> جيب <color=#f0abfc>مقوّم كامل</b>.\n\n<size=92%><color=#a8b2d1>زوايا عند الصفر؛ المشتق يقفز.</color></size>
+story.17=<b>BC — عكس مثلثي.</b> <color=#38bdf8>arctan</color>، 1/(1+x²).\n\n<size=92%><color=#a8b2d1>خطوط مقاربة أفقية كحدود.</color></size>
+story.18=<b>لوجستي:</b> dP/dt = kP(1−P/L). شبه أسي ثم <color=#86efac>انحناء</color> نحو سعة <b>L</b>.\n\n<size=92%><color=#a8b2d1>نقطة انعطاف = أقصى نمو.</color></size>
+story.19=<b>قطبي</b> <color=#fde047>(r,θ)</color>. <b>قلب</b> r ~ 1+cos θ.\n\n<size=92%><color=#a8b2d1>مساحة ½∫ r² dθ.</color></size>
+story.20=<b>وردة</b> r ~ cos(nθ).\n\n<size=92%><color=#a8b2d1>قفزات المشتق حيث r يتغير بسرعة.</color></size>
+story.21=<b>sinh/cosh</b>، هوية الزائدية.\n\n<size=92%><color=#a8b2d1>sinh فردي من الصفر.</color></size>
+story.22=<b>فيزياء C:</b> Q = Q₀ e^{−t/τ}.\n\n<size=92%><color=#a8b2d1>المنحنى يهبط؛ المشتق يتسرب نحو صفر.</color></size>
+story.23=<b>دوران</b> <color=#7dd3fc>L = Iω</color>، τ = dL/dt.\n\n<size=92%><color=#a8b2d1>اهتزاز صغير مثل حركة توافقية.</color></size>
+story.24=<b>ارتفاع قذيفة y(t)</b> — <color=#fde047>قطع مكافئ</color> بالزمن. القمة عند v=0.\n\n<size=92%><color=#a8b2d1>سلسلة y,v,a.</color></size>
+story.25=<b>ماكلورين cos</b> بقوى زوجية.\n\n<size=92%><color=#a8b2d1>مزيد من الحدود ⇢ أدقى عند 0.</color></size>
+story.26=<b>ln x</b> و∫dx/x.\n\n<size=92%><color=#a8b2d1>ميل موجب يضعف ببعد.</color></size>
+story.27=<b>√x</b> ميل شديد عند 0⁺.\n\n<size=92%><color=#a8b2d1>اللعب أملس ؛ التحليل يحذر عند الحد.</color></size>
+story.28=<b>tan x</b> بين مقاربات. sec²x.\n\n<size=92%><color=#a8b2d1>عمود فقري لتمارين BC.</color></size>
+story.29=<b>y′=ky ⇒ Ce^{kx}</b>.\n\n<size=92%><color=#a8b2d1>معدل يتناسب مع الكمية.</color></size>
+story.30=<b>طور و SHM</b>.\n\n<size=92%><color=#a8b2d1>المشتق يقود بـ cos تقريباً.</color></size>
+story.31=<b>تكعيب</b> — نقاط حرجة، <color=#fca5a5>انعطاف</color>.\n\n<size=92%><color=#a8b2d1>نمط تلّ ووادٍ.</color></size>
+story.32=<b>b^x</b> بمشتق (ln b)b^x.\n\n<size=92%><color=#a8b2d1>جسر للأساس e.</color></size>
+story.33=<b>دائرة</b> — نصف علوي y=k+√(⋯).\n\n<size=92%><color=#a8b2d1>ضمني وباراميتر AP.</color></size>
+story.34=<b>رفع C_L(α)</b> خطي + <b>انفصال</b>.\n\n<size=92%><color=#a8b2d1>نموذج تعليمي.</color></size>
+story.35=<b>قطب سحب</b> C_D = C_{D0} + K C_L².\n\n<size=92%><color=#a8b2d1>حدس أفضل L/D.</color></size>
+story.36=<b>جو متساوي الحرارة</b> ρ ~ e^{−h/H}.\n\n<size=92%><color=#a8b2d1>الضغط الديناميكي يتبع ρ.</color></size>
+story.37=<b>مجنحة/قصيرة</b> كاهتزاز مخمّد مبسّط.\n\n<size=92%><color=#a8b2d1>التحكم الحقيقي أغنى.</color></size>
+story.38=<b>نيوتني</b> ~ sin²α تعليمي.\n\n<size=92%><color=#a8b2d1>ليس CFD.</color></size>
+story.39=<b>ستروهال</b> vortices.\n\n<size=92%><color=#a8b2d1>f ≈ St·U/D.</color></size>
+story.40=<b>دخول غلاف جوي</b> — <i>تخفيف نوعي</i> لمنحنى التسخين.\n\n<size=92%><color=#a8b2d1>ليس وثيقة كمية.</color></size>
+story.41=<b>فقاعة الدوت كوم</b> — مؤشر توضيحي (ليس S&amp;P الحقيقي).\n\n<size=92%><color=#a8b2d1>صعود، هبوط حاد، تعافٍ بطيء — تمثيل تعليمي.</color></size>
+story.42=<b>أزمة 2008</b> — رهن عقاري وضغط ائتمان، منحنى نوعي فقط.\n\n<size=92%><color=#a8b2d1>ليس بيانات فعلية.</color></size>
+story.43=<b>ماندلبرو</b> مستوى c، زمن هروب، شريح بـ Re ثابت.\n\n<size=92%><color=#a8b2d1>حد جوليا؛ تكبير عميق بمحرك آخر.</color></size>

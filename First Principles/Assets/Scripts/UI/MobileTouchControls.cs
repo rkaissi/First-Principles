@@ -7,12 +7,22 @@ using UnityEngine.UI;
 /// Builds a bottom **◀ / ▶ / Jump** row parented under <see cref="MobileUiRoots"/>.
 /// Phones: buttons expand to fill width. Tablets: fixed widths + flex spacers so landscape iPad
 /// does not create kilometer-wide hit targets. Uses <see cref="IPointerDownHandler"/> for responsive hold-to-run.
+/// <para/>
+/// Visuals aim for a **Minecraft PE–style** translucent strip: low-alpha panels so the graph stays readable;
+/// only the three <see cref="Image"/> buttons use <c>raycastTarget</c> — the bar backdrop is non-blocking so
+/// taps in any gaps/spacers pass through to content behind (HUD is laid out above <see cref="DeviceLayout.TouchHintVerticalOffset"/>).
 /// </summary>
 public class MobileTouchControls : MonoBehaviour
 {
     private static MobileTouchControls _instance;
 
     private TextMeshProUGUI jumpLabelTmp;
+
+    // --- Minecraft-style translucency (tweak alphas here) ----------------------------------
+    private static readonly Color TouchBarBackdrop = new Color(0.06f, 0.07f, 0.09f, 0.34f);
+    private static readonly Color MoveButtonFace = new Color(0.18f, 0.2f, 0.24f, 0.52f);
+    private static readonly Color JumpButtonFace = new Color(0.14f, 0.38f, 0.32f, 0.55f);
+    private const float TouchButtonShadowAlpha = 0.14f;
 
     public static void EnsureForGameCanvas(Transform canvasTransform)
     {
@@ -83,6 +93,20 @@ public class MobileTouchControls : MonoBehaviour
         bool tablet = DeviceLayout.IsTabletLike();
         float gap = tablet ? 20f : 16f;
 
+        // Full-bar tint only; raycasts off so this never steals input from UI above or gaps between controls.
+        var backdropGo = new GameObject("TouchBarBackdrop", typeof(RectTransform));
+        var bdRt = backdropGo.GetComponent<RectTransform>();
+        bdRt.SetParent(root, false);
+        bdRt.SetAsFirstSibling();
+        bdRt.anchorMin = Vector2.zero;
+        bdRt.anchorMax = Vector2.one;
+        bdRt.offsetMin = Vector2.zero;
+        bdRt.offsetMax = Vector2.zero;
+        var bdImg = backdropGo.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(bdImg);
+        bdImg.color = TouchBarBackdrop;
+        bdImg.raycastTarget = false;
+
         var row = new GameObject("Row", typeof(RectTransform));
         var rowRt = row.GetComponent<RectTransform>();
         rowRt.SetParent(root, false);
@@ -136,11 +160,11 @@ public class MobileTouchControls : MonoBehaviour
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
-        img.color = RuntimeUiPolish.ButtonNeutral;
+        img.color = MoveButtonFace;
 
         var h = go.AddComponent<MobileHoldButton>();
         h.Init(dir);
-        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(1.5f, -2.5f), 0.24f);
+        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(1f, -2f), TouchButtonShadowAlpha);
 
         var tr = new GameObject("Text");
         var trt = tr.AddComponent<RectTransform>();
@@ -151,9 +175,9 @@ public class MobileTouchControls : MonoBehaviour
         trt.offsetMax = Vector2.zero;
         var tmp = tr.AddComponent<TextMeshProUGUI>();
         tmp.text = label == "Left" ? "\u25C0" : "\u25B6";
-        tmp.fontSize = tablet ? 54f : 48f;
+        tmp.fontSize = UiTypography.Scale(tablet ? 54f : 48f);
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = new Color(1f, 0.88f, 0.48f, 1f);
+        tmp.color = new Color(1f, 0.9f, 0.55f, 0.92f);
         CopyTmpFont(tmp);
     }
 
@@ -172,8 +196,8 @@ public class MobileTouchControls : MonoBehaviour
 
         var img = go.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(img);
-        img.color = RuntimeUiPolish.AccentJump;
-        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(2f, -3f), 0.28f);
+        img.color = JumpButtonFace;
+        RuntimeUiPolish.ApplyDropShadow(rt, new Vector2(1.5f, -2.5f), TouchButtonShadowAlpha);
 
         var tr = new GameObject("Text");
         var trt = tr.AddComponent<RectTransform>();
@@ -184,10 +208,10 @@ public class MobileTouchControls : MonoBehaviour
         trt.offsetMax = Vector2.zero;
         jumpLabelTmp = tr.AddComponent<TextMeshProUGUI>();
         jumpLabelTmp.text = LocalizationManager.Get("ui.jump", "Jump");
-        jumpLabelTmp.fontSize = tablet ? 34f : 30f;
+        jumpLabelTmp.fontSize = UiTypography.Scale(tablet ? 34f : 30f);
         jumpLabelTmp.fontStyle = FontStyles.Bold;
         jumpLabelTmp.alignment = TextAlignmentOptions.Center;
-        jumpLabelTmp.color = new Color(0.98f, 1f, 1f, 1f);
+        jumpLabelTmp.color = new Color(0.98f, 1f, 1f, 0.94f);
         CopyTmpFont(jumpLabelTmp);
         LocalizationManager.ApplyTextDirection(jumpLabelTmp);
 

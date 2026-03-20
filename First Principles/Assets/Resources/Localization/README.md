@@ -1,12 +1,16 @@
 # Localization
 
-- **Files**: `en.txt`, `ar.txt`, `fr.txt`, `zh.txt`, `ko.txt`, `ja.txt`, `de.txt`, `es.txt` (UTF-8).
-- **Keys**: Copy from `en.txt`. Optional `story.0` … `story.42` override long level narratives; if omitted, the built-in English body from `LevelManager` is used.
-- **Fonts (TMP)**: The default / Outfit asset may not include Arabic or CJK glyphs. To avoid tofu:
-  1. Import **Noto Sans** (Arabic, SC, JP, KR) or **Source Han** as TMP font assets.
-  2. Add them to **Fallback Font Assets** on your primary TMP font, or swap the default font per language in code.
+- **Files**: `en.txt`, `hi.txt`, `ur.txt`, `ar.txt`, `fr.txt`, `zh.txt`, `ko.txt`, `ja.txt`, `de.txt`, `es.txt`, `it.txt`, `cs.txt`, `pl.txt`, `ru.txt` (UTF-8).
+- **Keys**: Copy from `en.txt`. Optional **`story.0` … `story.43`** in a locale file override the **in-game story banner** (and aerospace preamble tail) for that language. Do **not** put `story.N` in `en.txt` if you want English to keep using the strings baked into `LevelManager`—add `story.N` only to `ko.txt`, `fr.txt`, etc. When a key is missing, the English `def.storyText` from `LevelManager` is used.
+- **Math concepts reader (long article)**:
+  - Place one UTF-8 file per language: **`MathArticle/en.txt`**, **`MathArticle/ko.txt`**, … under `Assets/Resources/Localization/`.
+  - `LearningArticleLibrary` loads `Resources.Load("Localization/MathArticle/" + CurrentLanguage)` and falls back to `MathArticle/en.txt`. Translate by copying `en.txt` and replacing prose (keep `\(...\)` LaTeX for `TmpLatex` where needed). **`MathArticle/cs.txt`**, **`pl.txt`**, **`ru.txt`** are shorter in-game summaries pointing to **English** / **docs** for the full article until a full-length translation ships.
+- **First-launched language**: If `PlayerPrefs` has no `fp_language` yet, the game sets it from **`Application.systemLanguage`** (iOS, Android, Windows, macOS, Linux editors/players—whatever Unity reports). Supported mappings: en, fr, de, ja, ko, zh, es, ar, hi, plus Urdu when Unity exposes it as `SystemLanguage` or the enum name `Urdu`. Anything else defaults to **en**. After the first save, only the **language chip** in Menu / Level select changes `fp_language`.
+- **Level stories (title banner in Game):** Optional UTF-8 file **`LevelStories/{code}.txt`** under `Assets/Resources/Localization/` with keys **`story.0` … `story.42`** (same `key=value` format as main locale files; use `\n` for newlines). `LocalizationManager` merges this after `Localization/{code}.txt`. Missing keys still use the English `storyText` embedded in `LevelManager`. Regenerate bundles with `python3 tools/build_level_story_bundles.py` from the repo root (outputs `fr/de/es/ja/ko/zh/ar/hi/ur`; add **`LevelStories/en.txt`** only if you want English prose editable without a code change).
+- **Menu credits:** `menu.version_line` (title + version), `menu.credits_line` (developer attribution), and `menu.support_contact` (support email) — composed by `SceneCreditsFooter.BuildMenuFooterRichText()` for `MenuCreditsBlock`.
+- **Fonts (TMP)**: `TmpGlobalFallbackBootstrap` registers dynamic Noto fallbacks at startup (see `Assets/Resources/Fonts/`), including **Noto Sans Arabic** (glyphs for Arabic UI + `MathArticle/ar.txt`), **Noto Sans Devanagari** (Hindi), **Noto Sans Bengali** (Bangla), and **Noto Nastaliq Urdu** (Urdu). If you remove those TTFs, add your own TMP fallbacks on the primary font or per-locale in code. (`MathArticlesOverlay` applies **RTL** and **TopRight** alignment when `LocalizationManager.IsRightToLeft` is true.)
 
 ## Player preference
 
-- Stored in `PlayerPrefs` under `fp_language` (`en`, `ar`, `fr`, `zh`, `ko`, `ja`, `de`, `es`).
+- Stored in `PlayerPrefs` under `fp_language` (`en`, `hi`, `ar`, `fr`, `zh`, `ko`, `ja`, `de`, `es`, `it`, `cs`, `pl`, `ru`).
 - Menu and Level Select include a **Language** chip (tap cycles languages).
