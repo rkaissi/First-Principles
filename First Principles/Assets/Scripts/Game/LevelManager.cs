@@ -80,7 +80,7 @@ public class LevelManager : MonoBehaviour
 
     [Header("Spawn spotlight")]
     [Tooltip("Total time from level ready until controls unlock from spotlight (fade in + hold + fade out).")]
-    [SerializeField] private float spawnSpotlightTotalSeconds = 3f;
+    [SerializeField] private float spawnSpotlightTotalSeconds = 1.5f;
 
     [Tooltip("Optional; if null, loads Resources/UI_SpotlightDim then Shader.Find.")]
     [SerializeField] private Shader spawnSpotlightShader;
