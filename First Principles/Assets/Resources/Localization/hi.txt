@@ -13,9 +13,6 @@ ui.jump=कूद
 ui.move=चलें
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(कीबोर्ड: तीर / स्पेस)</color></size>
 hud.stage=चरण
-controls.mobile=<color=#7a8399>चलें</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>कूद</color>  <b><color=#ffd978>टैप</color></b>  <size=90%><color=#5c6577>(कीबोर्ड: तीर / स्पेस)</color></size>
-controls.desktop=<color=#7a8399>चलें</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>कूद</color>  <b><color=#ffd978>स्पेस</color></b>
-controls.calculator=<color=#7a8399>ग्राफ़िंग कैलकुलेटर</color>  <b>f(u) लिखें</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>पिंच</b>  ·  <b>वापस</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) जब x>0 · min(x,3)...
 graph.status_enter=Enter / ग्राफ़ के लिए बाहर टैप करें
@@ -23,7 +20,7 @@ graph.status_graphed=<color=#8fd9b3>ग्राफ़ तैयार</color>
 graph.line1=<b>ग्राफ़िंग कैलकुलेटर मोड</b>
 graph.line2=<size=88%><color=#c4d0e8>नीचे <b>f(u)</b> लिखें (बॉक्स में चर <b>x</b> = आंतरिक u)। फिर:</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · <b>+</b> पर डबल-टैप · <b>−</b> दबाकर रखें · <b>Scale</b> ज़ूम इन / आउट दबाकर रखें · दो उंगलियों से <b>पिंच</b></size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x ∈ [{4},{5}]</color></size>
 graph.param_a=A (लंबवत स्केल)
 graph.param_k=k (क्षैतिज स्केल)
 graph.param_c=C (लंबवत खिसकाव)
@@ -67,20 +64,28 @@ level.30=BC: कला व सरल हार्मोनिक गति
 level.31=BC: घन व प्रगाढ़ता (रेखाचित्र)
 level.32=BC: b^x व d/dx b^x
 level.33=वृत्त: (x−h)² + (y−k)² = R²
-level.34=एयरोस्पेस: लिफ़्ट C_L(α) रैखिक + स्टॉल
-level.35=एयरोस्पेस: ड्रैग पोलर (पैरासिटिक, प्रेरित, कुल)
-level.36=एयरोस्पेस: समतापमान वायुमंडल ρ(h)
-level.37=एयरोस्पेस: फ्यूगॉइड / डैम्प्ड पिच-हीव
-level.38=एयरोस्पेस: न्यूटोनियन Cp ~ sin²α
-level.39=एयरोस्पेस: स्ट्रौहल / वॉर्टेक्स शेडिंग
-level.40=एयरोस्पेस: पुनः प्रवेश क्षय लिफ़ाफ़ा (ρV ताप मूड)
-level.41=अर्थव्यवस्था: डॉट-कॉम बुलबुला व पतन (नमूना सूचकांक)
-level.42=अर्थव्यवस्था: 2008 संकट व रिकवरी (नमूना सूचकांक)
-level.43=BOSS: मैंडेलब्रॉट एस्केप स्लाइस (फ्रैक्टल)
-level.44=भौतिकी C: ऊष्मागतिकी (एडियाबैटिक P–V, γ का मान N से)
-level.45=BOSS: स्वर्ण अनुपात सर्पिल (लघुगणकीय ध्रुवीय)
-level.46=रूपांतरण: फूरियर — सिंक स्पेक्ट्रम
-level.47=रूपांतरण: लाप्लास — घातांकी क्षय
-level.48=BOSS: मैंडेलब्रॉट — अंतिम (फ्रैक्टल एस्केप स्लाइस)
-level.49=BOSS: लोरेंज तितली — अंतिम (विलक्षण आकर्षक)
+level.34=भौतिकी C: ऊष्मागतिकी (एडियाबैटिक P–V, γ का मान N से)
+level.35=एयरोस्पेस: लिफ़्ट C_L(α) रैखिक + स्टॉल
+level.36=एयरोस्पेस: ड्रैग पोलर (पैरासिटिक, प्रेरित, कुल)
+level.37=एयरोस्पेस: समतापमान वायुमंडल ρ(h)
+level.38=एयरोस्पेस: फ्यूगॉइड / डैम्प्ड पिच-हीव
+level.39=एयरोस्पेस: न्यूटोनियन Cp ~ sin²α
+level.40=एयरोस्पेस: स्ट्रौहल / वॉर्टेक्स शेडिंग
+level.41=एयरोस्पेस: पुनः प्रवेश क्षय लिफ़ाफ़ा (ρV ताप मूड)
+level.42=अर्थव्यवस्था: डॉट-कॉम बुलबुला व पतन (नमूना सूचकांक)
+level.43=अर्थव्यवस्था: 2008 संकट व रिकवरी (नमूना सूचकांक)
+level.44=रूपांतरण: फूरियर — सिंक स्पेक्ट्रम
+level.45=रूपांतरण: लाप्लास — घातांकी क्षय
+level.46=BOSS: स्वर्ण अनुपात सर्पिल (लघुगणकीय ध्रुवीय)
+level.47=BOSS: मैंडेलब्रॉट — अंतिम (फ्रैक्टल एस्केप स्लाइस)
+level.48=BOSS: लोरेंज आकर्षक — अराजकता सिद्धांत (विलक्षण आकर्षक)
+level.49=BOSS: ब्लैक होल — गुरुत्वाकर्षण कुआँ (1/r स्लाइस)
 level.50=फिजिक्स C: स्प्रिंग–द्रव्यमान SHM (हूक का नियम, अवमंदन रहित)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

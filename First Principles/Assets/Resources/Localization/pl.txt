@@ -7,10 +7,11 @@ level_select.cat.integration=Zmienne wielowymiarowe i całki
 level_select.cat.engineering=Inżynieria
 level_select.cat.ap_bc=AP Calculus BC i Fizyka C
 level_select.cat.aerospace=Lotnictwo i kosmonautyka
-level_select.cat.finale=Zaawansowane i boss
+level_select.cat.economics=Ekonomia
 level_select.cat.transforms=Transformaty
 level_select.cat.final_boss=Finałowy boss
 level_select.cat.spring_physics=Sprężyna i SHM
+level_select.cat.big_o=Notacja dużego O
 ui.math_tips=Wskazówki matematyczne
 ui.back_menu=Powrót do menu
 ui.graphing_calculator_mode=Kalkulator graficzny
@@ -24,9 +25,6 @@ ui.jump=Skok
 ui.move=Ruch
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(klawiatura: strzałki / Spacja)</color></size>
 hud.stage=ETAP
-controls.mobile=<color=#7a8399>Ruch</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>dotknij</color></b>  <size=90%><color=#5c6577>(klawiatura: strzałki / Spacja)</color></size>
-controls.desktop=<color=#7a8399>Ruch</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Skok</color>  <b><color=#ffd978>Spacja</color></b>
-controls.calculator=<color=#7a8399>Kalkulator graficzny</color>  <b>Wpisz f(u)</b>  ·  <b>Trans</b>  ·  <b>Skala</b>  ·  <b>Szczyp</b>  ·  <b>Wstecz</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) dla x>0 · min(x,3)...
 graph.status_enter=Enter / dotknij poza pole, aby narysować
@@ -34,7 +32,7 @@ graph.status_graphed=<color=#8fd9b3>Narysowano</color>
 graph.line1=<b>Tryb kalkulatora graficznego</b>
 graph.line2=<size=88%><color=#c4d0e8>Wpisz <b>f(u)</b> poniżej (zmienna <b>x</b> w polu = wewnętrzne u). Potem:</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · podwójne dotknięcie <b>+</b> · przytrzymaj <b>−</b> · <b>Skala</b> przybliż / przytrzymaj oddal · <b>szczyp</b> dwoma palcami</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x w [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x w [{4},{5}]</color></size>
 graph.param_a=A (skala pionowa)
 graph.param_k=k (skala pozioma)
 graph.param_c=C (przesunięcie pionowe)
@@ -85,20 +83,28 @@ level.30=BC: faza i drgania harmoniczne (wymiana energii)
 level.31=BC: sześcienny i punkt przegięcia
 level.32=BC: b^x i d/dx b^x
 level.33=Okrąg: (x−h)² + (y−k)² = R²
-level.34=Aerospace: siła nośna C_L(α) liniowa + przeciągnięcie
-level.35=Aerospace: polara oporu (pasożytniczy, indukowany, całkowity)
-level.36=Aerospace: atmosfera izotermiczna ρ(h)
-level.37=Aerospace: fugoide / stłumiony tryb przechylenia
-level.38=Aerospace: newtonowskie Cp ~ sin²α
-level.39=Aerospace: Strouhal / ton wirów
-level.40=Aerospace: obwiednia zaniku przy wejściu (ρV ciepło)
-level.41=Ekonomia: bańka dot-com i krach (stylizowany indeks)
-level.42=Ekonomia: kryzys 2008 i odbicie (stylizowany indeks)
-level.43=BOSS: przekrój ucieczki Mandelbrota (nastrój fraktalny)
-level.44=Fizyka C: termodynamika (adiabatyczny P–V, γ z N)
-level.45=BOSS: spirala złotego podziału (logarytmiczna, biegunowa)
-level.46=Transformaty: Fourier — sinc (widmo)
-level.47=Transformaty: Laplace — wykładniczy zanik
-level.48=BOSS: Mandelbrot — finał (fraktalny przekrój ucieczki)
-level.49=BOSS: motyl Lorenza — finał (dziwny atraktor)
+level.34=Fizyka C: termodynamika (adiabatyczny P–V, γ z N)
+level.35=Aerospace: siła nośna C_L(α) liniowa + przeciągnięcie
+level.36=Aerospace: polara oporu (pasożytniczy, indukowany, całkowity)
+level.37=Aerospace: atmosfera izotermiczna ρ(h)
+level.38=Aerospace: fugoide / stłumiony tryb przechylenia
+level.39=Aerospace: newtonowskie Cp ~ sin²α
+level.40=Aerospace: Strouhal / ton wirów
+level.41=Aerospace: obwiednia zaniku przy wejściu (ρV ciepło)
+level.42=Ekonomia: bańka dot-com i krach (stylizowany indeks)
+level.43=Ekonomia: kryzys 2008 i odbicie (stylizowany indeks)
+level.44=Transformaty: Fourier — sinc (widmo)
+level.45=Transformaty: Laplace — wykładniczy zanik
+level.46=BOSS: spirala złotego podziału (logarytmiczna, biegunowa)
+level.47=BOSS: Mandelbrot — finał (fraktalny przekrój ucieczki)
+level.48=BOSS: atraktor Lorenza — teoria chaosu (dziwny atraktor)
+level.49=BOSS: czarna dziura — studnia grawitacji (przekrój 1/r)
 level.50=Fizyka C: sprężyna–masa SHM (prawo Hooka, nietłumione)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

@@ -42,11 +42,21 @@ public readonly struct GameplayPlayBounds
             ? Mathf.Max(16f, w * 0.022f)
             : Mathf.Max(10f, w * 0.018f);
 
+        // Narrow portrait: reserve a bit more side margin so the playfield matches the visibly inset graph.
+        float aspectTall = h / Mathf.Max(1f, w);
+        if (!DeviceLayout.IsTabletLike() && aspectTall > 1.45f)
+            hPad = Mathf.Max(hPad, w * 0.026f);
+
         float topPad = Mathf.Max(44f, h * 0.065f);
 
         float bottomPad = Mathf.Max(12f, h * 0.022f);
         if (DeviceLayout.PreferOnScreenGameControls)
-            bottomPad = Mathf.Max(bottomPad, DeviceLayout.TouchControlBarHeight + 36f);
+        {
+            if (DeviceLayout.GameplayUsesFullScreenTouchZones)
+                bottomPad = Mathf.Max(bottomPad, 28f);
+            else
+                bottomPad = Mathf.Max(bottomPad, DeviceLayout.TouchControlBarHeight + 36f);
+        }
 
         float xMin = hPad / unitX;
         float xMax = gridSize.x - hPad / unitX;

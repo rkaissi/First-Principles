@@ -80,39 +80,57 @@ public static class StageRoleplayLibrary
         // 33
         "<b>Circle lawyer.</b> (x−h)²+(y−k)²=R² fails the vertical-line exam—so you walk the upper contract only. Semicircles still argue with implicit bias.",
         // 34
-        "<b>Wind-tunnel initiate.</b> Lift coefficient whispers to angle of attack until stall throws a tantrum. Respect the breakpoint; it’s older than your clearance badge.",
-        // 35
-        "<b>Performance engineer.</b> Drag polar plots your sins against lift: parasitic weight plus induced gossip. Min-drag C_L is the quiet table at the banquet.",
-        // 36
-        "<b>High-altitude clerk.</b> Isothermal density falls exponentially—scale height is the accountant. Thinner air, quieter Reynolds gossip, louder truth about thrust lapse.",
-        // 37
-        "<b>Test pilot (modes).</b> Phugoid myths trade altitude for speed slowly; short-period pitches snap faster. Damping writes apologies on every oscillation.",
-        // 38
-        "<b>Hypersonic scribe.</b> Newtonian sin²α scratches impact lore on blunt faces—models, not scripture. Use it to speak, not to land contracts.",
-        // 39
-        "<b>Wake listener.</b> Strouhal hums a shedding song—bluff bodies gossip at f~St·U/D. Feel the sine fingerprint of organized wake jazz.",
-        // 40
-        "<b>Shield monk.</b> Re-entry trades dynamic pressure against velocity cubed in campfire tales. The envelope relaxes: breathe as ρ and V forgive you.",
-        // 41
-        "<b>Equities ghost.</b> You ride a stylized dot-com decade—run-up, vertigo, air pocket—where every slope is a headline and second derivative feels like sentiment flipping overnight.",
-        // 42
-        "<b>Risk officer.</b> The 2008 arc is a cliff masquerading as a bull: crawl the crest, brace for the sheer drop, then learn that recovery is a slow integral, not a bounce.",
-        // 43
-        "<b>Fractal exile.</b> Mandelbrot boundary guards escape routes—each iterate is a spell. Step wrong and infinity notices; step right and you pierce a holographic veil.",
-        // 44
         "<b>Heat engine cadet.</b> Compression trades volume for pressure along an adiabat—no heat admitted, just workledger math. Feel the steepening as γ insists the gas fight back harder per liter squeezed.",
-        // 45
-        "<b>Gilded navigator.</b> Every quarter-turn the world wants to scale itself by φ—the spiral is a compass that never forgets proportion. Follow the radius outward: each step is geometric, not arithmetic.",
-        // 46
+        // 35
+        "<b>Wind-tunnel initiate.</b> Lift coefficient whispers to angle of attack until stall throws a tantrum. Respect the breakpoint; it’s older than your clearance badge.",
+        // 36
+        "<b>Performance engineer.</b> Drag polar plots your sins against lift: parasitic weight plus induced gossip. Min-drag C_L is the quiet table at the banquet.",
+        // 37
+        "<b>High-altitude clerk.</b> Isothermal density falls exponentially—scale height is the accountant. Thinner air, quieter Reynolds gossip, louder truth about thrust lapse.",
+        // 38
+        "<b>Test pilot (modes).</b> Phugoid myths trade altitude for speed slowly; short-period pitches snap faster. Damping writes apologies on every oscillation.",
+        // 39
+        "<b>Hypersonic scribe.</b> Newtonian sin²α scratches impact lore on blunt faces—models, not scripture. Use it to speak, not to land contracts.",
+        // 40
+        "<b>Wake listener.</b> Strouhal hums a shedding song—bluff bodies gossip at f~St·U/D. Feel the sine fingerprint of organized wake jazz.",
+        // 41
+        "<b>Shield monk.</b> Re-entry trades dynamic pressure against velocity cubed in campfire tales. The envelope relaxes: breathe as ρ and V forgive you.",
+        // 42
+        "<b>Equities ghost.</b> You ride a stylized dot-com decade—run-up, vertigo, air pocket—where every slope is a headline and second derivative feels like sentiment flipping overnight.",
+        // 43
+        "<b>Risk officer.</b> The 2008 arc is a cliff masquerading as a bull: crawl the crest, brace for the sheer drop, then learn that recovery is a slow integral, not a bounce.",
+        // 44
         "<b>Spectrum scribe.</b> A rectangle in one domain blooms into a sinc in the other—side lobes are the honest echo of sharp corners. You are reading the interference pattern of changing coordinates.",
-        // 47
+        // 45
         "<b>s‑plane pilgrim.</b> The exponential after the switch-on is the seed of every pole story: decay in time becomes algebra in s. The past is zero until the kernel says go.",
-        // 48
+        // 46
+        "<b>Gilded navigator.</b> Every quarter-turn the world wants to scale itself by φ—the spiral is a compass that never forgets proportion. Follow the radius outward: each step is geometric, not arithmetic.",
+        // 47
         "<b>Fractal exile, encore.</b> You return to Mandelbrot’s coastline for the last word—each iterate still votes on escape, and the boundary remembers every branch you dared to name.",
+        // 48
+        "<b>Chaos theory.</b> Lorenz’s wings beat on a thread of time: the curve you ride is sensitive, restless, forever retuning—small shifts in the unseen become storms in the visible trace.",
         // 49
-        "<b>Strange butterfly.</b> Lorenz’s wings beat on a thread of time: the curve you ride is sensitive, restless, forever retuning—small shifts in the unseen become storms in the visible trace.",
+        "<b>Event horizon clerk.</b> The graph pretends to be a softened well—potential diving toward a point that eats straight lines. Tread the shoulder: steep slopes mean the derivative has opinions.",
         // 50
-        "<b>Spring cadet.</b> Hooke’s law pulls you home to equilibrium — each crest is stored spring energy, each crossing is the quiet where velocity wins; undamped, the tune never dies, only repeats."
+        "<b>Spring cadet.</b> Hooke’s law pulls you home to equilibrium — each crest is stored spring energy, each crossing is the quiet where velocity wins; undamped, the tune never dies, only repeats.",
+        // 51
+        "<b>Constant-time courier.</b> O(1) is the myth that distance doesn’t matter—your path stays level while the input scrolls sideways. Enjoy the flatness; it’s rare in the wild.",
+        // 52
+        "<b>Binary search monk.</b> O(log n) whispers: halve, halve, halve. The curve climbs so politely you almost trust infinite data—almost.",
+        // 53
+        "<b>Root scout.</b> O(√n) is the compromise growth—faster than log, slower than linear. You’re walking a power law with a gentle exponent.",
+        // 54
+        "<b>Linear pilgrim.</b> O(n) is honesty: one pass, proportional work. The ramp doesn’t cheat; it just keeps asking for more steps.",
+        // 55
+        "<b>Sort priest.</b> O(n log n) is the church of merge sorts and balanced trees—more than linear, less than quadratic, forever arguing about constants in the basement.",
+        // 56
+        "<b>Nested-loop detective.</b> O(n²) means someone doubled a walk. Feel the parabola: small n forgives you; large n sends invoices.",
+        // 57
+        "<b>Cubic alchemist.</b> O(n³) is triple trouble—dense, blunt, expensive. The graph rockets to remind you why we invent better algorithms.",
+        // 58
+        "<b>Subset gambler.</b> O(2ⁿ) is the house always winning: every extra unit doubles the shadow workload. Pray for pruning, memoization, or a smaller universe.",
+        // 59 — catalog slot only until Hohmann stage ships; intro not shown while level is “coming soon”.
+        "<b>Trajectory officer (preview).</b> A Hohmann transfer stitches two circular orbits with two tangential burns—minimum-energy class when the geometry cooperates. The graph for this act is still on the pad."
     };
 
     /// <summary>Must match <see cref="GameLevelCatalog.LevelCount"/>.</summary>

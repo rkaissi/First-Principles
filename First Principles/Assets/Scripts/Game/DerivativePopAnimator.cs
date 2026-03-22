@@ -14,17 +14,23 @@ public class DerivativePopAnimator : MonoBehaviour
     [SerializeField] private float thicknessMultiplier = 1.8f;
     [SerializeField] private float popDurationSeconds = 0.25f;
 
-    private float baseThickness;
-    private Color baseColor;
+    /// <summary>
+    /// Baseline stroke width for f′ (not the momentary boosted value). Stopping a pop mid-animation used to leave
+    /// <see cref="DerivRendererUI.thickness"/> elevated; the next pop then multiplied that again — runaway “thick line”.
+    /// </summary>
+    private float _restThickness = DerivRendererUI.DefaultThicknessPixels;
 
     public void SetTarget(DerivRendererUI target)
     {
         this.target = target;
-        if (this.target != null)
-        {
-            baseThickness = this.target.thickness;
-            baseColor = this.target.color;
-        }
+        SyncRestThicknessFromTarget();
+    }
+
+    /// <summary>Call after resetting <see cref="DerivRendererUI.thickness"/> on level load / theme apply.</summary>
+    public void SyncRestThicknessFromTarget()
+    {
+        if (target != null)
+            _restThickness = Mathf.Max(0.25f, target.thickness);
     }
 
     public void Pop(Color popColor)
@@ -33,7 +39,12 @@ public class DerivativePopAnimator : MonoBehaviour
             return;
 
         if (popRoutine != null)
+        {
             StopCoroutine(popRoutine);
+            popRoutine = null;
+            // Interrupted mid-pulse — snap back so the next pop does not compound thickness.
+            target.thickness = _restThickness;
+        }
 
         popRoutine = StartCoroutine(PopRoutine(popColor));
     }
@@ -42,16 +53,16 @@ public class DerivativePopAnimator : MonoBehaviour
     {
         float elapsed = 0f;
 
-        baseThickness = target.thickness;
-        baseColor = target.color;
+        Color colorBeforePop = target.color;
 
         Color c = popColor;
         if (c.a <= 0f)
             c.a = 1f;
         target.color = c;
 
-        float startThickness = baseThickness;
-        float endThickness = baseThickness * thicknessMultiplier;
+        float restT = _restThickness;
+        float startThickness = restT;
+        float endThickness = restT * thicknessMultiplier;
 
         while (elapsed < popDurationSeconds * 0.5f)
         {
@@ -67,12 +78,16 @@ public class DerivativePopAnimator : MonoBehaviour
         {
             settleT += Time.deltaTime;
             float t = Mathf.Clamp01(settleT / (popDurationSeconds * 0.5f));
-            target.thickness = Mathf.Lerp(fromThickness, startThickness, t);
+            target.thickness = Mathf.Lerp(fromThickness, restT, t);
             yield return null;
         }
 
+        target.thickness = restT;
+
         var restored = target.color;
-        restored.a = baseColor.a;
+        restored.a = colorBeforePop.a;
         target.color = restored;
+
+        popRoutine = null;
     }
 }

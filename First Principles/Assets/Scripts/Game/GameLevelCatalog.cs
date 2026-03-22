@@ -69,6 +69,7 @@ public static class GameLevelCatalog
         "BC: cubic & inflection (sketching)",
         "BC: b^x & d/dx b^x",
         "Circle: (x−h)² + (y−k)² = R²",
+        "Physics C: thermodynamics (adiabatic P–V, γ from N)",
         // --- Aerospace engineering & aerodynamics (order must match LevelManager.BuildSampleLevels) ---
         "Aerospace: lift C_L(α) linear + stall",
         "Aerospace: drag polar (parasitic, induced, total)",
@@ -79,17 +80,32 @@ public static class GameLevelCatalog
         "Aerospace: re-entry decay envelope (ρV heating mood)",
         "Economics: dot-com bubble & crash (stylized index)",
         "Economics: 2008 crisis & recovery (stylized index)",
-        "BOSS: Mandelbrot escape slice (fractal boundary mood)",
-        "Physics C: thermodynamics (adiabatic P–V, γ from N)",
-        "BOSS: golden ratio spiral (logarithmic polar)",
         "Transforms: Fourier — sinc spectrum (rect ↔ sinc)",
         "Transforms: Laplace — causal exponential decay",
+        "BOSS: golden ratio spiral (logarithmic polar)",
         "BOSS: Mandelbrot — finale (fractal escape slice)",
-        "BOSS: Lorenz butterfly — finale (strange attractor)",
-        "Physics C: spring–mass SHM (Hooke's law, undamped)"
+        "BOSS: Lorenz attractor — Chaos Theory (strange attractor)",
+        "BOSS: Black hole — gravity well (1/r slice)",
+        "Physics C: spring–mass SHM (Hooke's law, undamped)",
+        "Big O: O(1) — constant time",
+        "Big O: O(log n) — logarithmic growth",
+        "Big O: O(√n) — sublinear root growth",
+        "Big O: O(n) — linear growth",
+        "Big O: O(n log n) — n log n growth",
+        "Big O: O(n²) — quadratic growth",
+        "Big O: O(n³) — cubic growth",
+        "Big O: O(2ⁿ) — exponential (base 2)",
+        // Placeholder: listed in Level Select but not built in LevelManager yet (see IsComingSoonLevel).
+        "Astrophysics: Hohmann transfer"
     };
 
     public static int LevelCount => DisplayNames.Length;
+
+    /// <summary>Level index reserved for a future stage; <see cref="LevelSelectController"/> shows “coming soon” instead of loading Game.</summary>
+    public const int HohmannTransferComingSoonLevelIndex = 59;
+
+    public static bool IsComingSoonLevel(int index) =>
+        index == HohmannTransferComingSoonLevelIndex;
 
     /// <summary>
     /// Grouped picker on the Level Select scene (indices must match <see cref="DisplayNames"/> / <see cref="LevelManager"/>).
@@ -99,19 +115,21 @@ public static class GameLevelCatalog
         new LevelSelectCategory("level_select.cat.core", "Core & series", 0, 8),
         new LevelSelectCategory("level_select.cat.integration", "Multivar & integration", 9, 13),
         new LevelSelectCategory("level_select.cat.engineering", "Engineering", 14, 16),
-        new LevelSelectCategory("level_select.cat.ap_bc", "AP Calculus BC & Physics C", 17, 33),
-        new LevelSelectCategory("level_select.cat.aerospace", "Aerospace", 34, 40),
-        new LevelSelectCategory("level_select.cat.finale", "Advanced & boss", 41, 45),
-        new LevelSelectCategory("level_select.cat.transforms", "Transforms", 46, 47),
-        new LevelSelectCategory("level_select.cat.final_boss", "Final boss", 48, 49),
+        new LevelSelectCategory("level_select.cat.ap_bc", "AP Calculus BC & Physics C", 17, 34),
+        new LevelSelectCategory("level_select.cat.aerospace", "Aerospace", 35, 41),
+        new LevelSelectCategory("level_select.cat.astrophysics", "Astrophysics", 59, 59),
+        new LevelSelectCategory("level_select.cat.economics", "Economics", 42, 43),
+        new LevelSelectCategory("level_select.cat.transforms", "Transforms", 44, 45),
         new LevelSelectCategory("level_select.cat.spring_physics", "Spring & SHM", 50, 50),
+        new LevelSelectCategory("level_select.cat.big_o", "Big O notation", 51, 58),
+        new LevelSelectCategory("level_select.cat.final_boss", "Final boss", 46, 49),
     };
 
     /// <summary>First index of the contiguous <b>Aerospace:</b> block (must match <see cref="LevelManager"/> sample levels).</summary>
-    public const int AerospaceLevelsBeginIndex = 34;
+    public const int AerospaceLevelsBeginIndex = 35;
 
     /// <summary>Inclusive last index of the Aerospace block (re-entry stage).</summary>
-    public const int AerospaceLevelsEndIndex = 40;
+    public const int AerospaceLevelsEndIndex = 41;
 
     /// <summary>True for levels whose titles start with <c>Aerospace:</c> in the catalog.</summary>
     public static bool IsAerospaceLevel(int index) =>

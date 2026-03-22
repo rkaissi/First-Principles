@@ -12,9 +12,6 @@ ui.jump=Saltar
 ui.move=Mover
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(teclado: flechas / Espacio)</color></size>
 hud.stage=FASE
-controls.mobile=<color=#7a8399>Mover</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saltar</color>  <b><color=#ffd978>tocar</color></b>  <size=90%><color=#5c6577>(teclado: flechas / Espacio)</color></size>
-controls.desktop=<color=#7a8399>Mover</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saltar</color>  <b><color=#ffd978>Espacio</color></b>
-controls.calculator=<color=#7a8399>Calculadora gráfica</color>  <b>Escribir f(u)</b>  ·  <b>Trans</b>  ·  <b>Escala</b>  ·  <b>Pellizco</b>  ·  <b>Atrás</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) para x>0 · min(x,3)...
 graph.status_enter=Intro / tocar fuera para graficar
@@ -22,7 +19,7 @@ graph.status_graphed=<color=#8fd9b3>Graficado</color>
 graph.line1=<b>Modo calculadora gráfica</b>
 graph.line2=<size=88%><color=#c4d0e8>Escribe <b>f(u)</b> abajo (la variable <b>x</b> en el cuadro = u interior). Luego:</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · doble toque <b>+</b> · mantén <b>−</b> · <b>Escala</b> acercar / mantén alejar · <b>pellizco</b> con dos dedos</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x en [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x en [{4},{5}]</color></size>
 graph.param_a=A (escala vertical)
 graph.param_k=k (escala horizontal)
 graph.param_c=C (desplazamiento vertical)
@@ -65,20 +62,28 @@ level.30=BC: fase y MAS (energía)
 level.31=BC: cúbica e inflexión (boceto)
 level.32=BC: b^x y d/dx b^x
 level.33=Círculo: (x−h)² + (y−k)² = R²
-level.34=Aero: sustentación C_L(α) lineal + pérdida
-level.35=Aero: polar de arrastre (parásita, inducida, total)
-level.36=Aero: atmósfera isoterma ρ(h)
-level.37=Aero: fugoide / cabeceo–heave amortiguado
-level.38=Aero: newtoniano Cp ~ sin²α
-level.39=Aero: Strouhal / tono de vórtices
-level.40=Aero: envolvente de reentrada (calor ρV)
-level.41=Economía: burbuja dotcom y crash (índice estilizado)
-level.42=Economía: crisis 2008 y recuperación (índice estilizado)
-level.43=JEFE: corte de escape Mandelbrot (fractal)
-level.44=Física C: termodinámica (P–V adiabático, γ desde N)
-level.45=JEFE: espiral áurea (polar logarítmica)
-level.46=Transformadas: Fourier — sinc (espectro)
-level.47=Transformadas: Laplace — decaimiento exponencial
-level.48=JEFE: Mandelbrot — final (corte de escape fractal)
-level.49=JEFE: mariposa de Lorenz — final (atractor extraño)
+level.34=Física C: termodinámica (P–V adiabático, γ desde N)
+level.35=Aero: sustentación C_L(α) lineal + pérdida
+level.36=Aero: polar de arrastre (parásita, inducida, total)
+level.37=Aero: atmósfera isoterma ρ(h)
+level.38=Aero: fugoide / cabeceo–heave amortiguado
+level.39=Aero: newtoniano Cp ~ sin²α
+level.40=Aero: Strouhal / tono de vórtices
+level.41=Aero: envolvente de reentrada (calor ρV)
+level.42=Economía: burbuja dotcom y crash (índice estilizado)
+level.43=Economía: crisis 2008 y recuperación (índice estilizado)
+level.44=Transformadas: Fourier — sinc (espectro)
+level.45=Transformadas: Laplace — decaimiento exponencial
+level.46=JEFE: espiral áurea (polar logarítmica)
+level.47=JEFE: Mandelbrot — final (corte de escape fractal)
+level.48=JEFE: atractor de Lorenz — teoría del caos (atractor extraño)
+level.49=JEFE: agujero negro — pozo gravitatorio (corte 1/r)
 level.50=Física C: resorte–masa SHM (ley de Hooke, sin amortiguación)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

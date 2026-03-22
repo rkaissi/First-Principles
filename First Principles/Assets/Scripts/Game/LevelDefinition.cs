@@ -88,6 +88,9 @@ public class LevelDefinition : ScriptableObject
     [Tooltip("Tint the background grid to match this level’s mood.")]
     public bool applyGridTheming = false;
 
+    [Tooltip("GPU wind-tunnel / schlieren backdrop (aerospace category).")]
+    public bool showWindTunnelBackdrop = false;
+
     public Color gridCenterLineTheming = new Color(1f, 1f, 1f, 0.39f);
     public Color gridOutsideLineTheming = new Color(1f, 1f, 1f, 0.14f);
 

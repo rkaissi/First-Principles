@@ -8,14 +8,18 @@ using UnityEngine.UI;
 /// </summary>
 public static class GraphCalculatorEquationPanel
 {
-    private const string RootName = "GraphicCalculatorEquationRoot";
+    public const string EquationRootObjectName = "GraphicCalculatorEquationRoot";
+    private const string RootName = EquationRootObjectName;
     private const string LegacyRootName = "FaxasEquationInputRoot";
 
     private static TextMeshProUGUI labelTmp;
     private static TextMeshProUGUI placeholderTmp;
     private static TextMeshProUGUI statusTmp;
 
-    public static void Ensure(RectTransform parent, FunctionPlotter plotter, TextMeshProUGUI typographyReference, float bottomY, float panelHeight)
+    /// <param name="bottomY">When <paramref name="layoutBelowStory"/> is null: anchored Y from bottom of parent (legacy placement).</param>
+    /// <param name="layoutBelowStory">When set: panel is top-anchored directly under this banner (graphing calculator).</param>
+    public static void Ensure(RectTransform parent, FunctionPlotter plotter, TextMeshProUGUI typographyReference, float bottomY, float panelHeight,
+        RectTransform layoutBelowStory = null, float gapBelowStory = 10f)
     {
         if (parent == null || plotter == null)
             return;
@@ -24,6 +28,11 @@ public static class GraphCalculatorEquationPanel
         if (existing != null)
         {
             ApplyEquationPanelFontAndWeight(existing, typographyReference, plotter);
+            var ert = existing.GetComponent<RectTransform>();
+            if (layoutBelowStory != null)
+                ApplyEquationPanelLayoutBelowStory(ert, layoutBelowStory, gapBelowStory, panelHeight);
+            else
+                ApplyEquationPanelBottomLayout(ert, parent, bottomY, panelHeight);
             return;
         }
 
@@ -32,6 +41,11 @@ public static class GraphCalculatorEquationPanel
         {
             legacyRoot.name = RootName;
             ApplyEquationPanelFontAndWeight(legacyRoot, typographyReference, plotter);
+            var legacyRt = legacyRoot.GetComponent<RectTransform>();
+            if (layoutBelowStory != null)
+                ApplyEquationPanelLayoutBelowStory(legacyRt, layoutBelowStory, gapBelowStory, panelHeight);
+            else
+                ApplyEquationPanelBottomLayout(legacyRt, parent, bottomY, panelHeight);
             return;
         }
 
@@ -40,12 +54,17 @@ public static class GraphCalculatorEquationPanel
 
         var root = new GameObject(RootName);
         var rt = root.AddComponent<RectTransform>();
-        rt.SetParent(parent, false);
-        rt.anchorMin = new Vector2(0.5f, 0f);
-        rt.anchorMax = new Vector2(0.5f, 0f);
-        rt.pivot = new Vector2(0.5f, 0f);
-        rt.anchoredPosition = new Vector2(0f, bottomY);
-        rt.sizeDelta = new Vector2(w, panelHeight);
+        rt.SetParent(layoutBelowStory != null ? layoutBelowStory.parent : parent, false);
+        if (layoutBelowStory != null)
+            ApplyEquationPanelLayoutBelowStory(rt, layoutBelowStory, gapBelowStory, panelHeight);
+        else
+        {
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.pivot = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(0f, bottomY);
+            rt.sizeDelta = new Vector2(w, panelHeight);
+        }
 
         var bg = root.AddComponent<Image>();
         RuntimeUiPolish.UseRoundedSliced(bg);
@@ -53,13 +72,13 @@ public static class GraphCalculatorEquationPanel
         bg.raycastTarget = true;
 
         var labelGo = new GameObject("Label");
-        var lrt = labelGo.AddComponent<RectTransform>();
-        lrt.SetParent(rt, false);
-        lrt.anchorMin = new Vector2(0f, 1f);
-        lrt.anchorMax = new Vector2(0f, 1f);
-        lrt.pivot = new Vector2(0f, 1f);
-        lrt.anchoredPosition = new Vector2(tablet ? 16f : 12f, -6f);
-        lrt.sizeDelta = new Vector2(220f, 28f);
+        var labelRt = labelGo.AddComponent<RectTransform>();
+        labelRt.SetParent(rt, false);
+        labelRt.anchorMin = new Vector2(0f, 1f);
+        labelRt.anchorMax = new Vector2(0f, 1f);
+        labelRt.pivot = new Vector2(0f, 1f);
+        labelRt.anchoredPosition = new Vector2(tablet ? 16f : 12f, -6f);
+        labelRt.sizeDelta = new Vector2(220f, 28f);
         var label = labelGo.AddComponent<TextMeshProUGUI>();
         label.text = LocalizationManager.Get("graph.label_fu", "f(u) =");
         label.fontSize = UiTypography.Scale(tablet ? 26 : 24);
@@ -265,5 +284,35 @@ public static class GraphCalculatorEquationPanel
             srt.anchoredPosition = new Vector2(0f, 0f);
             srt.sizeDelta = new Vector2(-24f, 28f);
         }
+    }
+
+    /// <summary>Top-anchored panel flush under the intro banner (same horizontal stretch as <paramref name="storyRt"/>).</summary>
+    static void ApplyEquationPanelLayoutBelowStory(RectTransform eqRt, RectTransform storyRt, float gap, float panelHeight)
+    {
+        if (eqRt == null || storyRt == null)
+            return;
+
+        eqRt.SetParent(storyRt.parent, false);
+        eqRt.anchorMin = storyRt.anchorMin;
+        eqRt.anchorMax = storyRt.anchorMax;
+        eqRt.pivot = new Vector2(0.5f, 1f);
+        eqRt.sizeDelta = new Vector2(0f, panelHeight);
+        float storyH = storyRt.sizeDelta.y;
+        eqRt.anchoredPosition = new Vector2(storyRt.anchoredPosition.x, storyRt.anchoredPosition.y - storyH - gap);
+    }
+
+    static void ApplyEquationPanelBottomLayout(RectTransform eqRt, RectTransform parent, float bottomY, float panelHeight)
+    {
+        if (eqRt == null || parent == null)
+            return;
+
+        bool tablet = DeviceLayout.IsTabletLike();
+        float w = tablet ? 980f : 900f;
+        eqRt.SetParent(parent, false);
+        eqRt.anchorMin = new Vector2(0.5f, 0f);
+        eqRt.anchorMax = new Vector2(0.5f, 0f);
+        eqRt.pivot = new Vector2(0.5f, 0f);
+        eqRt.anchoredPosition = new Vector2(0f, bottomY);
+        eqRt.sizeDelta = new Vector2(w, panelHeight);
     }
 }

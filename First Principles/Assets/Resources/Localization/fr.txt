@@ -12,9 +12,6 @@ ui.jump=Saut
 ui.move=Déplacer
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(clavier : flèches / Espace)</color></size>
 hud.stage=NIVEAU
-controls.mobile=<color=#7a8399>Déplacer</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saut</color>  <b><color=#ffd978>tapoter</color></b>  <size=90%><color=#5c6577>(clavier : flèches / Espace)</color></size>
-controls.desktop=<color=#7a8399>Déplacer</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Saut</color>  <b><color=#ffd978>Espace</color></b>
-controls.calculator=<color=#7a8399>Calculatrice graphique</color>  <b>Saisir f(u)</b>  ·  <b>Trans</b>  ·  <b>Échelle</b>  ·  <b>Pincer</b>  ·  <b>Retour</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) si x>0 · min(x,3)...
 graph.status_enter=Entrée / toucher ailleurs pour tracer
@@ -22,7 +19,7 @@ graph.status_graphed=<color=#8fd9b3>Tracé</color>
 graph.line1=<b>Mode calculatrice graphique</b>
 graph.line2=<size=88%><color=#c4d0e8>Saisissez <b>f(u)</b> ci-dessous (la variable <b>x</b> dans la zone = u interne). Ensuite :</color></size>
 graph.line3=<size=92%><b>Trans</b> → {0} · double appui <b>+</b> · maintenir <b>−</b> · <b>Échelle</b> zoom avant / maintenir zoom arrière · <b>pincer</b> deux doigts</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x ∈ [{4},{5}]</color></size>
 graph.param_a=A (échelle verticale)
 graph.param_k=k (échelle horizontale)
 graph.param_c=C (translation verticale)
@@ -65,20 +62,28 @@ level.30=BC : phase & MHS (échanges d’énergie)
 level.31=BC : cubique & inflexion (esquisse)
 level.32=BC : b^x & d/dx b^x
 level.33=Cercle : (x−h)² + (y−k)² = R²
-level.34=Aéro : portance C_L(α) linéaire + décrochage
-level.35=Aéro : polaire (traînée de profil, induite, totale)
-level.36=Aéro : atmosphère isotherme ρ(h)
-level.37=Aéro : phugoïde / oscillation amortie tangage–pilonnement
-level.38=Aéro : newtonien Cp ~ sin²α
-level.39=Aéro : Strouhal / tonalité tourbillonnaire
-level.40=Aéro : enveloppe rentrée (échauffement ρV)
-level.41=Éco : bulle internet & krach (indice stylisé)
-level.42=Éco : crise 2008 & reprise (indice stylisé)
-level.43=BOSS : tranche d’échappement Mandelbrot (fractale)
-level.44=Physique C : thermodynamique (adiabatique P–V, γ depuis N)
-level.45=BOSS : spirale d’or (polaire logarithmique)
-level.46=Transformations : Fourier — sinc (spectre)
-level.47=Transformations : Laplace — décroissance exponentielle
-level.48=BOSS : Mandelbrot — finale (tranche d’échappement fractale)
-level.49=BOSS : papillon de Lorenz — finale (attracteur étrange)
+level.34=Physique C : thermodynamique (adiabatique P–V, γ depuis N)
+level.35=Aéro : portance C_L(α) linéaire + décrochage
+level.36=Aéro : polaire (traînée de profil, induite, totale)
+level.37=Aéro : atmosphère isotherme ρ(h)
+level.38=Aéro : phugoïde / oscillation amortie tangage–pilonnement
+level.39=Aéro : newtonien Cp ~ sin²α
+level.40=Aéro : Strouhal / tonalité tourbillonnaire
+level.41=Aéro : enveloppe rentrée (échauffement ρV)
+level.42=Éco : bulle internet & krach (indice stylisé)
+level.43=Éco : crise 2008 & reprise (indice stylisé)
+level.44=Transformations : Fourier — sinc (spectre)
+level.45=Transformations : Laplace — décroissance exponentielle
+level.46=BOSS : spirale d’or (polaire logarithmique)
+level.47=BOSS : Mandelbrot — finale (tranche d’échappement fractale)
+level.48=BOSS : attracteur de Lorenz — théorie du chaos (attracteur étrange)
+level.49=BOSS : trou noir — puits de gravité (tranche 1/r)
 level.50=Physique C : ressort–masse SHM (loi de Hooke, non amorti)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

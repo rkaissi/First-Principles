@@ -18,8 +18,8 @@ public class PlayerControllerUI2D : MonoBehaviour
 {
     [Header("Movement (Grid Units)")]
     [SerializeField] private float moveSpeedGridPerSec = 7f;
-    [SerializeField] private float gravityGridPerSec2 = 20f;
-    [SerializeField] private float jumpVelocityGridPerSec = 9f;
+    [SerializeField] private float gravityGridPerSec2 = 15.5f;
+    [SerializeField] private float jumpVelocityGridPerSec = 11.2f;
 
     [Header("f′ line — air jump")]
     [Tooltip("Grid-space proximity to f′ (player center vs polyline). Wider = easier to register a 'hit'.")]
@@ -59,6 +59,8 @@ public class PlayerControllerUI2D : MonoBehaviour
 
     private Action deathCallback;
     private Action finishCallback;
+    /// <summary>Invoked on the first frame the avatar enters the f′ proximity band (with hit feedback).</summary>
+    private Action derivativeLineGrazeScoringCallback;
 
     /// <summary>When true (e.g. stage intro overlay), physics/input integration is skipped so the avatar stays frozen.</summary>
     private bool inputLocked;
@@ -69,7 +71,7 @@ public class PlayerControllerUI2D : MonoBehaviour
     private bool touchingDerivativeNow;
     /// <summary>After using f′ air jump, stay true until you leave the band or land (prevents spam while sliding on the line).</summary>
     private bool derivativeAirJumpConsumedThisBand;
-    /// <summary>Fresh level entry: first grounded jump uses <see cref="jumpVelocityGridPerSec"/>×1.5 once.</summary>
+    /// <summary>Fresh level entry: first grounded jump uses a small boost once (~12% over base).</summary>
     private bool strongFirstGroundJumpPending;
     private float derivativeHighlightSmoothed;
     private AudioSource derivativeHitAudio;
@@ -172,6 +174,11 @@ public class PlayerControllerUI2D : MonoBehaviour
         this.finishCallback = finishCallback;
     }
 
+    public void SetDerivativeLineGrazeScoringCallback(Action callback)
+    {
+        derivativeLineGrazeScoringCallback = callback;
+    }
+
     /// <summary>Integrate movement, resolve collisions, invoke death/finish callbacks.</summary>
     private void Update()
     {
@@ -209,7 +216,7 @@ public class PlayerControllerUI2D : MonoBehaviour
                 float jv = jumpVelocityGridPerSec;
                 if (strongFirstGroundJumpPending)
                 {
-                    jv *= 1.5f;
+                    jv *= 1.12f;
                     strongFirstGroundJumpPending = false;
                 }
                 velGrid.y = jv;
@@ -256,21 +263,45 @@ public class PlayerControllerUI2D : MonoBehaviour
 
         posGrid = nextPos;
 
-        ClampHorizontalToPlayBounds();
+        ClampPositionToPlayBounds();
 
         TickDerivativeBackgroundTint(dt);
 
         ApplyVisualPosition();
     }
 
-    /// <summary>Hard horizontal limits so the avatar stays over the padded playfield (screen/safe + touch bar).</summary>
-    private void ClampHorizontalToPlayBounds()
+    /// <summary>Hard AABB limits so the avatar stays inside the padded playfield (safe area + touch bar insets).</summary>
+    private void ClampPositionToPlayBounds()
     {
         if (world == null || !world.hasPlayBounds)
             return;
 
         float halfW = playerWidthGrid * 0.5f;
-        posGrid.x = Mathf.Clamp(posGrid.x, world.playBounds.XMin + halfW, world.playBounds.XMax - halfW);
+        float halfH = playerHeightGrid * 0.5f;
+        var b = world.playBounds;
+        posGrid.x = Mathf.Clamp(posGrid.x, b.XMin + halfW, b.XMax - halfW);
+        posGrid.y = Mathf.Clamp(posGrid.y, b.YMin + halfH, b.YMax - halfH);
+    }
+
+    /// <summary>After rotation or Cartesian plane resize: refresh pixel scale, play-bound grid inset, and clamp.</summary>
+    public void ApplyResponsivePlaneLayout(RectTransform plane, Vector2Int gridSize)
+    {
+        if (world == null || plane == null || gridSize.x < 1 || gridSize.y < 1)
+            return;
+
+        float uw = plane.rect.width / gridSize.x;
+        float uh = plane.rect.height / gridSize.y;
+        SetGridToPixelUnits(uw, uh);
+
+        if (world.hasPlayBounds)
+        {
+            world.playBounds = GameplayPlayBounds.Compute(plane, gridSize);
+            world.RefreshFinishFromPlayBounds();
+            SetDeathMinYGrid(world.playBounds.YMin - 0.4f);
+        }
+
+        ClampPositionToPlayBounds();
+        ApplyVisualPosition();
     }
 
     /// <summary>Air jump only while overlapping f′ and not already used until you leave the band.</summary>
@@ -298,6 +329,7 @@ public class PlayerControllerUI2D : MonoBehaviour
 
         if (touching && !wasTouchingDerivativeLine)
         {
+            derivativeLineGrazeScoringCallback?.Invoke();
             PlayDerivativeLineHitFeedback();
             PulseDerivativeBackgroundTint();
         }

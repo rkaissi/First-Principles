@@ -6,7 +6,7 @@ using TMPro;
 /// Spawns TMP axis labels from <see cref="GridRendererUI"/> extents.
 /// Y-axis numbers track <see cref="FunctionPlotter.AxisTickOffsetToMathY"/> when vertical auto-fit is on.
 /// X-axis numbers track <see cref="FunctionPlotter.AxisTickOffsetToMathX"/> and refresh when the plot window
-/// (zoom / pinch), <b>Trans</b> (<c>k</c>, <c>D</c>), or mode changes — calculator ticks show inner <c>u</c>.
+/// (zoom / pinch), horizontal auto-fit pivots, <b>Trans</b> (<c>k</c>, <c>D</c>), or mode changes — calculator ticks show inner <c>u</c>.
 /// </summary>
 public class LabelManager : MonoBehaviour
 {
@@ -40,6 +40,8 @@ public class LabelManager : MonoBehaviour
     private float _lastTransD = float.NaN;
     private FunctionType _lastFunctionTypeForXAxis = (FunctionType)(-1);
 
+    private Vector2 _lastGridPixelSize = Vector2.zero;
+
     private void Awake()
     {
         gridRenderer = FindAnyObjectByType<GridRendererUI>();
@@ -48,6 +50,16 @@ public class LabelManager : MonoBehaviour
     private void Start()
     {
         GenerateLabels();
+        if (gridRenderer != null)
+            _lastGridPixelSize = RectSize(gridRenderer.rectTransform);
+    }
+
+    private static Vector2 RectSize(RectTransform rt)
+    {
+        if (rt == null)
+            return Vector2.zero;
+        var r = rt.rect;
+        return new Vector2(r.width, r.height);
     }
 
     private void LateUpdate()
@@ -55,6 +67,17 @@ public class LabelManager : MonoBehaviour
         var plotter = FindAnyObjectByType<FunctionPlotter>();
         if (plotter == null)
             return;
+
+        if (gridRenderer != null)
+        {
+            Vector2 gridPx = RectSize(gridRenderer.rectTransform);
+            if (gridPx.x > 16f && gridPx.y > 16f &&
+                (gridPx - _lastGridPixelSize).sqrMagnitude > 36f)
+            {
+                _lastGridPixelSize = gridPx;
+                GenerateLabels();
+            }
+        }
 
         float mid = plotter.VerticalAxisLabelPivot;
         float sc = plotter.VerticalAxisLabelScale;
@@ -210,6 +233,26 @@ public class LabelManager : MonoBehaviour
                 continue;
             xLabels[i].text = FormatXTick(plotter, _xTickOffsetsFromCenter[i]);
         }
+    }
+
+    /// <summary>
+    /// Re-read tick strings from the current <see cref="FunctionPlotter"/> mapping (e.g. after pinch / Scale in graphing calculator).
+    /// Syncs cached pivots so <see cref="LateUpdate"/> does not lag one frame.
+    /// </summary>
+    public void RefreshAllTickLabels()
+    {
+        var plotter = FindAnyObjectByType<FunctionPlotter>();
+        if (plotter != null)
+        {
+            _lastAutoMid = plotter.VerticalAxisLabelPivot;
+            _lastAutoScale = plotter.VerticalAxisLabelScale;
+            _lastAutoMidX = plotter.HorizontalAxisLabelPivot;
+            _lastAutoScaleX = plotter.HorizontalAxisLabelScale;
+            CacheHorizontalAxisState(plotter);
+        }
+
+        RefreshXAxisLabelText();
+        RefreshYAxisLabelText();
     }
 
     static string FormatXTick(FunctionPlotter plotter, float tickOffsetFromCenter)

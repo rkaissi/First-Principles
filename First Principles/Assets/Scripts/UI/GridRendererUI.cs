@@ -20,6 +20,8 @@ public class GridRendererUI : Graphic
     private float height;
     private float cellWidth;
     private float cellHeight;
+    private float _meshXMin;
+    private float _meshYMin;
 
     private LabelManager labelManager;
 
@@ -50,8 +52,12 @@ public class GridRendererUI : Graphic
     {
         vh.Clear();
 
-        width = rectTransform.rect.width;
-        height = rectTransform.rect.height;
+        Rect r = rectTransform.rect;
+        width = r.width;
+        height = r.height;
+        // Vertices were authored for bottom-left origin; centered/stretched pivots shift rect.xMin/yMin — offset so grid matches curve/labels.
+        _meshXMin = r.xMin;
+        _meshYMin = r.yMin;
 
         cellWidth = width / (float)gridSize.x;
         cellHeight = height / (float)gridSize.y;
@@ -78,32 +84,34 @@ public class GridRendererUI : Graphic
         UIVertex vertex = UIVertex.simpleVert;
         vertex.color = outsideLine;
 
-        vertex.position = new Vector3(xPos, yPos);
+        float bx = _meshXMin + xPos;
+        float by = _meshYMin + yPos;
+        vertex.position = new Vector3(bx, by);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos, yPos + cellHeight);
+        vertex.position = new Vector3(bx, by + cellHeight);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos + cellWidth, yPos + cellHeight);
+        vertex.position = new Vector3(bx + cellWidth, by + cellHeight);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos + cellWidth, yPos);
+        vertex.position = new Vector3(bx + cellWidth, by);
         vh.AddVert(vertex);
 
         float widthSqr = Mathf.Pow(thickness, 2);
         float distanceSqr = widthSqr / 2;
         float distance = Mathf.Sqrt(distanceSqr);
 
-        vertex.position = new Vector3(xPos + distance, yPos + distance);
+        vertex.position = new Vector3(bx + distance, by + distance);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos + distance, yPos + (cellHeight - distance));
+        vertex.position = new Vector3(bx + distance, by + (cellHeight - distance));
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos + (cellWidth - distance), yPos + (cellHeight - distance));
+        vertex.position = new Vector3(bx + (cellWidth - distance), by + (cellHeight - distance));
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(xPos + (cellWidth - distance), yPos + distance);
+        vertex.position = new Vector3(bx + (cellWidth - distance), by + distance);
         vh.AddVert(vertex);
 
         int offset = index * 8;
@@ -127,25 +135,26 @@ public class GridRendererUI : Graphic
 
     private void DrawCenterLine(int index, VertexHelper vh)
     {
-        float width = rectTransform.rect.width;
-        float height = rectTransform.rect.height;
+        float cx = _meshXMin;
+        float cy = _meshYMin;
 
         float centerLineOffset = centerLineThickness / 2;
 
         UIVertex vertex = UIVertex.simpleVert;
         vertex.color = centerLine;
 
+        float midY = cy + height * 0.5f;
         //Horizontal Line
-        vertex.position = new Vector3(0, (height / 2) - centerLineOffset);
+        vertex.position = new Vector3(cx, midY - centerLineOffset);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(0, (height / 2) + centerLineOffset);
+        vertex.position = new Vector3(cx, midY + centerLineOffset);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(width, (height / 2) + centerLineOffset);
+        vertex.position = new Vector3(cx + width, midY + centerLineOffset);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3(width, (height / 2) - centerLineOffset);
+        vertex.position = new Vector3(cx + width, midY - centerLineOffset);
         vh.AddVert(vertex);
 
         int offset = index * 8;
@@ -153,17 +162,18 @@ public class GridRendererUI : Graphic
         vh.AddTriangle(offset + 0, offset + 1, offset + 2);
         vh.AddTriangle(offset + 2, offset + 3, offset + 0);
 
+        float midX = cx + width * 0.5f;
         //Vertical Line
-        vertex.position = new Vector3((width / 2) - centerLineOffset, 0);
+        vertex.position = new Vector3(midX - centerLineOffset, cy);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3((width / 2) - centerLineOffset, height);
+        vertex.position = new Vector3(midX - centerLineOffset, cy + height);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3((width / 2) + centerLineOffset, height);
+        vertex.position = new Vector3(midX + centerLineOffset, cy + height);
         vh.AddVert(vertex);
 
-        vertex.position = new Vector3((width / 2) + centerLineOffset, 0);
+        vertex.position = new Vector3(midX + centerLineOffset, cy);
         vh.AddVert(vertex);
 
         vh.AddTriangle(offset + 4, offset + 5, offset + 6);

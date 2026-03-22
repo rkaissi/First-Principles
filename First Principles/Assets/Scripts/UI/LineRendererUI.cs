@@ -16,7 +16,9 @@ public class LineRendererUI : Graphic
     /// </summary>
     public static LineRendererUI FindPrimaryCurve()
     {
-        var all = UnityEngine.Object.FindObjectsByType<LineRendererUI>(FindObjectsInactive.Include);
+        // Active hierarchy only: inactive clones / hidden UI must not steal grid sizing from the visible graph
+        // (breaks Riemann strips & anything sampling f(x) with a mismatched grid origin).
+        var all = UnityEngine.Object.FindObjectsByType<LineRendererUI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         foreach (var lr in all)
         {
             if (lr == null || lr.gameObject == null)
@@ -29,7 +31,7 @@ public class LineRendererUI : Graphic
             return lr;
         }
 
-        return all != null && all.Length > 0 ? all[0] : null;
+        return null;
     }
     public Vector2Int gridSize;
 

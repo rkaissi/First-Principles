@@ -7,10 +7,11 @@ level_select.cat.integration=Многие переменные и интегра
 level_select.cat.engineering=Инженерия
 level_select.cat.ap_bc=AP Calculus BC и физика C
 level_select.cat.aerospace=Аэрокосмос
-level_select.cat.finale=Сложные и босс
+level_select.cat.economics=Экономика
 level_select.cat.transforms=Преобразования
 level_select.cat.final_boss=Финальный босс
 level_select.cat.spring_physics=Пружина и ГС
+level_select.cat.big_o=О-нотация
 ui.math_tips=Советы по математике
 ui.back_menu=В меню
 ui.graphing_calculator_mode=Графический калькулятор
@@ -24,9 +25,6 @@ ui.jump=Прыжок
 ui.move=Движение
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(клавиатура: стрелки / Пробел)</color></size>
 hud.stage=ЭТАП
-controls.mobile=<color=#7a8399>Движение</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Прыжок</color>  <b><color=#ffd978>тап</color></b>  <size=90%><color=#5c6577>(клавиатура: стрелки / Пробел)</color></size>
-controls.desktop=<color=#7a8399>Движение</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>Прыжок</color>  <b><color=#ffd978>Пробел</color></b>
-controls.calculator=<color=#7a8399>Граф. калькулятор</color>  <b>Ввод f(u)</b>  ·  <b>Транс</b>  ·  <b>Масштаб</b>  ·  <b>Щипок</b>  ·  <b>Назад</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) при x>0 · min(x,3)...
 graph.status_enter=Enter / тап вне поля для графика
@@ -34,7 +32,7 @@ graph.status_graphed=<color=#8fd9b3>Построено</color>
 graph.line1=<b>Режим графического калькулятора</b>
 graph.line2=<size=88%><color=#c4d0e8>Введите <b>f(u)</b> ниже (переменная <b>x</b> в поле = внутреннее u). Затем:</color></size>
 graph.line3=<size=92%><b>Транс</b> → {0} · двойной тап <b>+</b> · удерживайте <b>−</b> · <b>Масштаб</b> увеличить / удерживайте уменьшить · <b>щипок</b> двумя пальцами</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x ∈ [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x ∈ [{4},{5}]</color></size>
 graph.param_a=A (вертикальный масштаб)
 graph.param_k=k (горизонтальный масштаб)
 graph.param_c=C (вертикальный сдвиг)
@@ -85,20 +83,28 @@ level.30=BC: фаза и гармонические колебания
 level.31=BC: кубическая и точка перегиба
 level.32=BC: b^x и d/dx b^x
 level.33=Окружность: (x−h)² + (y−k)² = R²
-level.34=Aerospace: подъёмная сила C_L(α) линейно + срыв
-level.35=Aerospace: поляра сопротивления (паразит., индукт., суммарн.)
-level.36=Aerospace: изотерм. атмосфера ρ(h)
-level.37=Aerospace: фюгоид / затух. тангаж-высота
-level.38=Aerospace: ньютоновское Cp ~ sin²α
-level.39=Aerospace: Струхал / тон вихревой дорожки
-level.40=Aerospace: оболочка затухания при входе (ρV тепло)
-level.41=Экономика: пузырь dot-com и крах (стилиз. индекс)
-level.42=Экономика: кризис 2008 и восстановление (стилиз. индекс)
-level.43=БОСС: сечение убегания Мандельброта (фрактал)
-level.44=Физика C: термодинамика (адиабата P–V, γ из N)
-level.45=БОСС: золотая спираль (логарифмическая, полярная)
-level.46=Преобразования: Фурье — sinc-спектр
-level.47=Преобразования: Лаплас — затухание
-level.48=БОСС: Мандельброт — финал (фрактальный срез побега)
-level.49=БОСС: эффект бабочки Лоренца — финал (странный аттрактор)
+level.34=Физика C: термодинамика (адиабата P–V, γ из N)
+level.35=Aerospace: подъёмная сила C_L(α) линейно + срыв
+level.36=Aerospace: поляра сопротивления (паразит., индукт., суммарн.)
+level.37=Aerospace: изотерм. атмосфера ρ(h)
+level.38=Aerospace: фюгоид / затух. тангаж-высота
+level.39=Aerospace: ньютоновское Cp ~ sin²α
+level.40=Aerospace: Струхал / тон вихревой дорожки
+level.41=Aerospace: оболочка затухания при входе (ρV тепло)
+level.42=Экономика: пузырь dot-com и крах (стилиз. индекс)
+level.43=Экономика: кризис 2008 и восстановление (стилиз. индекс)
+level.44=Преобразования: Фурье — sinc-спектр
+level.45=Преобразования: Лаплас — затухание
+level.46=БОСС: золотая спираль (логарифмическая, полярная)
+level.47=БОСС: Мандельброт — финал (фрактальный срез побега)
+level.48=БОСС: аттрактор Лоренца — теория хаоса (странный аттрактор)
+level.49=БОСС: чёрная дыра — гравитационная яма (сечение 1/r)
 level.50=Физика C: пружина–масса ГС (закон Гука, без затухания)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

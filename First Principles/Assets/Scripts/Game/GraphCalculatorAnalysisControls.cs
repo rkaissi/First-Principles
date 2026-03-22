@@ -107,7 +107,7 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
             && (!Mathf.Approximately(integralCachedXStart, plotter.xStart)
                 || !Mathf.Approximately(integralCachedXEnd, plotter.xEnd)))
         {
-            riemann.RebuildForGraphingCalculator(plotter, RiemannRectCount, RiemannRule.Midpoint, CalculatorRiemannFill);
+            riemann.RebuildForGraphingCalculator(plotter, primaryCurve, RiemannRectCount, RiemannRule.Midpoint, CalculatorRiemannFill);
             integralCachedXStart = plotter.xStart;
             integralCachedXEnd = plotter.xEnd;
             if (primaryCurve.transform.parent != null)
@@ -168,7 +168,7 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
         integralBarsActive = true;
         RefreshButtonInteractable();
 
-        riemann.RebuildForGraphingCalculator(plotter, RiemannRectCount, RiemannRule.Midpoint, CalculatorRiemannFill);
+        riemann.RebuildForGraphingCalculator(plotter, primaryCurve, RiemannRectCount, RiemannRule.Midpoint, CalculatorRiemannFill);
         integralCachedXStart = plotter.xStart;
         integralCachedXEnd = plotter.xEnd;
         if (primaryCurve != null && primaryCurve.transform.parent != null)
@@ -339,5 +339,16 @@ public class GraphCalculatorAnalysisControls : MonoBehaviour
         }
         derivButton = null;
         integralButton = null;
+    }
+
+    /// <summary>
+    /// Top edge of the Deriv / ∫ row in the same bottom‑anchored space as <see cref="BuildToolButtons"/>
+    /// (<c>anchoredPosition.y</c> + button height).
+    /// </summary>
+    public static float DerivativeIntegralRowTopFromBottom(float transRowBottomY, bool tablet)
+    {
+        float h = tablet ? 108f : 100f;
+        float row2Bottom = transRowBottomY + h + 10f;
+        return row2Bottom + h * 0.92f;
     }
 }

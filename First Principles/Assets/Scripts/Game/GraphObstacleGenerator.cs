@@ -43,6 +43,36 @@ public class GraphWorld
     /// <summary>When true, keeps the avatar inside <see cref="playBounds"/> horizontally and uses them for fall death.</summary>
     public bool hasPlayBounds;
     public GameplayPlayBounds playBounds;
+
+    /// <summary>Call after <see cref="playBounds"/> is recomputed (e.g. rotation) so the exit band stays in the padded region.</summary>
+    public void RefreshFinishFromPlayBounds()
+    {
+        if (!hasPlayBounds)
+            return;
+        const float finishWidth = 1f;
+        var b = playBounds;
+        finish = new GridRect(Mathf.Max(b.XMax - finishWidth, b.XMin), b.XMax, b.YMin, b.YMax);
+    }
+}
+
+/// <summary>Caches grid-space AABB for a platform/hazard/finish visual; reapplies pixel rect when the plane size changes.</summary>
+public sealed class GraphObstacleUILayout : MonoBehaviour
+{
+    public GridRect gridRect;
+
+    public void ApplyPixelLayout(float unitWidth, float unitHeight)
+    {
+        var rt = transform as RectTransform;
+        if (rt == null)
+            return;
+
+        float pxX = gridRect.xMin * unitWidth;
+        float pxY = gridRect.yMin * unitHeight;
+        float pxW = (gridRect.xMax - gridRect.xMin) * unitWidth;
+        float pxH = (gridRect.yMax - gridRect.yMin) * unitHeight;
+        rt.anchoredPosition = new Vector2(pxX, pxY);
+        rt.sizeDelta = new Vector2(pxW, pxH);
+    }
 }
 
 /// <summary>
@@ -65,6 +95,16 @@ public class GraphObstacleGenerator : MonoBehaviour
         this.unitHeight = unitHeight;
 
         obstacleSprite = RuntimeUiPolish.Rounded9Slice != null ? RuntimeUiPolish.Rounded9Slice : TryGetSquareSprite();
+    }
+
+    /// <summary>Repositions platform/hazard/finish quads after the Cartesian plane is scaled (rotation, safe area).</summary>
+    public void RefreshObstaclePixelLayout()
+    {
+        if (obstaclesRoot == null)
+            return;
+        var layouts = obstaclesRoot.GetComponentsInChildren<GraphObstacleUILayout>(true);
+        for (int i = 0; i < layouts.Length; i++)
+            layouts[i].ApplyPixelLayout(unitWidth, unitHeight);
     }
 
     /// <param name="functionPlotter">Required for Riemann stair mode; used to evaluate exact f at sample x.</param>
@@ -433,6 +473,9 @@ public class GraphObstacleGenerator : MonoBehaviour
         rt.anchoredPosition = new Vector2(pxX, pxY);
         rt.sizeDelta = new Vector2(pxW, pxH);
 
+        var finishLayout = go.AddComponent<GraphObstacleUILayout>();
+        finishLayout.gridRect = rect;
+
         var grad = go.AddComponent<UiHorizontalGradientGraphic>();
         grad.raycastTarget = false;
         grad.SetGradientColors(
@@ -462,6 +505,9 @@ public class GraphObstacleGenerator : MonoBehaviour
         rt.pivot = Vector2.zero;
         rt.anchoredPosition = new Vector2(pxX, pxY);
         rt.sizeDelta = new Vector2(pxW, pxH);
+
+        var layout = go.AddComponent<GraphObstacleUILayout>();
+        layout.gridRect = rect;
 
         var img = go.AddComponent<Image>();
         img.sprite = obstacleSprite;

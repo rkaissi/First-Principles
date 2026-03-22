@@ -52,5 +52,9 @@ public class GraphPinchZoom : MonoBehaviour
         plot.xStart = mid - half;
         plot.xEnd = mid + half;
         plot.step = Mathf.Clamp((plot.xEnd - plot.xStart) / 520f, 0.004f, 0.42f);
+        plot.InitPlotFunction();
+        var lm = FindAnyObjectByType<LabelManager>();
+        if (lm != null)
+            lm.RefreshAllTickLabels();
     }
 }

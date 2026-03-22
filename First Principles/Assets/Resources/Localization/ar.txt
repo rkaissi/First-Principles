@@ -12,9 +12,6 @@ ui.jump=قفز
 ui.move=تحرك
 ui.keyboard_hint_mobile=<size=90%><color=#5c6577>(لوحة المفاتيح: الأسهم / المسافة)</color></size>
 hud.stage=المرحلة
-controls.mobile=<color=#7a8399>تحرك</color>  <b><color=#ffd978>◀ ▶</color></b>  <color=#5c6577>·</color>  <color=#7a8399>قفز</color>  <b><color=#ffd978>مس</color></b>  <size=90%><color=#5c6577>(لوحة المفاتيح: الأسهم / المسافة)</color></size>
-controls.desktop=<color=#7a8399>تحرك</color>  <b><color=#ffd978>←</color></b>  <b><color=#ffd978>→</color></b>  <color=#5c6577>·</color>  <color=#7a8399>قفز</color>  <b><color=#ffd978>مسافة</color></b>
-controls.calculator=<color=#7a8399>آلة رسومية</color>  <b>اكتب f(u)</b>  ·  <b>Trans</b>  ·  <b>Scale</b>  ·  <b>قرصة</b>  ·  <b>رجوع</b>
 graph.label_fu=f(u) =
 graph.placeholder=x^2 + sin(x) · ln(x) عندما x>0 · min(x,3)...
 graph.status_enter=Enter / اضغط خارج الحقل للرسم
@@ -22,7 +19,7 @@ graph.status_graphed=<color=#8fd9b3>تم الرسم</color>
 graph.line1=<b>وضع آلة الرسوم البيانية</b>
 graph.line2=<size=88%><color=#c4d0e8>اكتب <b>f(u)</b> أدناه (المتغير <b>x</b> في المربع = u الداخلي). ثم:</color></size>
 graph.line3=<size=92%><b>Trans</b> ← {0} · نقرتان <b>+</b> · اضغط مطولًا <b>−</b> · <b>Scale</b> تكبير باللمس / اضغط مطولًا للتصغير · <b>قرصة</b> بإصبعين</size>
-graph.line4=<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x في [{4},{5}]</color></size>
+graph.line4=<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}   x في [{4},{5}]</color></size>
 graph.param_a=A (مقياس عمودي)
 graph.param_k=k (مقياس أفقي)
 graph.param_c=C (إزاحة عمودية)
@@ -65,20 +62,28 @@ level.30=BC: طور وحركة توافقية بسيطة (طاقة)
 level.31=BC: تكعيب ونقطة انعطاف (رسم)
 level.32=BC: b^x و d/dx b^x
 level.33=دائرة: (x−h)² + (y−k)² = R²
-level.34=طيران: رفع C_L(α) خطي + انفصال
-level.35=طيران: قطب السحب (طفيلي، مُستحثّ، إجمالي)
-level.36=طيران: جو متساوي الحرارة ρ(h)
-level.37=طيران: حركة مجنحة / اهتزاز مُخمَّد
-level.38=طيران: نيوتوني Cp ~ sin²α
-level.39=طيران: Strouhal / نبرة انبعاث دوامات
-level.40=طيران: غلاف دخول غلاف جوي (تسخين ρV)
-level.41=اقتصاد: فقاعة الدوت كوم والانهيار (مؤشر توضيحي)
-level.42=اقتصاد: أزمة 2008 والتعافي (مؤشر توضيحي)
-level.43=الزعيم: شريحة هروب ماندلبروت (كسيري)
-level.44=فيزياء C: الديناميكا الحرارية (P–V أديباتي، γ من N)
-level.45=زعيم: لولب النسبة الذهبية (قطبي لوغاريتمي)
-level.46=تحويلات: فورييه — طيف sinc
-level.47=تحويلات: لابلاس — تضاؤل أسي
-level.48=زعيم: ماندلبروت — الختام (شريحة هروب كسيرية)
-level.49=زعيم: فراشة لورينز — الختام (جذاب غريب)
+level.34=فيزياء C: الديناميكا الحرارية (P–V أديباتي، γ من N)
+level.35=طيران: رفع C_L(α) خطي + انفصال
+level.36=طيران: قطب السحب (طفيلي، مُستحثّ، إجمالي)
+level.37=طيران: جو متساوي الحرارة ρ(h)
+level.38=طيران: حركة مجنحة / اهتزاز مُخمَّد
+level.39=طيران: نيوتوني Cp ~ sin²α
+level.40=طيران: Strouhal / نبرة انبعاث دوامات
+level.41=طيران: غلاف دخول غلاف جوي (تسخين ρV)
+level.42=اقتصاد: فقاعة الدوت كوم والانهيار (مؤشر توضيحي)
+level.43=اقتصاد: أزمة 2008 والتعافي (مؤشر توضيحي)
+level.44=تحويلات: فورييه — طيف sinc
+level.45=تحويلات: لابلاس — تضاؤل أسي
+level.46=زعيم: لولب النسبة الذهبية (قطبي لوغاريتمي)
+level.47=زعيم: ماندلبروت — الختام (شريحة هروب كسيرية)
+level.48=زعيم: جاذب لورينز — نظرية الفوضى (جذاب غريب)
+level.49=زعيم: ثقب أسود — بئر جاذبية (مقطع 1/r)
 level.50=فيزياء C: نابض–كتلة حركة توافقية (قانون هوك، بلا تخميد)
+level.51=Big O: O(1) — constant time
+level.52=Big O: O(log n) — logarithmic growth
+level.53=Big O: O(√n) — sublinear root growth
+level.54=Big O: O(n) — linear growth
+level.55=Big O: O(n log n) — n log n growth
+level.56=Big O: O(n²) — quadratic growth
+level.57=Big O: O(n³) — cubic growth
+level.58=Big O: O(2ⁿ) — exponential (base 2)

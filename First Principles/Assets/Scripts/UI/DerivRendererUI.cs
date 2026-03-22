@@ -8,11 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class DerivRendererUI : Graphic
 {
+    /// <summary>Scene / level default stroke width (reset on theme load and after derivative pop animation).</summary>
+    public const float DefaultThicknessPixels = 10f;
+
     public Vector2Int gridSize;
 
     public List<Vector2> points = new List<Vector2>();
 
-    public float thickness = 10f;
+    public float thickness = DefaultThicknessPixels;
 
     [Tooltip("When < 1, the polyline fades in left→right (set by FunctionPlotter).")]
     [Range(0f, 1f)]

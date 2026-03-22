@@ -637,7 +637,100 @@ public class LevelSelectController : MonoBehaviour
 
     private void StartGameAt(int index)
     {
+        if (GameLevelCatalog.IsComingSoonLevel(index))
+        {
+            ShowComingSoonOverlay();
+            return;
+        }
+
         LevelSelection.SetSelectedLevel(index);
         SceneTransitionHost.LoadSingleScene("Game");
+    }
+
+    private const string ComingSoonOverlayName = "ComingSoonOverlayRoot";
+
+    /// <summary>Full-screen message for catalog levels not yet playable (e.g. Hohmann transfer).</summary>
+    private void ShowComingSoonOverlay()
+    {
+        var canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+
+        var existing = canvas.transform.Find(ComingSoonOverlayName);
+        if (existing != null)
+            Destroy(existing.gameObject);
+
+        var root = new GameObject(ComingSoonOverlayName);
+        var rootRt = root.AddComponent<RectTransform>();
+        rootRt.SetParent(canvas.transform, false);
+        rootRt.anchorMin = Vector2.zero;
+        rootRt.anchorMax = Vector2.one;
+        rootRt.offsetMin = Vector2.zero;
+        rootRt.offsetMax = Vector2.zero;
+        rootRt.SetAsLastSibling();
+
+        var dim = root.AddComponent<Image>();
+        dim.color = new Color(0.04f, 0.05f, 0.1f, 0.88f);
+        dim.raycastTarget = true;
+
+        var dimBtn = root.AddComponent<Button>();
+        dimBtn.targetGraphic = dim;
+        dimBtn.transition = Selectable.Transition.None;
+        dimBtn.onClick.AddListener(() => Destroy(root));
+
+        bool tablet = DeviceLayout.IsTabletLike();
+        var panelGo = new GameObject("Panel");
+        var panelRt = panelGo.AddComponent<RectTransform>();
+        panelRt.SetParent(root.transform, false);
+        panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRt.pivot = new Vector2(0.5f, 0.5f);
+        panelRt.sizeDelta = new Vector2(tablet ? 560f : 480f, tablet ? 200f : 176f);
+
+        var panelImg = panelGo.AddComponent<Image>();
+        RuntimeUiPolish.UseRoundedSliced(panelImg);
+        panelImg.color = new Color(0.12f, 0.14f, 0.2f, 0.98f);
+        panelImg.raycastTarget = true;
+
+        var panelBtn = panelGo.AddComponent<Button>();
+        panelBtn.targetGraphic = panelImg;
+        panelBtn.transition = Selectable.Transition.None;
+        panelBtn.onClick.AddListener(() => Destroy(root));
+
+        var msgGo = new GameObject("Message");
+        var msgRt = msgGo.AddComponent<RectTransform>();
+        msgRt.SetParent(panelGo.transform, false);
+        msgRt.anchorMin = new Vector2(0.06f, 0.28f);
+        msgRt.anchorMax = new Vector2(0.94f, 0.92f);
+        msgRt.offsetMin = Vector2.zero;
+        msgRt.offsetMax = Vector2.zero;
+
+        var msgTmp = msgGo.AddComponent<TextMeshProUGUI>();
+        msgTmp.text = LocalizationManager.Get("ui.coming_soon", "Coming soon!");
+        msgTmp.fontSize = UiTypography.Scale(tablet ? 36 : 30);
+        msgTmp.alignment = TextAlignmentOptions.Center;
+        msgTmp.color = RuntimeUiPolish.TitleIvory;
+        msgTmp.fontStyle = FontStyles.Bold;
+        msgTmp.raycastTarget = false;
+        CopyFontFromAny(msgTmp);
+        LocalizationManager.ApplyTextDirection(msgTmp);
+
+        var okGo = new GameObject("DismissHint");
+        var okRt = okGo.AddComponent<RectTransform>();
+        okRt.SetParent(panelGo.transform, false);
+        okRt.anchorMin = new Vector2(0.06f, 0.08f);
+        okRt.anchorMax = new Vector2(0.94f, 0.26f);
+        okRt.offsetMin = Vector2.zero;
+        okRt.offsetMax = Vector2.zero;
+
+        var okTmp = okGo.AddComponent<TextMeshProUGUI>();
+        okTmp.text = LocalizationManager.Get("ui.coming_soon_tap", "Tap anywhere to close");
+        okTmp.fontSize = UiTypography.Scale(tablet ? 22 : 19);
+        okTmp.alignment = TextAlignmentOptions.Center;
+        okTmp.color = new Color(0.75f, 0.8f, 0.92f, 0.85f);
+        okTmp.raycastTarget = false;
+        CopyFontFromAny(okTmp);
+        okTmp.fontStyle = FontStyles.Italic;
+        LocalizationManager.ApplyTextDirection(okTmp);
     }
 }

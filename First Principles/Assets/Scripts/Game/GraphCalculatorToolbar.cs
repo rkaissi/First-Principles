@@ -128,6 +128,10 @@ public class GraphCalculatorToolbar : MonoBehaviour
         plot.xStart = mid - half;
         plot.xEnd = mid + half;
         plot.step = Mathf.Clamp((plot.xEnd - plot.xStart) / 480f, 0.004f, 0.42f);
+        plot.InitPlotFunction();
+        var lm = FindAnyObjectByType<LabelManager>();
+        if (lm != null)
+            lm.RefreshAllTickLabels();
     }
 
     private void RefreshHint()
@@ -164,9 +168,9 @@ public class GraphCalculatorToolbar : MonoBehaviour
         float th1 = plot.transK * (plot.xEnd - plot.transD);
         string line4Fmt = polar
             ? LocalizationManager.Get("graph.polar.line4",
-                "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;θ∈[{4},{5}]</color></size>")
+                "<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}  θ∈[{4},{5}]</color></size>")
             : LocalizationManager.Get("graph.line4",
-                "<size=88%><color=#a8b2d1>A={0} &nbsp;k={1} &nbsp;C={2} &nbsp;D={3} &nbsp;&nbsp;x∈[{4},{5}]</color></size>");
+                "<size=88%><color=#a8b2d1>A={0}  k={1}  C={2}  D={3}  x∈[{4},{5}]</color></size>");
         string line4 = polar
             ? string.Format(line4Fmt,
                 plot.transA.ToString("0.##"),

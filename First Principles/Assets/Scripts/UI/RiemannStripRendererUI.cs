@@ -144,7 +144,8 @@ public class RiemannStripRendererUI : Graphic
     }
 
     /// <summary>Riemann rectangles over the graphing calculator window (no <see cref="LevelDefinition"/>).</summary>
-    public void RebuildForGraphingCalculator(FunctionPlotter plotter, int rectCount, RiemannRule rule, Color fillColor)
+    /// <param name="primaryCurve">Main <see cref="LineRendererUI"/> for this graph (same as calculator); avoids wrong grid if multiple curves exist.</param>
+    public void RebuildForGraphingCalculator(FunctionPlotter plotter, LineRendererUI primaryCurve, int rectCount, RiemannRule rule, Color fillColor)
     {
         strips.Clear();
         color = fillColor;
@@ -155,7 +156,10 @@ public class RiemannStripRendererUI : Graphic
             return;
         }
 
-        SyncGridSizeFromPrimaryCurve();
+        if (primaryCurve != null && primaryCurve.gridSize.x >= 1 && primaryCurve.gridSize.y >= 1)
+            gridSize = primaryCurve.gridSize;
+        else
+            SyncGridSizeFromPrimaryCurve();
         if (grid == null)
             grid = GetComponentInParent<GridRendererUI>();
         if (grid != null && (gridSize.x < 1 || gridSize.y < 1))
