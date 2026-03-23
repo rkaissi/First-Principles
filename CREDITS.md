@@ -38,4 +38,4 @@ For other assets under `Assets/`, check any `LICENSE`, `*.txt`, or `Third Party 
 
 ## Contact / support
 
-Link your **support URL** and **privacy policy URL** (if any) in App Store Connect when you submit. Repository and issue-tracker links belong in the store listing, not inside the app, unless you add a dedicated screen.
+Link your **support URL** and **privacy policy URL** in App Store Connect when you submit. **Privacy policy:** repository root [`privacy-policy.md`](privacy-policy.md) and GitHub Pages copy [`docs/privacy-policy.md`](docs/privacy-policy.md) (e.g. `https://gamegenesis.github.io/First-Principles/privacy-policy/` after Pages is enabled). Repository and issue-tracker links belong in the store listing, not inside the app, unless you add a dedicated screen.

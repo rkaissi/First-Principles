@@ -25,6 +25,7 @@ title: Home
 
 | Guide | Description |
 |------|----------------|
+| [Privacy policy]({% link privacy-policy.md %}) | App privacy (local settings, no accounts; store & engine notices) — use this URL in App Store Connect / Play Console when Pages is live |
 | [ORCH Aerospace — Orch Avionic 1 EFB]({% link orch-avionic-efb.md %}) | [orchaerospace.com](https://orchaerospace.com) — on-device AI avionics / EFB announcement (promo) |
 | [Setup]({% link setup.md %}) | Unity version, clone, open the correct project folder |
 | [Gameplay]({% link gameplay.md %}) | Controls, stages, level select, how the graph affects the world |

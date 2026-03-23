@@ -21,6 +21,7 @@ plugins:
 # Minima 3.x navigation (adds top links on the generated site)
 header_pages:
   - index.md
+  - privacy-policy.md
   - setup.md
   - gameplay.md
   - first-principles-business.md
