@@ -62,3 +62,39 @@ If you delete the bootstrap or duplicate `EventSystem` setups in new scenes, ens
 If **Package Manager** fails to resolve `com.unity.inputsystem`, open **Window → Package Manager**, select **Input System**, and use the **version Unity recommends** for your editor; then align `Packages/manifest.json` with that version.
 
 If you see **`TypeLoadException` … `InputActionAsset` from assembly `Unity.InputSystem`**, the Input System DLLs in `Library/` are often out of sync: close Unity, delete the project’s **`Library`** folder (and let the editor reimport), or **Reimport** the Input System package. The repo pins a version verified for **Unity 6000.4** (`manifest.json`); adjust if your patch release differs.
+
+## macOS / Mac standalone build fails in a few seconds
+
+**Symptoms:** Console shows **Build completed with a result of 'Failed'** and a stack trace mentioning **`EditorApplication:Internal_CallDelayFunctions`**. That line is only where Unity reported the failure — the **real errors are a few lines above** (red **`error CS…`**, **`BuildFailedException`**, **`IOException`**, missing module, etc.).
+
+**What to do first**
+
+1. Open **Console** (clear it), run **Build** again, and scroll to the **first red error** — copy that full message (and the one after it if it says “2 errors”).
+2. In **Unity Hub** → your **6000.4.x** editor → gear → **Add modules**: enable **Mac Build Support (Mono)** and, if you use IL2CPP for Mac, **Mac Build Support (IL2CPP)**. Without the right module, the build can fail almost immediately.
+3. **Player Settings → Other Settings → Company Name** must not use characters that break **bundle IDs / Info.plist** (e.g. avoid **`;`** in the name). This project uses a plain **`Orch Aerospace and Game Genesis`** style string for that field; full legal attribution stays in **`CREDITS.md`** / **`LICENSE`**.
+4. **Close other Unity instances** using the same project before running a **command-line** build; only one editor may own the `Library` folder at a time.
+
+**CLI build (optional, captures a log)** — quit the Unity Editor for this project, then (adjust the editor path if yours differs):
+
+```bash
+mkdir -p _MacBuildOut
+"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" \
+  -batchmode -nographics -quit \
+  -projectPath "/path/to/First Principles" \
+  -buildTarget StandaloneOSX \
+  -buildPath "/path/to/_MacBuildOut/First Principles.app" \
+  -logFile "/path/to/_MacBuildOut/build.log"
+tail -100 "/path/to/_MacBuildOut/build.log"
+```
+
+If the log mentions **code signing** or **hardened runtime**, configure **Player Settings → macOS** (signing team, entitlements) for distribution builds; unsigned local builds usually still work for testing on your own Mac.
+
+If the Console shows **`error CS0103: The name 'Handheld' does not exist`**, some script is calling **`UnityEngine.Handheld`** (e.g. **`Handheld.Vibrate()`**), which only exists for **iOS/Android** player builds — not for **Mac / Windows / Linux** standalone. Wrap those calls in **`#if UNITY_ANDROID || UNITY_IOS`** (or remove them on desktop). This project does that for derivative-line haptics in **`PlayerControllerUI2D`**.
+
+## Mac / desktop build feels slow or crashes
+
+**Cause (fixed in repo):** **`FunctionPlotter.Update`** used to run a **full graph resample** (`ComputeGraph` over `[xStart,xEnd]` with step `h`) **every frame** and toggled **`GridRendererUI`** off/on every frame to “refresh” it. On **Retina Macs** that is a huge amount of UI mesh work and can **stutter**, **heat-throttle**, or **OOM / crash**.
+
+**Fix:** Updates now **replot only when** curve parameters change or the **Lorenz** stage is animating; during the **left→right reveal**, only **vertex / fade** refresh runs. The grid is **not** toggled every frame.
+
+If problems remain: lower **Quality** in **Project Settings → Quality** for **Standalone**, close other heavy apps, and capture **`~/Library/Logs/Unity/Player.log`** after a crash for the native stack.

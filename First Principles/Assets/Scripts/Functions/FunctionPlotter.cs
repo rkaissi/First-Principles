@@ -2,7 +2,8 @@
  * FunctionPlotter.cs — John Seong / First Principles
  *
  * Maintenance overview:
- *   • Each Update() calls InitPlotFunction → samples f and numeric f' over [xStart,xEnd].
+ *   • Update() only runs a full replot when parameters change or the Lorenz attractor is animating;
+ *     during the left→right reveal, it only refreshes vertex alpha. (Avoids sampling f/f′ every frame.)
  *   • Points are in “grid space”: (MapDisplayX(xPlot) + gridOrigin.x, MapDisplayY(yPlot) + gridOrigin.y).
  *   • To add a new curve: extend FunctionType, EvaluateFunctionY, and UpdateEquationText.
  *   • LevelManager sets public fields to match LevelDefinition; differentiate=true feeds DerivRendererUI.
@@ -93,6 +94,9 @@ public class FunctionPlotter : MonoBehaviour
     private LineRendererUI lineRenderer;
     private DerivRendererUI derivRenderer;
 
+    /// <summary>Last <see cref="ComputePlotInvalidationHash"/> after a full <see cref="PlotFunction"/> — skips redundant work in <see cref="Update"/>.</summary>
+    private int _cachedPlotParamHash = int.MinValue;
+
     [Tooltip("Seconds for the main f and f′ curves to fade in left→right after the graph parameters change.")]
     public float graphRevealDurationSeconds = 2.1f;
 
@@ -121,9 +125,44 @@ public class FunctionPlotter : MonoBehaviour
     private void Update()
     {
         UpdateGraphRevealAnimation();
-        InitPlotFunction();
-        RefreshGrid();
+
+        // Lorenz stage scrolls phase every frame — full resample required.
+        if (functionType == FunctionType.ChaosLorenzButterflyX)
+        {
+            InitPlotFunction();
+            return;
+        }
+
+        int paramHash = ComputePlotInvalidationHash();
+        if (paramHash != _cachedPlotParamHash)
+        {
+            InitPlotFunction();
+            return;
+        }
+
+        // Graph reveal: only push fade uniforms + remesh existing points (no ComputeGraph).
+        if (_graphRevealT01 < 0.999f)
+        {
+            if (lineRenderer == null)
+                lineRenderer = LineRendererUI.FindPrimaryCurve();
+            if (derivRenderer == null)
+                derivRenderer = FindAnyObjectByType<DerivRendererUI>();
+
+            PushGraphRevealToRenderers();
+            if (lineRenderer != null)
+                lineRenderer.SetVerticesDirty();
+            if (derivRenderer != null && differentiate)
+                derivRenderer.SetVerticesDirty();
+        }
     }
+
+    /// <summary>When this changes, <see cref="PlotFunction"/> must run (same inputs that affect <see cref="ComputeGraph"/>).</summary>
+    int ComputePlotInvalidationHash() =>
+        HashCode.Combine(
+            ComputeGraphRevealParamsHash(),
+            differentiate,
+            showWindTunnelBackdrop,
+            equationExtraSuffix ?? "");
 
     void UpdateGraphRevealAnimation()
     {
@@ -410,6 +449,8 @@ public class FunctionPlotter : MonoBehaviour
             WindTunnelBackdrop.Sync(gridRt, this);
             PushGraphRevealToRenderers();
         }
+
+        _cachedPlotParamHash = ComputePlotInvalidationHash();
     }
 
     public void ComputeGraph(FunctionType functionType, float transA, float transK, float transC, float transD, int power, int baseN)

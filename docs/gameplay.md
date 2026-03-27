@@ -60,7 +60,7 @@ Legacy **Trans** / **Scale** tuning buttons on the Game UI are **disabled**; tun
 
 ## Level flow
 
-1. **Menu** — Entry and scene fade; footer shows **Credits** (GAME GENESIS × ORCH AEROSPACE), version, proprietary / initiative line, and **Unity** trademark notice ([`CREDITS.md`](../CREDITS.md) for full attribution).
+1. **Menu** — Entry and scene fade; footer shows **Credits** (ORCH AEROSPACE × GAME GENESIS), version, proprietary / initiative line, and **Unity** trademark notice ([`CREDITS.md`](../CREDITS.md) for full attribution).
 2. **LevelSelect** — `LevelSelectController` builds a **scrollable** list from **`GameLevelCatalog.DisplayNames`**, plus **Math tips & snippets** (`MathArticlesOverlay` / `LearningArticleLibrary`). Choosing a level calls **`LevelSelection.SetSelectedLevel`** and loads **Game**.
 3. **Game** — `LevelManager` reads **`LevelSelection.ConsumeSelectedLevel`**, applies the level theme to **`FunctionPlotter`**, regenerates obstacles, and spawns / resets the player. The **Menu** scene shows title/version + credits (`MenuCreditsBlock` / `SceneCreditsFooter.BuildMenuFooterRichText()` → `menu.version_line` + `menu.credits_line`); gameplay HUD does not duplicate it above the controls hint. Per-level story banners use **`story.N`** from `Localization/LevelStories/{locale}.txt` when present (see `Localization/README.md`).
 

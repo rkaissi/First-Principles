@@ -69,6 +69,10 @@ public class LevelManager : MonoBehaviour
 
     private const int GameplayStartingScore = 100;
     private const int DerivativeTouchPenaltyPoints = 5;
+    /// <summary>How long the top story banner stays at full opacity after fading in (per-level override via <see cref="LevelDefinition.storyPauseSeconds"/>).</summary>
+    private const float DefaultStoryBannerReadableSeconds = 3.25f;
+    /// <summary>Preferred height for the top <c>StoryText</c> block so longer level copy fits above the graph.</summary>
+    private const float StoryBannerLayoutHeightPx = 400f;
 
     /// <summary>Touch f′ penalty score (starts at <see cref="GameplayStartingScore"/> each level).</summary>
     private int gameplayScore = GameplayStartingScore;
@@ -837,7 +841,7 @@ public class LevelManager : MonoBehaviour
         rt.anchorMax = new Vector2(0.96f, 1f);
         rt.pivot = new Vector2(0.5f, 1f);
         rt.anchoredPosition = new Vector2(0, -64f);
-        rt.sizeDelta = new Vector2(0f, 280f);
+        rt.sizeDelta = new Vector2(0f, StoryBannerLayoutHeightPx);
 
         tmp.color = new Color(1f, 1f, 1f, 0f);
 
@@ -2857,7 +2861,7 @@ public class LevelManager : MonoBehaviour
         for (int i = 1; i <= popN; i++)
             stageTriggerXGrid.Add((i / (float)(popN + 1)) * width);
 
-        storyMiddlePauseSeconds = def.storyPauseSeconds > 0.01f ? def.storyPauseSeconds : 1.65f;
+        storyMiddlePauseSeconds = def.storyPauseSeconds > 0.01f ? def.storyPauseSeconds : DefaultStoryBannerReadableSeconds;
 
         if (gridRenderer != null)
         {

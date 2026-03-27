@@ -3,11 +3,25 @@
 # First Principles: An Interactive Module
 
 A **graphing calculator** and **derivative-driven platformer** built in **Unity 6**. The **name** nods to **Elon Musk**’s comments on a **first-principles approach** to **business** and to **problem-solving in life and work**—paired here with **calculus** on the graph as the literal teaching layer ([`docs/first-principles-business.md`](docs/first-principles-business.md)).  
-Credits: **GAME GENESIS** ([itch.io](https://game-genesis.itch.io) · [Rayan Kaissi](https://github.com/rkaissi/)) × **ORCH AEROSPACE** ([orchaerospace.com](https://orchaerospace.com) · [John Wonmo Seong](https://github.com/wonmor)). **Proprietary** — see [`LICENSE`](LICENSE) and [`CREDITS.md`](CREDITS.md) for terms, App Store–style attribution, and third-party notices. **Orch Avionic 1 EFB** (promo): [`docs/orch-avionic-efb.md`](docs/orch-avionic-efb.md).
+Credits: **ORCH AEROSPACE** ([orchaerospace.com](https://orchaerospace.com) · [John Wonmo Seong](https://github.com/wonmor)) × **GAME GENESIS** ([itch.io](https://game-genesis.itch.io) · [Rayan Kaissi](https://github.com/rkaissi/)). **Proprietary** — see [`LICENSE`](LICENSE) and [`CREDITS.md`](CREDITS.md) for terms, App Store–style attribution, and third-party notices. **Orch Avionic 1 EFB** (promo): [`docs/orch-avionic-efb.md`](docs/orch-avionic-efb.md).
 
 ---
 
-## Beta build 1.0
+| iOS and iPadOS |
+|:-:|
+| [<img src="https://github.com/wonmor/Atomizer-Swift-Challenge/blob/bb3e156b76ce46eeed402345667d51c843f73280/Docs/appstore-badge.png" height="50">](https://apps.apple.com/us/app/first-principles-2d-platformer/id6760980245) |
+
+---
+
+## Screenshots
+
+<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 39 PM" src="https://user-images.githubusercontent.com/35755386/158451505-71e056ee-cca4-42ee-a621-38c092c806f2.png">
+
+<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 31 PM" src="https://user-images.githubusercontent.com/35755386/158451522-61e0c14c-57c3-4819-b023-b7d7c13075aa.png">
+
+---
+
+## Official Release 1.0
 
 The project pairs a **Cartesian graph UI** (functions + numeric derivatives) with **Limbo-style** gameplay: **platforms** follow the curve and **gaps / hazards** follow derivative rules, with **staged progression** (HUD), **level select**, primer plus **Taylor / Maclaurin / series / multivar** levels, **area-under-the-curve / Riemann sum** stages (left, right, midpoint rectangles + optional stair platforms), an **AP Calculus BC** extension (polar rose/cardioid, logistic, inverse trig, transcendental-tooling levels), **AP Physics C** hooks (decay, projectile, angular momentum / rotation stories), and **aerospace / aerodynamics** stages (lift vs α & stall, drag polar, atmosphere ρ(h), phugoid mood, Newtonian sin²α, Strouhal shedding, re-entry decay envelope), with typography matched to the main equation label. **Mobile / touch:** portrait-oriented scaler, **safe-area** UI, **scrollable** level list, and **on-screen move/jump** controls on handheld / touch builds.
 
@@ -71,14 +85,6 @@ Topics covered: **Unity 6000.4.0f1** project path (`First Principles/`), **Menu 
 2. **Fundamentals of Calculus** — Limits and differentiation  
 3. **Integral calculus**  
 4. **Infinite series**
-
----
-
-## Screenshots
-
-<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 39 PM" src="https://user-images.githubusercontent.com/35755386/158451505-71e056ee-cca4-42ee-a621-38c092c806f2.png">
-
-<img width="1728" alt="Screen Shot 2026-03-15 at 2 57 31 PM" src="https://user-images.githubusercontent.com/35755386/158451522-61e0c14c-57c3-4819-b023-b7d7c13075aa.png">
 
 ---
 

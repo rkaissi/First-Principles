@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -14,19 +15,35 @@ public static class UiTypography
 
     public static float Scale(float px) => Mathf.Max(1f, Mathf.Round(px * GlobalScale));
 
+    /// <summary>Same asset referenced by Menu/Game scenes; must live under a <c>Resources</c> folder for <see cref="Resources.Load"/>.</summary>
+    const string ProjectPrimaryTmpFontResourcePath = "Fonts/Nunito-VariableFont_wght SDF";
+
     /// <summary>
-    /// Assigns <see cref="TMP_Settings.defaultFontAsset"/> (e.g. Quicksand after font setup) so runtime-built UI
-    /// matches the project TMP default instead of whatever happens to be first in the scene.
+    /// Picks a TMP font for runtime-built UI (level select, overlays, etc.): uses <see cref="TMP_Settings.defaultFontAsset"/>
+    /// when you have replaced the stock Liberation default (e.g. Quicksand menu command); otherwise loads
+    /// <b>Resources/<see cref="ProjectPrimaryTmpFontResourcePath"/></b> so level select matches Menu/Game (Nunito in this repo).
     /// </summary>
     public static void ApplyDefaultFontAsset(TextMeshProUGUI target)
     {
         if (target == null)
             return;
-        var font = TMP_Settings.defaultFontAsset;
+        TMP_FontAsset settingsFont = TMP_Settings.defaultFontAsset;
+        TMP_FontAsset fromResources = Resources.Load<TMP_FontAsset>(ProjectPrimaryTmpFontResourcePath);
+
+        TMP_FontAsset font = fromResources;
+        if (settingsFont != null && !IsLikelyStockLiberationSans(settingsFont))
+            font = settingsFont;
+        if (font == null)
+            font = settingsFont;
         if (font == null)
             return;
+
         target.font = font;
         if (font.material != null)
             target.fontSharedMaterial = font.material;
     }
+
+    static bool IsLikelyStockLiberationSans(TMP_FontAsset f) =>
+        f != null && f.name != null &&
+        f.name.IndexOf("Liberation", StringComparison.OrdinalIgnoreCase) >= 0;
 }

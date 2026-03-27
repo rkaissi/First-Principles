@@ -116,4 +116,4 @@
 <b><size=110%>للمزيد من القراءة</size></b>
 <b>docs/math-concepts.md</b> (فهرس)، <b>docs/first-principles-business.md</b>، <b>docs/engineering-math.md</b>، وملفات الامتحانات أعلاه على GitHub Pages.
 
-— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles
+— © 2022-2026 · ORCH AEROSPACE × GAME GENESIS · First Principles

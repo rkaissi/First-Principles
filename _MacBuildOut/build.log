@@ -1,0 +1,30 @@
+Unity Editor version:    6000.4.0f1 (8cf496087c8f)
+Branch:                  6000.4/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 26.3.1 (a) (Build 25D771280a)
+Darwin version:          25.3.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        32768 MB
+Date:                    2026-03-23T04:29:19Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-johnseong" at "2026-03-23T04:29:19.671953Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity
+-batchmode
+-nographics
+-quit
+-projectPath
+/Users/johnseong/Documents/GitHub2/First-Principles/First Principles
+-buildTarget
+StandaloneOSX
+-buildPath
+/Users/johnseong/Documents/GitHub2/First-Principles/_MacBuildOut/First Principles.app
+-logFile
+/Users/johnseong/Documents/GitHub2/First-Principles/_MacBuildOut/build.log
+Successfully changed project path to: /Users/johnseong/Documents/GitHub2/First-Principles/First Principles
+/Users/johnseong/Documents/GitHub2/First-Principles/First Principles
+[Package Manager] Server process was shutdown

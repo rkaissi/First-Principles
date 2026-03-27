@@ -4,7 +4,7 @@
 
 *A copy formatted for **GitHub Pages** lives in [`docs/privacy-policy.md`](docs/privacy-policy.md); keep both files aligned when you edit this policy.*
 
-This policy describes how the **First Principles** mobile app (the “App”) handles information when you install and use it. The App is developed by **Game Genesis** (Rayan Kaissi) and **Orch Aerospace** (John Wonmo Seong). By using the App, you agree to this policy.
+This policy describes how the **First Principles** mobile app (the “App”) handles information when you install and use it. The App is developed by **Orch Aerospace** (John Wonmo Seong) and **Game Genesis** (Rayan Kaissi). By using the App, you agree to this policy.
 
 If anything here conflicts with **Apple App Store** or **Google Play** terms, the store terms apply for distribution and payments.
 

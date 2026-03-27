@@ -20,7 +20,7 @@ public class LevelDefinition : ScriptableObject
     public string levelName = "Stage";
     [TextArea(4, 12)]
     public string storyText = "Follow the curve. Watch the derivative.";
-    [Tooltip("Extra seconds the story stays readable after fading in (0 = use LevelManager default).")]
+    [Tooltip("Extra seconds the story stays readable after fading in (0 = use LevelManager default, ~3.25 s).")]
     public float storyPauseSeconds = 0f;
 
     [Header("Graph Parameters (FunctionPlotter)")]

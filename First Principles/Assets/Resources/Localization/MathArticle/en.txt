@@ -155,4 +155,4 @@ BC stacks <b>series & Taylor</b>, <b>parametric / polar / vector-valued</b> moti
 <b><size=110%>Where to read more</size></b>
 <b>docs/math-concepts.md</b> (index), <b>docs/first-principles-business.md</b> (Musk-popularized builder lens ↔ game), <b>docs/competition-math.md</b> &amp; <b>docs/amc-10-12.md</b> (contest / MAA map), <b>docs/engineering-math.md</b> (applied circuits/oscillations), and the exam-prep files above on GitHub Pages.
 
-— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles
+— © 2022-2026 · ORCH AEROSPACE × GAME GENESIS · First Principles

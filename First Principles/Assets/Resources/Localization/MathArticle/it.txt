@@ -135,4 +135,4 @@ Meccanica ed E&amp;M <b>calcolo‑first</b>: \(v = dr/dt\), \(a = dv/dt\), integ
 <b><size=110%>Dove leggere di più</size></b>
 <b>docs/math-concepts.md</b> (indice), <b>docs/first-principles-business.md</b> (lente builder popolarizzata da Musk ↔ gioco), <b>docs/competition-math.md</b> &amp; <b>docs/amc-10-12.md</b> (mappa concorsi / MAA), <b>docs/engineering-math.md</b> (circuiti/oscillazioni applicate) e i file d’esame sopra su GitHub Pages.
 
-— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles
+— © 2022-2026 · ORCH AEROSPACE × GAME GENESIS · First Principles

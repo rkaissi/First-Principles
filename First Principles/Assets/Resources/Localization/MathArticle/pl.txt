@@ -20,4 +20,4 @@ Pełny glosariusz §1–13, aerospace, „first principles” i mapa egzaminów 
 <b><size=110%>Gdzie czytać dalej</size></b>
 <b>docs/math-concepts.md</b>, <b>docs/derivative-rules.md</b>, <b>docs/definite-indefinite-integrals.md</b>, <b>docs/first-principles-business.md</b>, <b>docs/engineering-math.md</b> oraz pliki przygotowawcze AP / AMC / TMUA / MAT.
 
-— © 2022-2026 · GAME GENESIS × ORCH AEROSPACE · First Principles
+— © 2022-2026 · ORCH AEROSPACE × GAME GENESIS · First Principles

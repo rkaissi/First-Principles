@@ -232,16 +232,19 @@ public class PlayerControllerUI2D : MonoBehaviour
         // Gravity.
         velGrid.y -= gravityGridPerSec2 * dt;
 
-        Vector2 prevPos = posGrid;
         Vector2 nextPos = posGrid;
 
         // Horizontal step + collision.
         nextPos.x = posGrid.x + velGrid.x * dt;
         ResolveHorizontalPlatforms(ref nextPos);
 
+        // Vertical sweep should use Y from before this frame's vertical move but X after horizontal
+        // (matches diagonal motion; avoids false collisions when strafing along stepped platforms).
+        Vector2 prevForVerticalSweep = new Vector2(nextPos.x, posGrid.y);
+
         // Vertical step + collision.
         nextPos.y = posGrid.y + velGrid.y * dt;
-        ResolveVerticalPlatforms(prevPos, ref nextPos, ref grounded);
+        ResolveVerticalPlatforms(prevForVerticalSweep, ref nextPos, ref grounded);
 
         // Hazard check.
         if (OverlapsAny(world.hazards, nextPos))
@@ -353,8 +356,10 @@ public class PlayerControllerUI2D : MonoBehaviour
     private void PlayDerivativeLineHitFeedback()
     {
         bool usedHaptic = derivativeHitHaptic && Application.isMobilePlatform;
+#if UNITY_ANDROID || UNITY_IOS
         if (usedHaptic)
             Handheld.Vibrate();
+#endif
 
         // Sound only where vibration isn’t used (no haptic on this platform/path).
         if (usedHaptic)
@@ -534,7 +539,7 @@ public class PlayerControllerUI2D : MonoBehaviour
         }
     }
 
-    /// <summary>Land on platform tops when falling; bonk head when rising through thin solids.</summary>
+    /// <summary>Land on platform tops when falling; bonk head when rising into a true overhead solid.</summary>
     private void ResolveVerticalPlatforms(Vector2 prevPos, ref Vector2 pos, ref bool groundedOut)
     {
         groundedOut = false;
@@ -551,6 +556,12 @@ public class PlayerControllerUI2D : MonoBehaviour
         float pxMax = pos.x + halfW;
 
         const float eps = 0.001f;
+        // Graph levels use ~1-column × thin-slab platforms along the curve. The slab's bottom (yMin) sits
+        // under the walkable top (yMax); jumping forward along rising steps hits that underside and used to
+        // zero vy mid-air. Skip that "bonk" while the feet are still clearly below the step top.
+        const float maxLedgeSlabThicknessGrid = 0.95f;
+        const float maxLedgeSlabWidthGrid = 1.28f;
+        const float feetBelowStepTopClearanceGrid = 0.1f;
 
         foreach (var p in world.platforms)
         {
@@ -569,8 +580,14 @@ public class PlayerControllerUI2D : MonoBehaviour
                     groundedOut = true;
                 }
             }
-            else // Rising into platform
+            else // Rising — only bonk real ceilings, not the underside lip of the next stair tread.
             {
+                float platW = p.xMax - p.xMin;
+                float platH = p.yMax - p.yMin;
+                bool thinStairSlab = platW <= maxLedgeSlabWidthGrid && platH <= maxLedgeSlabThicknessGrid;
+                if (thinStairSlab && nextBottom < p.yMax - feetBelowStepTopClearanceGrid)
+                    continue;
+
                 bool crossedBottomSurface = prevTop <= p.yMin + eps && nextTop >= p.yMin - eps;
                 if (crossedBottomSurface)
                 {
